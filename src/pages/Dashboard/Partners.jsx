@@ -1,39 +1,34 @@
-// src/pages/Dashboard/UserWallet.jsx
+
+
+
+
+
+
+
+
+
 import React from "react";
 import { motion } from "framer-motion";
 import { DollarSign, CreditCard, ArrowRightLeft, Wallet } from "lucide-react";
-
+import PortfolioOverview from "../../utlis/PortfolioOverview";
+import ReferralCard from "../../utlis/ReferralCard";
+import PackageSummary from "../../utlis/PackageSummary";
+import PackagesSection from "../../utlis/PackagesSection";
 import { RiMenuFoldLine } from "react-icons/ri";
 
-import UserWithdrawalForm from "../../utlis/UserWithdrawalForm";
-import DepositDetails from "../../utlis/DepositDetails";
+export default function PartnerPage() {
+  const stats = [
+    { title: "Total Investment", value: "0.00", currency: "USD" },
+    { title: "Weekly Rebate Profit", value: "0.00", currency: "USD" },
+    { title: "Weekly Total Profit", value: "0.00", currency: "USD" },
+    { title: "Weekly Packages", value: "0", currency: "" },
+  ];
 
-export default function UsersWallet() {
   const walletData = [
-    {
-      title: "Deposit Wallet",
-      amount: "0.00",
-      currency: "USD",
-      icon: <Wallet size={22} />,
-    },
-    {
-      title: "Bonus Wallet",
-      amount: "0.00",
-      currency: "USD",
-      icon: <DollarSign size={22} />,
-    },
-    {
-      title: "Referral Wallet",
-      amount: "0.00",
-      currency: "USD",
-      icon: <CreditCard size={22} />,
-    },
-    {
-      title: "Earnings Wallet",
-      amount: "0.00",
-      currency: "USD",
-      icon: <ArrowRightLeft size={22} />,
-    },
+    { title: "Deposit Wallet", amount: "0.00", currency: "USD", icon: <Wallet size={22} /> },
+    { title: "Bonus Wallet", amount: "0.00", currency: "USD", icon: <DollarSign size={22} /> },
+    { title: "Referral Wallet", amount: "0.00", currency: "USD", icon: <CreditCard size={22} /> },
+    { title: "Earnings Wallet", amount: "0.00", currency: "USD", icon: <ArrowRightLeft size={22} /> },
   ];
 
   // Animation variants
@@ -50,12 +45,12 @@ export default function UsersWallet() {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="flex flex-col items-center bg-gray-100 dark:bg-neutral-900 dark:text-white min-h-screen py-5"
+      className="flex flex-col items-center bg-gray-100 dark:bg-neutral-900 dark:text-white min-h-screen py-10"
     >
       {/* Wallet Section */}
       <motion.div
         variants={fadeUp}
-        className="w-[95%] lg:w-[85%] xl:w-[80%] bg-white dark:bg-neutral-800 rounded-2xl shadow-md p-4 sm:p-2"
+        className="w-[95%] lg:w-[85%] xl:w-[80%] bg-white dark:bg-neutral-800 rounded-2xl shadow-md p-4 sm:p-2 mb-4"
       >
         <div className="flex mb-3 flex-col md:flex-row justify-between items-stretch divide-y md:divide-y-0 md:divide-x divide-gray-300">
           {walletData.map((item, i) => (
@@ -71,9 +66,7 @@ export default function UsersWallet() {
                 <h1 className="text-base font-semibold">{item.title} :</h1>
                 <p className="text-lg font-bold">
                   {item.amount}
-                  <span className="text-sm font-medium ml-1">
-                    {item.currency}
-                  </span>
+                  <span className="text-sm font-medium ml-1">{item.currency}</span>
                 </p>
               </div>
 
@@ -91,32 +84,45 @@ export default function UsersWallet() {
         </div>
       </motion.div>
 
+      {/* Stats Cards */}
       {/* Header */}
-      <div className="space-y-2 max-w-[1400px] p-5 w-full">
-        <RiMenuFoldLine size={30} className="text-gray-700 dark:text-white" />
-        <h1 className="text-[20px] sm:text-[24px] font-[700] text-[#000000] dark:text-white">
-          Wallet
-        </h1>
-      </div>
+            <div className="space-y-2 max-w-[1400px] p-5 w-full">
+              <RiMenuFoldLine size={30} className="text-gray-700 dark:text-white" />
+              <h1 className="text-[20px] sm:text-[24px] font-[700] text-[#000000] dark:text-white">
+                IB Dashboard
+              </h1>
+            </div>
+
+      {/* Portfolio & Referral */}
+      <motion.div
+        variants={fadeUp}
+        className="py-6 flex flex-col lg:flex-row gap-4 w-full max-w-[1400px] px-4 sm:px-6"
+      >
+        <div className="w-full lg:w-1/2">
+          <PortfolioOverview />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <ReferralCard />
+        </div>
+      </motion.div>
 
       {/* Package Summary & Packages */}
       <motion.div
         variants={fadeUp}
-        className="py-3 flex flex-col  gap-4 w-full max-w-[1400px] px-4 sm:px-6"
+        className="py-6 flex flex-col lg:flex-row gap-4 w-full max-w-[1400px] px-4 sm:px-6"
       >
-        <div className="w-full">
-          <UserWithdrawalForm title="DEPOSIT" />
+        <div className="w-full lg:w-1/2">
+          <PackageSummary />
         </div>
-        <div className="w-full">
-          {/* <UserPackagesSection /> */}
-          <DepositDetails title="DEPOSIT"/>
+        <div className="w-full lg:w-1/2">
+          <PackagesSection />
         </div>
       </motion.div>
 
       {/* Risk Warning Section */}
       <motion.div
         variants={fadeUp}
-        className="flex flex-col md:flex-row gap-8 items-start   dark:bg-neutral-800  p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
+        className="flex flex-col md:flex-row gap-8 items-start  dark:bg-neutral-800  p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
       >
         {/* Left */}
         <div className="md:w-1/2 space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base">
@@ -132,8 +138,7 @@ export default function UsersWallet() {
             trading products offered by{" "}
             <span className="font-semibold text-[#00A991]">
               International Finance Asia
-            </span>
-            .
+            </span>.
           </p>
           <p>
             <span className="font-semibold text-[#00A991]">
@@ -155,7 +160,9 @@ export default function UsersWallet() {
               Terms and Conditions
             </span>
             ,{" "}
-            <span className="text-[#00A991] font-medium">Risk Disclosure</span>{" "}
+            <span className="text-[#00A991] font-medium">
+              Risk Disclosure
+            </span>{" "}
             and other legal documents on the{" "}
             <span className="text-[#00A991] font-medium">
               International Finance Asia

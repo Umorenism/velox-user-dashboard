@@ -142,7 +142,7 @@ export default function Dashboardpage() {
       {/* Risk Warning Section */}
       <motion.div
         variants={fadeUp}
-        className="flex flex-col md:flex-row gap-8 items-start bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
+        className="flex flex-col md:flex-row gap-8 items-start  dark:bg-neutral-800  p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
       >
         {/* Left */}
         <div className="md:w-1/2 space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base">

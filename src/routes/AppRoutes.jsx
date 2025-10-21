@@ -1,21 +1,29 @@
-
+// src/router/AppRouter.jsx  (or wherever your router file is)
 import { Routes, Route, Navigate } from "react-router-dom";
 import React from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Login from "../pages/Login";
-import Settings from "../pages/Dashboard/Settings";
+
 import Dashboardpage from "../pages/Dashboard/Dashboardpage";
-import Packages from "../pages/Dashboard/Packages";
+
 import UsersMangement from "../pages/Dashboard/UsersManagement";
-import LeaderManagement from "../pages/Dashboard/LeaderManagement";
+
 import Transaction from "../pages/Dashboard/Transaction";
 import PromotionsBanner from "../pages/Dashboard/PromotionsBanners";
-import CompanyProfile from "../pages/Dashboard/CompanyProfile";
+
 import Permission from "../pages/Dashboard/Permission";
-import EmailPage from "../pages/Dashboard/EmailPage";
+
 import UsersWallet from "../pages/Dashboard/UserWallet";
 import NotFound from "../pages/Dashboard/NotFound";
+import Setting from "../pages/Dashboard/Setting";
+
+
+import UsersWithDrawal from "../pages/Dashboard/UserWithDrawal";
+import UsersInternalWithDrawal from "../pages/Dashboard/UserInternalWithdraw";
+
+import PartnerPage from "../pages/Dashboard/Partners";
+
 
 export default function AppRouter() {
   return (
@@ -31,15 +39,27 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       >
+        {/* dashboard index */}
         <Route index element={<Dashboardpage />} />
+
+        {/* main sections */}
         <Route path="users" element={<UsersMangement />} />
-       
-<Route path="package" element={<Packages />} />
+
+        {/* <Route path="wallet/deposit" element={<UserDeposite />} /> */}
+        <Route path="wallet/withdrawal" element={<UsersWithDrawal />} />
+        <Route
+          path="wallet/internal-withdraw"
+          element={<UsersInternalWithDrawal />}
+        />
         <Route path="transactions" element={<Transaction />} />
-        <Route path="withdrawal-wallet" element={<UsersWallet />} />
+        <Route path="wallet/deposit" element={<UsersWallet />} />
+        <Route path="part" element={<PartnerPage />} />
         <Route path="promotions" element={<PromotionsBanner />} />
-        <Route path="settings" element={<Settings />} />
-       
+        
+
+        <Route path="setting" element={<Setting />} />
+
+        <Route path="permission" element={<Permission />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

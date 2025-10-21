@@ -1,120 +1,177 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { RiMenuFoldLine } from "react-icons/ri";
-import { DollarSign, Search, Filter, Upload } from "lucide-react";
+import {
+  DollarSign,
+  CreditCard,
+  ArrowRightLeft,
+  Wallet,
+  Search,
+  Filter,
+  Upload,
+} from "lucide-react";
 import TransactionTable from "../../utlis/TransactionTable";
+import WalletTabs from "../../utlis/WalletTabs";
 
 export default function Transaction() {
-  const data = [
-    { title: "Deposit", amount: "0.00", currency: "USD" },
-    { title: "Withdrawal", amount: "700", currency: "USD" },
-    { title: "Transfers", amount: "560", currency: "USD" },
+  const walletData = [
+    {
+      title: "Deposit Wallet",
+      amount: "0.00",
+      currency: "USD",
+      icon: <Wallet size={22} />,
+    },
+    {
+      title: "Bonus Wallet",
+      amount: "0.00",
+      currency: "USD",
+      icon: <DollarSign size={22} />,
+    },
+    {
+      title: "Referral Wallet",
+      amount: "0.00",
+      currency: "USD",
+      icon: <CreditCard size={22} />,
+    },
+    {
+      title: "Earnings Wallet",
+      amount: "0.00",
+      currency: "USD",
+      icon: <ArrowRightLeft size={22} />,
+    },
   ];
 
-  // Animation variants
+  // Framer Motion animation variant
   const fadeUp = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 25 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
   return (
     <motion.div
       initial="hidden"
       animate="show"
-      className="flex flex-col items-center justify-center bg-gray-100 dark:bg-neutral-900 dark:text-white min-h-screen px-4 sm:px-6 lg:px-8"
+      className="flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8"
     >
-      <motion.div
-        variants={fadeUp}
-        className="w-full max-w-[1500px] mt-6 dark:bg-neutral-900"
-      >
-        {/* Header */}
-        <div className="space-y-5">
-          <RiMenuFoldLine
-            size={30}
-            className="text-gray-700 dark:text-white"
-          />
-          <h1 className="text-[20px] sm:text-[24px] font-[700] text-[#000000] dark:text-white">
-            Transactions
-          </h1>
-        </div>
-
-        {/* Stat Cards */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.map((item, index) => (
+      {/* Wallet Section */}
             <motion.div
-              key={index}
               variants={fadeUp}
-              custom={index}
-              className="flex flex-col justify-between rounded-xl p-5 shadow-md
-                         bg-white dark:bg-neutral-900 dark:text-white
-                         border border-gray-100 dark:border-neutral-800
-                         hover:shadow-lg transition-all duration-300"
+              className="w-[95%] lg:w-[85%] xl:w-[80%] bg-white dark:bg-neutral-800 rounded-2xl shadow-md p-4 sm:p-2 mb-4"
             >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-[15px] font-semibold">{item.title}</h3>
-                <div
-                  className="w-8 h-8 rounded-full bg-gray-100 dark:bg-neutral-800 
-                             flex justify-center items-center border border-gray-300 dark:border-neutral-700"
-                >
-                  <DollarSign
-                    size={16}
-                    color={
-                      window.matchMedia("(prefers-color-scheme: dark)").matches
-                        ? "#ccc"
-                        : "#333"
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="border-t border-neutral-200 dark:border-neutral-800 w-full mt-3 pt-2 text-left">
-                <span className="text-[36px] sm:text-[50px] font-bold text-green-600 dark:text-green-400">
-                  {item.amount}
-                  <span className="text-[14px] ml-1 text-green-600 dark:text-green-400">
-                    {item.currency}
-                  </span>
-                </span>
+              <div className="flex mb-3 flex-col md:flex-row justify-between items-stretch divide-y md:divide-y-0 md:divide-x divide-gray-300">
+                {walletData.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    variants={fadeUp}
+                    custom={i}
+                    className="flex flex-col justify-center items-center w-full md:w-1/4 px-2 py-2 text-center space-y-2"
+                  >
+                    {/* Title Row */}
+                    <div className="flex flex-wrap justify-center items-center gap-2 text-center">
+                      <span className="text-[#00A991]">{item.icon}</span>
+                      <h1 className="text-base font-semibold">{item.title} :</h1>
+                      <p className="text-lg font-bold">
+                        {item.amount}
+                        <span className="text-sm font-medium ml-1">{item.currency}</span>
+                      </p>
+                    </div>
+      
+                    {/* Buttons */}
+                    <div className="flex flex-wrap justify-center gap-3">
+                      <button className="px-5 py-2 rounded-full bg-[#00A991] text-white font-medium text-sm hover:opacity-90 transition">
+                        Deposit
+                      </button>
+                      <button className="px-5 py-2 rounded-full bg-[#EE933C] text-white font-medium text-sm hover:opacity-90 transition">
+                        Transfer
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
-          ))}
-        </div>
-
-        {/* Search + Actions */}
-        <div className="flex flex-col lg:flex-row mb-10 mt-8 flex-wrap items-center gap-3 dark:bg-neutral-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800">
-          {/* 🔍 Search Bar */}
-          <div className="flex items-center w-full sm:w-1/2 lg:w-1/3 bg-white dark:bg-neutral-800 rounded-lg border border-gray-300 dark:border-neutral-700 px-3 py-3 focus-within:ring-2 focus-within:ring-green-500 transition-all">
-            <Search
-              size={16}
-              className="text-gray-500 dark:text-gray-400 mr-2"
-            />
-            <input
-              type="text"
-              placeholder="Search users, packages..."
-              className="bg-transparent outline-none w-full text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-            />
-          </div>
-
-          {/* 🔘 Action Buttons */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <button className="flex items-center justify-center gap-1.5 w-full sm:w-auto bg-white dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-gray-700 dark:text-gray-200 px-3 py-3 rounded-lg text-sm hover:bg-gray-200 dark:hover:bg-neutral-700 transition-all">
-              <Filter size={16} />
-              Filter
-            </button>
-
-            <button className="flex items-center justify-center gap-1.5 w-full sm:w-auto bg-[#00A991] text-white px-3 py-3 rounded-lg text-sm shadow-md hover:bg-[#00957F] transition-all">
-              <Upload size={16} />
-              Import CSV
-            </button>
+      
+      {/* Transactions Section */}
+      <motion.div
+        variants={fadeUp}
+        className="w-full  max-w-[1300px]    dark:border-neutral-700 p-4 sm:p-6"
+      >
+        {/* Header */}
+        <div className="flex  items-center justify-between mb-4">
+          <div className="flex flex-col items-start gap-3">
+            <RiMenuFoldLine size={28} className="text-foreground" />
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              Transactions
+            </h1>
           </div>
         </div>
 
-        {/* Transaction Table */}
-        <div className="overflow-x-auto">
-          <TransactionTable />
+       <div className="flex items-center gap-2 px-4 py-2 rounded-md mb-2 border w-full   bg-white dark:bg-neutral-800 border-gray-300 dark:border-neutral-700">
+               <Search className="text-gray-400 w-4 h-4" />
+               <input
+                 type="text"
+                 placeholder="Search by referral name"
+                 className="w-full text-sm focus:outline-none bg-transparent text-gray-700 dark:text-gray-200"
+               />
+             </div>
+        {/* <TransactionTable /> */}
+      </motion.div>
+   <WalletTabs/>
+      <motion.div>
+
+
+
+{/* Risk Warning Section */}
+      <motion.div
+        variants={fadeUp}
+        className="flex flex-col md:flex-row gap-8 items-start   dark:bg-neutral-800  p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
+      >
+        {/* Left */}
+        <div className="md:w-1/2 space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base">
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white border-b border-gray-300 pb-2">
+            Risk Warning
+          </h1>
+          <p>
+            Trading forex, CFDs, and any financial derivative instruments on
+            margin carries a high level of risk and may not be suitable for all
+            investors, as you could sustain losses in excess of your deposits.
+            Leverage can work for you as well as against you. Please carefully
+            consider your financial situation and investment experience prior to
+            trading products offered by{" "}
+            <span className="font-semibold text-[#00A991]">
+              International Finance Asia
+            </span>
+            .
+          </p>
+          <p>
+            <span className="font-semibold text-[#00A991]">
+              International Finance Asia Pty Ltd
+            </span>{" "}
+            is regulated by the Australian Securities and Investments Commission
+            (ACN 670 137 345) under License No. 001305580.
+          </p>
         </div>
+
+        {/* Right */}
+        <div className="md:w-1/2 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base border-t md:border-t-0 md:border-l border-gray-300 md:pl-8 pt-4 md:pt-14">
+          <p>
+            The contents in this site are provided only for informational
+            purposes and should not be regarded as an offer or solicitation to
+            any person in any jurisdiction where such an offer is unauthorized.
+            Please read and understand the{" "}
+            <span className="text-[#00A991] font-medium">
+              Terms and Conditions
+            </span>
+            ,{" "}
+            <span className="text-[#00A991] font-medium">Risk Disclosure</span>{" "}
+            and other legal documents on the{" "}
+            <span className="text-[#00A991] font-medium">
+              International Finance Asia
+            </span>{" "}
+            website prior to initiating your leveraged investment.
+          </p>
+        </div>
+      </motion.div>
       </motion.div>
     </motion.div>
   );
 }
-

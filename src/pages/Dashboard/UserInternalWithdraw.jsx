@@ -1,3 +1,4 @@
+
 // src/pages/Dashboard/UserWallet.jsx
 import React from "react";
 import { motion } from "framer-motion";
@@ -8,7 +9,7 @@ import { RiMenuFoldLine } from "react-icons/ri";
 import UserWithdrawalForm from "../../utlis/UserWithdrawalForm";
 import DepositDetails from "../../utlis/DepositDetails";
 
-export default function UsersWallet() {
+export default function UsersInternalWithDrawal() {
   const walletData = [
     {
       title: "Deposit Wallet",
@@ -71,9 +72,7 @@ export default function UsersWallet() {
                 <h1 className="text-base font-semibold">{item.title} :</h1>
                 <p className="text-lg font-bold">
                   {item.amount}
-                  <span className="text-sm font-medium ml-1">
-                    {item.currency}
-                  </span>
+                  <span className="text-sm font-medium ml-1">{item.currency}</span>
                 </p>
               </div>
 
@@ -94,9 +93,7 @@ export default function UsersWallet() {
       {/* Header */}
       <div className="space-y-2 max-w-[1400px] p-5 w-full">
         <RiMenuFoldLine size={30} className="text-gray-700 dark:text-white" />
-        <h1 className="text-[20px] sm:text-[24px] font-[700] text-[#000000] dark:text-white">
-          Wallet
-        </h1>
+        <h1 className="text-[20px] sm:text-[24px] font-[700] text-[#000000] dark:text-white">Wallet</h1>
       </div>
 
       {/* Package Summary & Packages */}
@@ -105,65 +102,64 @@ export default function UsersWallet() {
         className="py-3 flex flex-col  gap-4 w-full max-w-[1400px] px-4 sm:px-6"
       >
         <div className="w-full">
-          <UserWithdrawalForm title="DEPOSIT" />
+          <UserWithdrawalForm title="INTERNAL TRANSFER" />
         </div>
         <div className="w-full">
-          {/* <UserPackagesSection /> */}
-          <DepositDetails title="DEPOSIT"/>
+          <DepositDetails title="INTERNAL TRANSFER"/>
         </div>
       </motion.div>
 
       {/* Risk Warning Section */}
       <motion.div
-        variants={fadeUp}
-        className="flex flex-col md:flex-row gap-8 items-start   dark:bg-neutral-800  p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
-      >
-        {/* Left */}
-        <div className="md:w-1/2 space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white border-b border-gray-300 pb-2">
-            Risk Warning
-          </h1>
-          <p>
-            Trading forex, CFDs, and any financial derivative instruments on
-            margin carries a high level of risk and may not be suitable for all
-            investors, as you could sustain losses in excess of your deposits.
-            Leverage can work for you as well as against you. Please carefully
-            consider your financial situation and investment experience prior to
-            trading products offered by{" "}
-            <span className="font-semibold text-[#00A991]">
-              International Finance Asia
-            </span>
-            .
-          </p>
-          <p>
-            <span className="font-semibold text-[#00A991]">
-              International Finance Asia Pty Ltd
-            </span>{" "}
-            is regulated by the Australian Securities and Investments Commission
-            (ACN 670 137 345) under License No. 001305580.
-          </p>
-        </div>
-
-        {/* Right */}
-        <div className="md:w-1/2 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base border-t md:border-t-0 md:border-l border-gray-300 md:pl-8 pt-4 md:pt-14">
-          <p>
-            The contents in this site are provided only for informational
-            purposes and should not be regarded as an offer or solicitation to
-            any person in any jurisdiction where such an offer is unauthorized.
-            Please read and understand the{" "}
-            <span className="text-[#00A991] font-medium">
-              Terms and Conditions
-            </span>
-            ,{" "}
-            <span className="text-[#00A991] font-medium">Risk Disclosure</span>{" "}
-            and other legal documents on the{" "}
-            <span className="text-[#00A991] font-medium">
-              International Finance Asia
-            </span>{" "}
-            website prior to initiating your leveraged investment.
-          </p>
-        </div>
-      </motion.div>
+              variants={fadeUp}
+              className="flex flex-col md:flex-row gap-8 items-start   dark:bg-neutral-800  p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
+            >
+              {/* Left */}
+              <div className="md:w-1/2 space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base">
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white border-b border-gray-300 pb-2">
+                  Risk Warning
+                </h1>
+                <p>
+                  Trading forex, CFDs, and any financial derivative instruments on
+                  margin carries a high level of risk and may not be suitable for all
+                  investors, as you could sustain losses in excess of your deposits.
+                  Leverage can work for you as well as against you. Please carefully
+                  consider your financial situation and investment experience prior to
+                  trading products offered by{" "}
+                  <span className="font-semibold text-[#00A991]">
+                    International Finance Asia
+                  </span>
+                  .
+                </p>
+                <p>
+                  <span className="font-semibold text-[#00A991]">
+                    International Finance Asia Pty Ltd
+                  </span>{" "}
+                  is regulated by the Australian Securities and Investments Commission
+                  (ACN 670 137 345) under License No. 001305580.
+                </p>
+              </div>
+      
+              {/* Right */}
+              <div className="md:w-1/2 text-gray-700 dark:text-gray-300 leading-relaxed text-sm md:text-base border-t md:border-t-0 md:border-l border-gray-300 md:pl-8 pt-4 md:pt-14">
+                <p>
+                  The contents in this site are provided only for informational
+                  purposes and should not be regarded as an offer or solicitation to
+                  any person in any jurisdiction where such an offer is unauthorized.
+                  Please read and understand the{" "}
+                  <span className="text-[#00A991] font-medium">
+                    Terms and Conditions
+                  </span>
+                  ,{" "}
+                  <span className="text-[#00A991] font-medium">Risk Disclosure</span>{" "}
+                  and other legal documents on the{" "}
+                  <span className="text-[#00A991] font-medium">
+                    International Finance Asia
+                  </span>{" "}
+                  website prior to initiating your leveraged investment.
+                </p>
+              </div>
+            </motion.div>
     </motion.div>
   );
 }

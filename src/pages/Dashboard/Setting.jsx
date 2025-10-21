@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function PromotionsBanners() {
+export default function Setting() {
   return (
     <div>
       

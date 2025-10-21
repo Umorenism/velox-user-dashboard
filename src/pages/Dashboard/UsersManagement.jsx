@@ -1,9 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { DollarSign, CreditCard, ArrowRightLeft, Wallet } from "lucide-react";
-import PortfolioOverview from "../../utlis/PortfolioOverview";
-import ReferralCard from "../../utlis/ReferralCard";
-import PackageSummary from "../../utlis/PackageSummary";
+
 import PackagesSection from "../../utlis/PackagesSection";
 import { RiMenuFoldLine } from "react-icons/ri";
 import UsersPackagesGrid from "../../utlis/UsersPackageGrid";
