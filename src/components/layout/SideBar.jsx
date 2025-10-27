@@ -1,5 +1,4 @@
 
-// src/components/layout/SideBar.jsx
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -12,11 +11,11 @@ import {
   LogOut,
   Search,
   X,
- 
   ChevronDown,
   ChevronUp,
-  
   Handshake,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logoimg from "../../assets/velox.svg";
@@ -24,11 +23,9 @@ import profilePic from "../../assets/profile.svg";
 import { useTheme } from "../../context/ThemeContext";
 
 export default function SideBar({ closeSidebar }) {
-  
-
-  // Accordion states
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme(); // ✅ Hook from ThemeContext
 
   const toggleSettings = () => setIsSettingsOpen((prev) => !prev);
   const toggleWallet = () => setIsWalletOpen((prev) => !prev);
@@ -37,17 +34,13 @@ export default function SideBar({ closeSidebar }) {
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
     { to: "/dashboard/users", label: "User Management", icon: <Users size={18} /> },
     { to: "/dashboard/transactions", label: "Transactions", icon: <CreditCard size={18} /> },
-   { to: "/dashboard/part", label: "Partners", icon: <Handshake size={18} /> },
-
-
+    { to: "/dashboard/part", label: "Partners", icon: <Handshake size={18} /> },
   ];
 
   const walletSubLinks = [
     { to: "/dashboard/wallet/deposit", label: "Deposit" },
     { to: "/dashboard/wallet/withdrawal", label: "Withdrawal" },
     { to: "/dashboard/wallet/internal-withdraw", label: "Internal Withdraw" },
-    
-    
   ];
 
   const settingsSubLinks = [
@@ -67,10 +60,11 @@ export default function SideBar({ closeSidebar }) {
       animate={{ x: 0 }}
       exit={{ x: -300 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="w-72 bg-white min-h-screen dark:bg-neutral-900 dark:text-white shadow-md h-screen p-4 flex flex-col justify-between"
+      className="w-72 bg-white dark:bg-neutral-900 dark:text-white shadow-md h-screen p-4 flex flex-col justify-between"
     >
-      {/* Top section */}
+      {/* =============== TOP SECTION =============== */}
       <div>
+        {/* Mobile Header */}
         <div className="flex justify-between items-center mb-4 md:hidden">
           <img src={logoimg} alt="Velox Logo" className="w-20 object-contain" />
           <button
@@ -81,11 +75,12 @@ export default function SideBar({ closeSidebar }) {
           </button>
         </div>
 
+        {/* Logo */}
         <div className="hidden md:flex justify-start mb-6">
           <img src={logoimg} alt="Velox Logo" className="w-20 object-contain" />
         </div>
 
-        {/* Search */}
+        {/* Search Bar */}
         <div className="relative mb-6">
           <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
           <input
@@ -95,9 +90,25 @@ export default function SideBar({ closeSidebar }) {
           />
         </div>
 
-        {/* Nav Links */}
+        {/* Theme Toggle */}
+        <div className="flex md:hidden  justify-between items-center px-3 mb-6">
+          <span className="text-sm  font-medium text-gray-600 dark:text-gray-300">
+            {theme === "dark" ? "Dark Mode" : "Light Mode"}
+          </span>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+          >
+            {theme === "dark" ? (
+              <Sun size={18} className="text-yellow-400" />
+            ) : (
+              <Moon size={18} className="text-gray-700" />
+            )}
+          </button>
+        </div>
+
+        {/* Navigation */}
         <nav className="space-y-3">
-          {/* Regular top links */}
           {topLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -206,7 +217,7 @@ export default function SideBar({ closeSidebar }) {
         <hr className="mt-10 border-gray-200 dark:border-gray-700" />
       </div>
 
-      {/* Bottom Section */}
+      {/* =============== BOTTOM SECTION =============== */}
       <div className="space-y-4 mb-20">
         {bottomLinks.map((link) => (
           <NavLink
@@ -226,6 +237,7 @@ export default function SideBar({ closeSidebar }) {
           </NavLink>
         ))}
 
+        {/* Profile + Logout */}
         <div className="flex items-center justify-between dark:bg-gray-800 rounded-lg p-3">
           <div className="flex items-center gap-3 relative">
             <img
