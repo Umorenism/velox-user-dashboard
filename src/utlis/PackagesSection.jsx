@@ -18,7 +18,7 @@ const UserPackagesSection = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Renew Packages
+       Packages
       </h2>
 
       {/* Tabs */}

@@ -18,16 +18,16 @@ import PackagesSection from "../../utlis/PackagesSection";
 export default function Dashboardpage() {
   const stats = [
     { title: "Total Investment", value: "0.00", currency: "USD" },
-    { title: "Weekly Rebate Profit", value: "0.00", currency: "USD" },
-    { title: "Weekly Total Profit", value: "0.00", currency: "USD" },
-    { title: "Weekly Packages", value: "0", currency: "" },
+    { title: "PV ", value: "0.00", currency: "USD" },
+    { title: "GV", value: "0.00", currency: "USD" },
+    { title: "Life time investment", value: "0", currency: "" },
   ];
 
   const walletData = [
     { title: "Deposit Wallet", amount: "0.00", currency: "USD", icon: <Wallet size={22} /> },
-    { title: "Bonus Wallet", amount: "0.00", currency: "USD", icon: <DollarSign size={22} /> },
-    { title: "Referral Wallet", amount: "0.00", currency: "USD", icon: <CreditCard size={22} /> },
-    { title: "Earnings Wallet", amount: "0.00", currency: "USD", icon: <ArrowRightLeft size={22} /> },
+    { title: "Bear Wallet", amount: "0.00", currency: "USD", icon: <DollarSign size={22} /> },
+    { title: "Bull Wallet", amount: "0.00", currency: "USD", icon: <CreditCard size={22} /> },
+    { title: "Account Balance", amount: "0.00", currency: "USD", icon: <ArrowRightLeft size={22} /> },
   ];
 
   // Animation variants
@@ -50,7 +50,7 @@ export default function Dashboardpage() {
       {/* Wallet Section */}
       <motion.div
         variants={fadeUp}
-        className="w-[95%] lg:w-[85%] xl:w-[80%] bg-white dark:bg-neutral-800 rounded-2xl shadow-md p-4 sm:p-2 mb-4"
+        className="w-[95%] lg:w-[85%] xl:w-[90%] bg-white dark:bg-neutral-800 rounded-2xl shadow-md p-4 sm:p-2 mb-4"
       >
         <div className="flex mb-3 flex-col md:flex-row justify-between items-stretch divide-y md:divide-y-0 md:divide-x divide-gray-300">
           {walletData.map((item, i) => (
