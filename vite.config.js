@@ -36,5 +36,8 @@ export default defineConfig({
       '@': '/src', // Your alias for /src directory
     },
   },
+  server: {
+    historyApiFallback: true, // Ensures local refreshes don’t break
+  },
 });
 
