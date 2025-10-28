@@ -113,33 +113,39 @@ export default function Course() {
   const lessons = [
     {
       id: 1,
-      title: "What is Forex?",
+      title: "Introduction to online Forex trading",
       videoUrl: "https://www.youtube.com/embed/0j8J7HXvR4Y",
     },
     {
       id: 2,
-      title: "How Do You Trade Forex?",
+      title: "Terminologies in Forex Trading",
       videoUrl: "https://www.youtube.com/embed/9bZkp7q19f0",
     },
     {
       id: 3,
-      title: "When Can You Trade Forex?",
+      title: "Brokers Services and platforms",
       videoUrl: "https://www.youtube.com/embed/lTTajzrSkCw",
     },
     {
       id: 4,
-      title: "Who Trades Forex?",
+      title: "Technical analysis and fundamental analysis",
       videoUrl: "https://www.youtube.com/embed/3fumBcKC6RE",
     },
     {
       id: 5,
-      title: "Why Trade Forex?",
+      title: "Forex trading times and sessions",
       videoUrl: "https://www.youtube.com/embed/VYOjWnS4cMY",
     },
     {
       id: 6,
       title:
-        "Margin Trading 101: Understand How Your Margin Account Works",
+        "Buying and selling currencies, types of orders and how to place them",
+      videoUrl: "https://www.youtube.com/embed/IcrbM1l_BoI",
+    },
+    {
+      id: 7,
+      title:
+        "Order types and users",
       videoUrl: "https://www.youtube.com/embed/IcrbM1l_BoI",
     },
   ];
@@ -149,7 +155,7 @@ export default function Course() {
   // Default Landing UI
   if (!selectedLesson) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
+      <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
         {/* HEADER SECTION */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 w-full max-w-5xl mb-10">
           <div className="flex flex-col items-center">
@@ -163,13 +169,13 @@ export default function Course() {
           </div>
 
           <div className="text-center md:text-left max-w-md">
-            <p className="text-sm text-gray-500 font-semibold mb-1">
+            <p className="text-sm dark:bg-neutral-900 dark:text-white text-gray-500 font-semibold mb-1">
               Course 1 of 11
             </p>
-            <h2 className="text-4xl font-extrabold text-gray-800 mb-3">
+            <h2 className="text-4xl dark:bg-neutral-900 dark:text-white font-extrabold text-gray-800 mb-3">
               Preschool
             </h2>
-            <p className="text-gray-600 mb-5">
+            <p className="text-gray-600 dark:bg-neutral-900 dark:text-white mb-5">
               Currency trading? Forex trading? FX trading? Totally clueless about
               forex? Here’s an introduction to the foreign exchange market.
             </p>
@@ -184,8 +190,8 @@ export default function Course() {
         {/* PROGRESS + OUTLINE SECTION */}
         <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Your Progress</h3>
-            <p className="text-sm text-teal-600 mb-4">
+            <h3 className="text-xl font-bold text-gray-800 mb-2 dark:bg-neutral-900 dark:text-white">Your Progress</h3>
+            <p className="text-sm dark:bg-neutral-900 dark:text-white text-teal-600 mb-4">
               Sign in to unlock progress tracking.
             </p>
 
@@ -200,7 +206,7 @@ export default function Course() {
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Course Outline</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-4 dark:bg-neutral-900 dark:text-white">Course Outline</h3>
             <div className="relative ml-4">
               <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-300"></div>
 
@@ -215,7 +221,7 @@ export default function Course() {
                       <PlayCircle size={14} className="text-teal-500" />
                     </div>
                   </div>
-                  <p className="ml-4 text-gray-700 text-sm hover:text-yellow-500 transition">
+                  <p className="ml-4 dark:bg-neutral-900 dark:text-white text-gray-700 text-sm hover:text-yellow-500 transition">
                     {lesson.title}
                   </p>
                 </div>

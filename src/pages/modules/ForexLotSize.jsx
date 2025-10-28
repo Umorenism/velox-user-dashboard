@@ -23,45 +23,45 @@ export default function ForexLotSize() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e2a] text-white flex flex-col md:flex-row p-4 md:p-10">
+    <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-[#0a0e2a] text-white flex flex-col md:flex-row p-4 md:p-10">
       {/* Sidebar */}
       <div className="bg-[#0d1238] border border-gray-700 rounded-xl w-full md:w-72 p-5 mb-6 md:mb-0 md:mr-10">
-        <h3 className="font-semibold text-gray-300 text-lg mb-3">
+        <h3 className="font-semibold dark:bg-neutral-900 dark:text-white text-gray-300 text-lg mb-3">
           Trading Calculators
         </h3>
         <ul className="text-sm space-y-2 text-gray-400">
-          <li className="font-semibold text-white">
+          <li className="font-semibold dark:bg-neutral-900 dark:text-white text-white">
             ▾ Risk & Trade Planning
           </li>
-          <li className="pl-3 hover:text-yellow-400 cursor-pointer">
+          <li className="pl-3 dark:bg-neutral-900 dark:text-white hover:text-yellow-400 cursor-pointer">
             Position Size Calculator
           </li>
-          <li className="pl-3 text-yellow-400">Lot Size Calculator</li>
-          <li className="pl-3 hover:text-yellow-400 cursor-pointer">
+          <li className="pl-3 text-yellow-400 dark:bg-neutral-900 dark:text-white">Lot Size Calculator</li>
+          <li className="pl-3 dark:bg-neutral-900 dark:text-white hover:text-yellow-400 cursor-pointer">
             Stop Loss Take Profit Calc
           </li>
-          <li className="pl-3 hover:text-yellow-400 cursor-pointer">
+          <li className="pl-3 dark:bg-neutral-900 dark:text-white hover:text-yellow-400 cursor-pointer">
             Risk to Reward Calculator
           </li>
-          <li className="pl-3 hover:text-yellow-400 cursor-pointer">
+          <li className="pl-3 dark:bg-neutral-900 dark:text-white hover:text-yellow-400 cursor-pointer">
             Breakeven & Win Rate
           </li>
-          <li className="pl-3 hover:text-yellow-400 cursor-pointer">
+          <li className="pl-3 dark:bg-neutral-900 dark:text-white hover:text-yellow-400 cursor-pointer">
             Risk of Ruin Calculator
           </li>
-          <li className="pl-3 hover:text-yellow-400 cursor-pointer">
+          <li className="pl-3 dark:bg-neutral-900 dark:text-white hover:text-yellow-400 cursor-pointer">
             Margin Call Calculator
           </li>
         </ul>
 
-        <h3 className="font-semibold text-gray-300 text-lg mt-6">▸ Forex Calculators</h3>
-        <h3 className="font-semibold text-gray-300 text-lg mt-3">▸ Technical Analysis</h3>
-        <h3 className="font-semibold text-gray-300 text-lg mt-3">▸ Profit & Performance</h3>
+        <h3 className="font-semibold text-gray-300 text-lg mt-6 dark:bg-neutral-900 dark:text-white">▸ Forex Calculators</h3>
+        <h3 className="font-semibold text-gray-300 text-lg mt-3 dark:bg-neutral-900 dark:text-white">▸ Technical Analysis</h3>
+        <h3 className="font-semibold text-gray-300 text-lg mt-3 dark:bg-neutral-900 dark:text-white">▸ Profit & Performance</h3>
       </div>
 
       {/* Calculator Section */}
       <div className="bg-gray-100 text-gray-800 rounded-xl flex-1 p-8 shadow-lg">
-        <h2 className="text-2xl font-bold mb-6">
+        <h2 className="text-2xl dark:bg-neutral-900 dark:text-white font-bold mb-6">
           Forex Lot Size Calculator
         </h2>
 
@@ -69,13 +69,13 @@ export default function ForexLotSize() {
           {/* Input Section */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block dark:bg-neutral-900 dark:text-white text-sm font-semibold mb-2">
                 Currency Pair
               </label>
               <select
                 value={currencyPair}
                 onChange={(e) => setCurrencyPair(e.target.value)}
-                className="w-full p-3 rounded-full bg-[#0d1238] text-white"
+                className="w-full p-3 dark:bg-neutral-900 dark:text-white rounded-full bg-[#0d1238] text-white"
               >
                 <option value="">Select Currency Pair</option>
                 <option value="EURUSD">EUR/USD</option>
@@ -102,7 +102,7 @@ export default function ForexLotSize() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold dark:bg-neutral-900 dark:text-white mb-2">
                 Account Balance
               </label>
               <input
@@ -128,7 +128,7 @@ export default function ForexLotSize() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2">
+              <label className="block text-sm font-semibold dark:bg-neutral-900 dark:text-white mb-2">
                 Stop Loss in Pips
               </label>
               <input

@@ -35,7 +35,7 @@ const CompoundCalculator = () => {
   };
 
   return (
-    <div className="flex flex-col items-center py-10 bg-white text-gray-900">
+    <div className="flex flex-col dark:bg-neutral-900 dark:text-white items-center py-10 bg-white text-gray-900">
       <h1 className="md:text-4xl text-3xl p-4 md:p-0 font-extrabold tracking-widest mb-8 text-[#0c0c18] italic">
         COMPOUNDING CALCULATOR
       </h1>
