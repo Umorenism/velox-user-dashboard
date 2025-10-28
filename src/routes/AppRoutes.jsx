@@ -18,6 +18,10 @@ import UsersInternalWithDrawal from "../pages/Dashboard/UserInternalWithdraw";
 import PartnerPage from "../pages/Dashboard/Partners";
 import NotFound from "../pages/Dashboard/NotFound";
 import VerifyEmail from "../pages/VerifyEmail";
+import CompoundCalculator from "../pages/modules/CompoundCalculator";
+import ForexLotSize from "../pages/modules/ForexLotSize";
+import Courses from "../pages/modules/academy/Courses";
+import LeaderBoard from "../pages/LeaderBoard";
 
 export default function AppRouter() {
   // 🧠 Decide where to send the user when they hit "/"
@@ -44,9 +48,9 @@ export default function AppRouter() {
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          // <ProtectedRoute>
             <DashboardLayout />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         }
       >
         <Route index element={<Dashboardpage />} />
@@ -59,6 +63,11 @@ export default function AppRouter() {
         <Route path="promotions" element={<PromotionsBanner />} />
         <Route path="setting" element={<Setting />} />
         <Route path="permission" element={<Permission />} />
+        <Route path="modules/compound-calculator" element={<CompoundCalculator />} />
+        <Route path="modules/forex-lot-size" element={<ForexLotSize />} />
+        <Route path="academy/courses" element={<Courses />} />
+        <Route path="leaderboard" element={<LeaderBoard />} />
+
       </Route>
 
       {/* 404 fallback */}

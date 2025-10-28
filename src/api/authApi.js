@@ -61,3 +61,17 @@ export const resendVerificationEmail = async (emailData) => {
     throw error;
   }
 };
+
+
+export const getUserProfile = async (token) => {
+  try {
+    const res = await apiClient.get("/api/users/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("Profile response:", res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch user profile:", error.response?.data || error.message);
+    throw error;
+  }
+};

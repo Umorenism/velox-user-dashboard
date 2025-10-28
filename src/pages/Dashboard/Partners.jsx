@@ -111,10 +111,10 @@ export default function PartnerPage() {
         variants={fadeUp}
         className="py-6 flex flex-col lg:flex-row gap-4 w-full max-w-[1400px] px-4 sm:px-6"
       >
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-[50%]">
           <PackageSummary />
         </div>
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-[60%]">
           <PackagesSection />
         </div>
       </motion.div>

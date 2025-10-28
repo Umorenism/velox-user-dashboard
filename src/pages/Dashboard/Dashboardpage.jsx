@@ -46,6 +46,7 @@ export default function Dashboardpage() {
       animate="visible"
       className="flex flex-col items-center bg-gray-100 dark:bg-neutral-900 dark:text-white min-h-screen py-10"
     >
+      
       {/* Wallet Section */}
       <motion.div
         variants={fadeUp}
@@ -83,18 +84,22 @@ export default function Dashboardpage() {
         </div>
       </motion.div>
 
+      <div className="w-full mt-10 max-w-[1200px] justify-start flex">
+        <h1 className="text-[20px] font-bold">DASHBORD</h1>
+      </div>
+
       {/* Stats Cards */}
       <motion.div
         variants={fadeUp}
-        className="w-full max-w-[1400px] mt-5 px-4 sm:px-6"
+        className="w-full max-w-[1400px]  mt-5 px-4 sm:px-6"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
               variants={fadeUp}
               custom={index}
-              className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between"
+              className="bg-white py-4 dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-100 p-4 flex flex-col justify-between"
             >
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-sm font-medium">{stat.title}</h3>
@@ -131,10 +136,10 @@ export default function Dashboardpage() {
         variants={fadeUp}
         className="py-6 flex flex-col lg:flex-row gap-4 w-full max-w-[1400px] px-4 sm:px-6"
       >
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-[30%]">
           <PackageSummary />
         </div>
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-[70%]">
           <PackagesSection />
         </div>
       </motion.div>
@@ -156,12 +161,12 @@ export default function Dashboardpage() {
             Leverage can work for you as well as against you. Please carefully
             consider your financial situation and investment experience prior to
             trading products offered by{" "}
-            <span className="font-semibold text-[#00A991]">
+            <span >
               International Finance Asia
             </span>.
           </p>
           <p>
-            <span className="font-semibold text-[#00A991]">
+            <span >
               International Finance Asia Pty Ltd
             </span>{" "}
             is regulated by the Australian Securities and Investments Commission
@@ -194,3 +199,9 @@ export default function Dashboardpage() {
     </motion.div>
   );
 }
+
+
+
+
+
+
