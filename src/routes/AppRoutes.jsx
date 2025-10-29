@@ -22,6 +22,17 @@ import CompoundCalculator from "../pages/modules/CompoundCalculator";
 import ForexLotSize from "../pages/modules/ForexLotSize";
 import Courses from "../pages/modules/academy/Courses";
 import LeaderBoard from "../pages/LeaderBoard";
+import CopyTrading from "../pages/copyTrading/CopyTrading";
+import Risk from "../pages/Risk/Risk";
+import Unilevel from "../pages/network/Unilevel";
+import Matrix from "../pages/network/Matrix";
+import LeadershipBonus from "../pages/network/LeadershipBonus";
+import PersonalMatchingBonus from "../pages/network/PersonalMatchingBonus";
+import RankAdvancement from "../pages/network/RankAdvancement";
+import FastStart from "../pages/network/FastStart";
+import RetirementBlog from "../pages/retirementbloq/RetirementBlog";
+
+import SupportPage from "../pages/SupportPage";
 
 export default function AppRouter() {
   // 🧠 Decide where to send the user when they hit "/"
@@ -67,6 +78,16 @@ export default function AppRouter() {
         <Route path="modules/forex-lot-size" element={<ForexLotSize />} />
         <Route path="academy/courses" element={<Courses />} />
         <Route path="leaderboard" element={<LeaderBoard />} />
+        <Route path="copy-trading" element={<CopyTrading />} />
+        <Route path="risk" element={<Risk />} />
+        <Route path="network/fast-start" element={<FastStart />} />
+  <Route path="network/unilevel" element={<Unilevel />} />
+        <Route path="network/matrix" element={<Matrix />} />
+        <Route path="network/leadership-bonus" element={<LeadershipBonus />} />
+        <Route path="network/personal-matching-bonus" element={<PersonalMatchingBonus />} />
+        <Route path="network/rank-advancement" element={<RankAdvancement />} />
+        <Route path="retirement-blog" element={<RetirementBlog />} />
+        <Route path="support" element={<SupportPage />} />
 
       </Route>
 

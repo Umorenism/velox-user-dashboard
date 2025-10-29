@@ -223,7 +223,7 @@ export default function Dashboardpage() {
     { title: "Total Investment", value: "0.00", currency: "USD" },
     { title: "PV", value: "0.00", currency: "USD" },
     { title: "GV", value: "0.00", currency: "USD" },
-    { title: "Life Time Investment", value: "0", currency: "" },
+    { title: "LTT", value: "0", currency: "" },
   ];
 
   const walletData = [
