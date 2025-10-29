@@ -27,11 +27,12 @@ const data = [
 
 const PortfolioOverview = () => {
   return (
-    <div className="bg-white dark:bg-neutral-900 dark:text-white rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div className="bg-white dark:bg-neutral-900 dark:text-white rounded-[10px] p-6 shadow-sm border border-gray-100">
       <h2 className="text-lg font-semibold text-gray-900 mb-4">
         Portfolio Overview
       </h2>
-      <div className="w-full h-72 ">
+      <hr />
+      <div className="w-full h-[400px] ">
         <ResponsiveContainer>
           <BarChart
             data={data}
@@ -51,7 +52,7 @@ const PortfolioOverview = () => {
               iconType="circle"
               wrapperStyle={{ paddingBottom: 20 }}
             />
-            <Bar dataKey="deposit" stackId="a" fill="#028176" name="Deposit Wallet" />
+            <Bar dataKey="deposit" stackId="a" fill="#028176" name="Deposit Wallet"  />
             <Bar dataKey="usd" stackId="a" fill="#66C2B9" name="USD Wallet" />
             <Bar dataKey="ib" stackId="a" fill="#B7E1DB" name="IB Wallet" />
             <Bar dataKey="mt5" stackId="a" fill="#E6F4F1" name="MT5 Total Balance" />

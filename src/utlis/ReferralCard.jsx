@@ -80,7 +80,7 @@ const ReferralCard = () => {
           </p>
 
           <div className="mt-2 bg-white dark:bg-neutral-800 p-3 rounded-lg border border-gray-200 dark:border-neutral-700">
-            <QRCodeCanvas value={referralLink} size={160} />
+            <QRCodeCanvas value={referralLink} size={265} />
           </div>
         </div>
 

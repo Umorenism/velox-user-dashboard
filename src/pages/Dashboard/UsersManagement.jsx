@@ -58,44 +58,43 @@ export default function UsersMangement() {
       className="flex flex-col items-center bg-gray-100 dark:bg-neutral-900 dark:text-white min-h-screen py-5"
     >
       {/* Wallet Section */}
-      <motion.div
-        variants={fadeUp}
-        className="w-[95%] lg:w-[85%] xl:w-[80%] bg-white dark:bg-neutral-800 rounded-2xl shadow-md p-4 sm:p-2"
-      >
-        <div className="flex mb-3 flex-col md:flex-row justify-between items-stretch divide-y md:divide-y-0 md:divide-x divide-gray-300">
-          {walletData.map((item, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              custom={i}
-              className="flex flex-col justify-center items-center w-full md:w-1/4 px-2 py-2 text-center space-y-2"
-            >
-              {/* Title Row */}
-              <div className="flex flex-wrap justify-center items-center gap-2 text-center">
-                <span className="text-[#00A991]">{item.icon}</span>
-                <h1 className="text-base font-semibold">{item.title} :</h1>
-                <p className="text-lg font-bold">
-                  {item.amount}
-                  <span className="text-sm font-medium ml-1">
-                    {item.currency}
-                  </span>
-                </p>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex flex-wrap justify-center gap-3">
-                <button className="px-5 py-2 rounded-full bg-[#00A991] text-white font-medium text-sm hover:opacity-90 transition">
-                  Deposit
-                </button>
-                <button className="px-5 py-2 rounded-full bg-[#EE933C] text-white font-medium text-sm hover:opacity-90 transition">
-                  Transfer
-                </button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
+      {/* Wallet Section */}
+           <motion.div
+       variants={fadeUp}
+       className="w-[92%] lg:w-[80%] xl:w-[85%] bg-white dark:bg-neutral-800 rounded-xl shadow-md p-2 sm:p-3 mb-3 border border-gray-100/30"
+     >
+       <div className="flex flex-col md:flex-row justify-between items-stretch divide-y md:divide-y-0 md:divide-x divide-gray-200">
+         {walletData.map((item, i) => (
+           <motion.div
+             key={i}
+             variants={fadeUp}
+             custom={i}
+             className="flex flex-col justify-center items-center w-full md:w-1/4 px-1 py-1.5 sm:px-2 sm:py-2 text-center space-y-1.5"
+           >
+             {/* Wallet Info */}
+             <div className="flex flex-col sm:flex-row justify-center items-center gap-1 text-center">
+               <span className="text-[#00A991]">{item.icon}</span>
+               <h1 className="text-[11px] sm:text-sm font-semibold">{item.title}:</h1>
+               <p className="text-sm font-bold">
+                 {item.amount}
+                 <span className="text-[10px] font-medium ml-1">{item.currency}</span>
+               </p>
+             </div>
+     
+             {/* Buttons */}
+             <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
+               <button className="px-3 py-1 rounded-full bg-[#00A991] text-white font-medium text-[10px] sm:text-[11px] hover:opacity-90 transition">
+                 Deposit
+               </button>
+               <button className="px-3 py-1 rounded-full bg-[#EE933C] text-white font-medium text-[10px] sm:text-[11px] hover:opacity-90 transition">
+                 Transfer
+               </button>
+             </div>
+           </motion.div>
+         ))}
+       </div>
+     </motion.div>
+     
       {/* Header */}
       <div className="space-y-2 max-w-[1400px] p-5 w-full">
         <RiMenuFoldLine size={30} className="text-gray-700 dark:text-white" />

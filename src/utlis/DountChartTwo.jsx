@@ -3,7 +3,7 @@
 
 import React from "react";
 
-const DonutChart = ({ percentage = 60 }) => {
+const DonutProgressTwo = ({ percentage = 60 }) => {
   const strokeWidth = 20;
   const radius = 60;
   const normalizedRadius = radius - strokeWidth / 2;
@@ -79,6 +79,5 @@ const DonutChart = ({ percentage = 60 }) => {
   );
 };
 
-export default DonutChart;
-
+export default DonutProgressTwo;
 
