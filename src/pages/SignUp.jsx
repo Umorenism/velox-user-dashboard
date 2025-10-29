@@ -272,8 +272,8 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#07112b] text-white relative overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1740&q=80')] bg-cover bg-center opacity-30"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-[#08152d]/80 via-[#08152d]/90 to-[#030b1a]/95"></div>
+      <div className="absolute inset-0 bg-img bg-cover bg-center opacity-30"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#08152d]/0 via-[#08152d]/0 to-[#030b1a]/0"></div>
 
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full px-6 md:px-16 lg:px-24">
         {/* LEFT SIDE */}

@@ -17,3 +17,6 @@
 svg {
   vertical-align: initial;
 }
+.bg-img {
+  background-image: url('./assets/ver.jpeg');
+}

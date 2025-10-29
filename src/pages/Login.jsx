@@ -781,6 +781,7 @@ import { motion } from "framer-motion";
 import { User, Lock, Eye, EyeOff, Type } from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 import logo from "../assets/logovelox.svg"; // 👈 your logo path
+import logo1 from "../assets/ver.jpeg"; // 👈 your logo path
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -819,8 +820,8 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#07112b] text-white relative overflow-hidden">
       {/* 🌌 Background */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1740&q=80')] bg-cover bg-center opacity-30"></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-[#08152d]/80 via-[#08152d]/90 to-[#030b1a]/95"></div>
+      <div className="absolute inset-0 bg-img bg-cover bg-center opacity-30"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#08152d]/0 via-[#08152d]/0 to-[#030b1a]/0"></div>
 
       {/* 🧭 Transparent Header */}
       <header className="absolute top-0 left-0 w-full flex justify-between items-center px-4 sm:px-8 md:px-16 py-3 z-20 bg-transparent">

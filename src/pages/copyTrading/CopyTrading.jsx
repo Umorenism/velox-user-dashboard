@@ -1,8 +1,9 @@
-// src/pages/dashboard/CopyTrading.jsx
+
 import React, { useState } from "react";
 import { Search, ChevronDown } from "lucide-react";
 
 const platforms = ["MT4", "MT5", "WebTrader"];
+const risks = ["Low", "Medium", "High"];
 const brokers = ["IC Markets", "Pepperstone", "FXTM", "XM", "Other"];
 
 export default function CopyTrading() {
@@ -12,8 +13,13 @@ export default function CopyTrading() {
   const [server, setServer] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [traderPassword, setTraderPassword] = useState("");
+  const [risk, setRisk] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
   const [showPlatform, setShowPlatform] = useState(false);
   const [showBroker, setShowBroker] = useState(false);
+  const [showRisk, setShowRisk] = useState(false);
+
   const [brokerSearch, setBrokerSearch] = useState("");
 
   const filteredBrokers = brokers.filter((b) =>
@@ -22,12 +28,16 @@ export default function CopyTrading() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Copy Trading Setup</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+        Copy Trading Setup
+      </h1>
 
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 space-y-6">
         {/* Platform */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Platform</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Platform
+          </label>
           <div className="relative">
             <button
               onClick={() => setShowPlatform(!showPlatform)}
@@ -57,7 +67,9 @@ export default function CopyTrading() {
 
         {/* Broker */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Broker</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Broker
+          </label>
           <div className="relative">
             <button
               onClick={() => setShowBroker(!showBroker)}
@@ -69,7 +81,10 @@ export default function CopyTrading() {
             {showBroker && (
               <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 rounded-lg shadow-lg p-2">
                 <div className="relative mb-2">
-                  <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
+                  <Search
+                    className="absolute left-3 top-2.5 text-gray-400"
+                    size={16}
+                  />
                   <input
                     type="text"
                     placeholder="Search broker..."
@@ -107,7 +122,9 @@ export default function CopyTrading() {
 
         {/* Server */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Server</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Server
+          </label>
           <input
             type="text"
             placeholder="e.g., IC Markets-Live01"
@@ -119,7 +136,9 @@ export default function CopyTrading() {
 
         {/* Account Number */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Account Number</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Account Number
+          </label>
           <input
             type="text"
             placeholder="12345678"
@@ -129,9 +148,43 @@ export default function CopyTrading() {
           />
         </div>
 
+        {/* Risk */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Risk
+          </label>
+          <div className="relative">
+            <button
+              onClick={() => setShowRisk(!showRisk)}
+              className="w-full flex justify-between items-center px-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-left text-sm"
+            >
+              {risk || "Select Risk"}
+              <ChevronDown size={16} />
+            </button>
+            {showRisk && (
+              <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 rounded-lg shadow-lg">
+                {risks.map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => {
+                      setRisk(r);
+                      setShowRisk(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Trader Password */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Trader Password</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Trader Password
+          </label>
           <input
             type="password"
             placeholder="••••••••"
@@ -141,7 +194,41 @@ export default function CopyTrading() {
           />
         </div>
 
-        <button className="w-full mt-6 py-3 bg-[#00A991] text-white font-semibold rounded-lg hover:bg-[#008f7a] transition">
+        {/* Terms & Conditions */}
+        <div className="flex items-start space-x-3">
+          <input
+            type="checkbox"
+            id="terms"
+            checked={termsAccepted}
+            onChange={(e) => setTermsAccepted(e.target.checked)}
+            className="mt-1 w-4 h-4 text-[#00A991] border-gray-300 rounded focus:ring-[#00A991]"
+          />
+          <label
+            htmlFor="terms"
+            className="text-sm text-gray-600 dark:text-gray-300"
+          >
+            I have read and agree to the{" "}
+            <a
+              href="/terms-and-conditions"
+              className="text-[#00A991] hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Terms and Conditions
+            </a>
+            .
+          </label>
+        </div>
+
+        {/* Submit */}
+        <button
+          disabled={!termsAccepted}
+          className={`w-full mt-6 py-3 rounded-lg font-semibold transition ${
+            termsAccepted
+              ? "bg-[#00A991] text-white hover:bg-[#008f7a]"
+              : "bg-gray-400 text-gray-100 cursor-not-allowed"
+          }`}
+        >
           Connect Account
         </button>
       </div>
