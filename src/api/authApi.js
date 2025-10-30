@@ -1,6 +1,5 @@
 import { apiClient } from "./apiClient";
 
-
 /**
  * ✅ User Login
  * Endpoint: POST /api/auth/login
@@ -15,7 +14,6 @@ export const loginUser = async (loginData) => {
     throw error;
   }
 };
-
 
 /**
  * ✅ User Sign Up
@@ -36,13 +34,30 @@ export const signUpUser = async (userData) => {
  * ✅ Verify Email
  * Endpoint: POST /api/auth/verify-email
  * Body: { email, code }
+ * - Normalized to handle "Email already verified" as success
  */
 export const verifyEmail = async (verifyData) => {
   try {
     const res = await apiClient.post("/api/auth/verify-email", verifyData);
-    return res.data;
+    const data = res.data;
+
+    // Normalize backend responses for smoother handling
+    if (
+      data?.error?.toLowerCase()?.includes("already verified") ||
+      data?.message?.toLowerCase()?.includes("already verified")
+    ) {
+      return {
+        success: true,
+        message: "Email already verified. Redirecting to login...",
+      };
+    }
+
+    return data;
   } catch (error) {
-    console.error("Email verification failed:", error.response?.data || error.message);
+    console.error(
+      "Email verification failed:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
@@ -62,7 +77,11 @@ export const resendVerificationEmail = async (emailData) => {
   }
 };
 
-
+/**
+ * ✅ Get User Profile
+ * Endpoint: GET /api/users/profile
+ * Headers: { Authorization: Bearer token }
+ */
 export const getUserProfile = async (token) => {
   try {
     const res = await apiClient.get("/api/users/profile", {
@@ -71,7 +90,10 @@ export const getUserProfile = async (token) => {
     console.log("Profile response:", res.data);
     return res.data;
   } catch (error) {
-    console.error("Failed to fetch user profile:", error.response?.data || error.message);
+    console.error(
+      "Failed to fetch user profile:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };

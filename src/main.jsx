@@ -29,27 +29,52 @@
 
 
 
+// import React from "react";
+// import ReactDOM from "react-dom/client";
+// import { BrowserRouter } from "react-router-dom";
+// import { ThemeProvider } from "./context/ThemeContext";
+// import "./index.css";
+// import AppRouter from "./routes/AppRoutes";
+// import { UserProvider } from "./routes/UserContext";
+
+// ReactDOM.createRoot(document.getElementById("root")).render(
+//   <React.StrictMode>
+//     <BrowserRouter>
+//       <ThemeProvider>
+//         <UserProvider>
+//          <AppRouter />
+//         </UserProvider>
+       
+//       </ThemeProvider>
+//     </BrowserRouter>
+//   </React.StrictMode>
+// );
+
+
+
+
+
+
+
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
-import "./index.css";
-import AppRouter from "./routes/AppRoutes";
 import { UserProvider } from "./routes/UserContext";
+import AppRouter from "./routes/AppRoutes";
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider>
         <UserProvider>
-         <AppRouter />
+          <AppRouter />
         </UserProvider>
-       
       </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
-
 
 
 

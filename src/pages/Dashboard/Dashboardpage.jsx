@@ -210,13 +210,14 @@
 
 
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { DollarSign, CreditCard, ArrowRightLeft, Wallet } from "lucide-react";
 import PortfolioOverview from "../../utlis/PortfolioOverview";
 import ReferralCard from "../../utlis/ReferralCard";
 import PackageSummary from "../../utlis/PackageSummary";
 import PackagesSection from "../../utlis/PackagesSection";
+import axios from "axios";
 
 export default function Dashboardpage() {
   const stats = [
@@ -241,6 +242,9 @@ export default function Dashboardpage() {
       transition: { duration: 0.6, delay: i * 0.2, ease: "easeOut" },
     }),
   };
+
+
+  
 
   return (
     <motion.div
