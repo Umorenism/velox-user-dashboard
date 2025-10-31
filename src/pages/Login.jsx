@@ -1135,7 +1135,7 @@ export default function Login() {
               href="mailto:contact@internationalfinanceasia.com"
               className="text-[#e3b874] hover:underline"
             >
-              contact@internationalfinanceasia.com
+              contact@veloxcapital.com
             </a>
           </div>
         </motion.div>
