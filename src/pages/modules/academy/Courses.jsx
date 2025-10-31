@@ -633,149 +633,575 @@
 
 
 
+// import React, { useState, useEffect, useRef } from "react";
+// import { motion } from "framer-motion";
+// import { PlayCircle, Lock, CheckCircle, AlertCircle } from "lucide-react";
+// import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+// import images from '../../../assets/ver.jpeg'
+
+// // DUMMY DATA (Replace with real API later)
+// const DUMMY_COURSE = {
+//   id: "507f1f77bcf86cd799439016",
+//   title: "Crypto Trading 101",
+//   description: "Learn the basics of crypto trading from scratch.",
+//   order: 1,
+//   thumbnail: "https://veloxcapital.com/courses/crypto101.jpg",
+//   progress: { percent: 40, completed: 2, total: 7 },
+// };
+
+// const DUMMY_LESSONS = [
+//   {
+//     id: "vid1",
+//     title: "Introduction to online Forex trading",
+//     videoUrl: "https://www.youtube.com/embed/0j8J7HXvR4Y",
+//     duration: "10:00",
+//     packageRequired: "basic",
+//   },
+//   {
+//     id: "vid2",
+//     title: "Terminologies in Forex Trading",
+//     videoUrl: "https://www.youtube.com/embed/9bZkp7q19f0",
+//     duration: "10:00",
+//     packageRequired: "basic",
+//   },
+//   {
+//     id: "vid3",
+//     title: "Brokers Services and platforms",
+//     videoUrl: "https://www.youtube.com/embed/lTTajzrSkCw",
+//     duration: "10:00",
+//     packageRequired: "pro",
+//   },
+//   {
+//     id: "vid4",
+//     title: "Technical analysis and fundamental analysis",
+//     videoUrl: "https://www.youtube.com/embed/3fumBcKC6RE",
+//     duration: "10:00",
+//     packageRequired: "pro",
+//   },
+//   {
+//     id: "vid5",
+//     title: "Forex trading times and sessions",
+//     videoUrl: "https://www.youtube.com/embed/VYOjWnS4cMY",
+//     duration: "10:00",
+//     packageRequired: "premium",
+//   },
+//   {
+//     id: "vid6",
+//     title: "Buying and selling currencies, types of orders",
+//     videoUrl: "https://www.youtube.com/embed/IcrbM1l_BoI",
+//     duration: "10:00",
+//     packageRequired: "premium",
+//   },
+//   {
+//     id: "vid7",
+//     title: "Order types and users",
+//     videoUrl: "https://www.youtube.com/embed/IcrbM1l_BoI",
+//     duration: "10:00",
+//     packageRequired: "premium",
+//   },
+// ];
+
+// export default function Course() {
+//   const [selectedLesson, setSelectedLesson] = useState(null);
+//   const [course, setCourse] = useState(null);
+//   const [lessons, setLessons] = useState([]);
+//   const [progress, setProgress] = useState({ percent: 0, completed: 0, total: 0 });
+//   const [videoCompleted, setVideoCompleted] = useState({});
+//   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+//   const [nextLockedPackage, setNextLockedPackage] = useState("");
+//   const iframeRef = useRef(null);
+
+//   // MOCK: Simulate API load
+//   useEffect(() => {
+//     setTimeout(() => {
+//       setCourse(DUMMY_COURSE);
+//       setLessons(DUMMY_LESSONS);
+//       setProgress(DUMMY_COURSE.progress);
+//     }, 800);
+//   }, []);
+
+//   // YouTube API to detect end
+//   useEffect(() => {
+//     if (!selectedLesson || !iframeRef.current) return;
+
+//     const tag = document.createElement("script");
+//     tag.src = "https://www.youtube.com/iframe_api";
+//     const firstScript = document.getElementsByTagName("script")[0];
+//     firstScript.parentNode.insertBefore(tag, firstScript);
+
+//     window.onYouTubeIframeAPIReady = () => {
+//       new window.YT.Player(iframeRef.current, {
+//         events: {
+//           onStateChange: (event) => {
+//             if (event.data === window.YT.PlayerState.ENDED) {
+//               handleVideoComplete(selectedLesson.id);
+//             }
+//           },
+//         },
+//       });
+//     };
+//   }, [selectedLesson]);
+
+//   // MOCK: Mark video complete
+//   const handleVideoComplete = async (videoId) => {
+//     // Simulate API delay
+//     await new Promise((r) => setTimeout(r, 500));
+
+//     setVideoCompleted((prev) => ({ ...prev, [videoId]: true }));
+
+//     const newCompleted = progress.completed + 1;
+//     const newPercent = Math.round((newCompleted / progress.total) * 100);
+//     setProgress((prev) => ({ ...prev, completed: newCompleted, percent: newPercent }));
+
+//     const currentIndex = lessons.findIndex((l) => l.id === videoId);
+//     const nextLesson = lessons[currentIndex + 1];
+
+//     if (nextLesson) {
+//       if (hasAccessToPackage(nextLesson.packageRequired)) {
+//         setTimeout(() => setSelectedLesson(nextLesson), 1000);
+//       } else {
+//         setNextLockedPackage(nextLesson.packageRequired);
+//         setShowSubscribeModal(true);
+//       }
+//     }
+//   };
+
+//   // MOCK: User package (change this to test)
+//   const hasAccessToPackage = (pkg) => {
+//     const userPackage = "basic"; // Change to "pro" or "premium" to test
+//     const levels = { basic: 1, pro: 2, premium: 3 };
+//     return levels[userPackage] >= levels[pkg];
+//   };
+
+//   const formatTime = (seconds) => {
+//     const mins = Math.floor(seconds / 60);
+//     const secs = seconds % 60;
+//     return `${mins}:${secs.toString().padStart(2, "0")}`;
+//   };
+
+//   const pieData = [
+//     { name: "Completed", value: progress.percent },
+//     { name: "Remaining", value: 100 - progress.percent },
+//   ];
+//   const COLORS = ["#14b8a6", "#e5e7eb"];
+
+//   // Loading state
+//   if (!course || lessons.length === 0) {
+//     return (
+//       <div className="min-h-screen bg-white dark:bg-neutral-900 flex items-center justify-center">
+//         <div className="text-gray-600">Loading course...</div>
+//       </div>
+//     );
+//   }
+
+//   // Landing UI
+//   if (!selectedLesson) {
+//     return (
+//       <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
+//         {/* HEADER */}
+//         <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 w-full max-w-5xl mb-10">
+//           <div className="flex flex-col items-center">
+//             <div className="w-40 h-40 rounded-full bg-gradient-to-b from-teal-500 to-yellow-400 flex items-center justify-center shadow-lg">
+//               <img
+//                 src={course.thumbnail}
+//                 alt="badge"
+//                 className="w-full h-full object-cover rounded-full"
+//               />
+//             </div>
+//           </div>
+
+//           <div className="text-center md:text-left max-w-md">
+//             <p className="text-sm text-gray-500 font-semibold mb-1">
+//               Course {course.order} of 11
+//             </p>
+//             <h2 className="text-4xl font-extrabold text-gray-800 mb-3">
+//               {course.title}
+//             </h2>
+//             <p className="text-gray-600 mb-5">
+//               {course.description}
+//             </p>
+//             <button
+//               onClick={() => setSelectedLesson(lessons[0])}
+//               className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white font-semibold rounded-full shadow-md hover:opacity-90 transition-all"
+//             >
+//               Start Course
+//             </button>
+//           </div>
+//         </div>
+
+//         <hr className="w-full max-w-5xl border-gray-200 my-6" />
+
+//         {/* PROGRESS + OUTLINE */}
+//         <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10">
+//           <div>
+//             <h3 className="text-xl font-bold text-gray-800 mb-2">Your Progress</h3>
+//             <p className="text-sm text-teal-600 mb-4">
+//               {progress.completed} of {progress.total} videos completed
+//             </p>
+
+//             <div className="flex items-center gap-4">
+//               <div className="w-40 h-40">
+//                 <ResponsiveContainer>
+//                   <PieChart>
+//                     <Pie
+//                       data={pieData}
+//                       cx="50%"
+//                       cy="50%"
+                      
+//                       innerRadius={50}
+//                       outerRadius={60}
+//                       paddingAngle={0}
+//                       dataKey="value"
+//                     >
+//                       {pieData.map((entry, index) => (
+//                         <Cell key={`cell-${index}`} fill={COLORS[index]} />
+//                       ))}
+//                     </Pie>
+//                     <text
+//                       x="50%"
+//                       y="50%"
+//                       textAnchor="middle"
+//                       dominantBaseline="middle"
+//                       className="text-2xl font-bold fill-gray-800"
+//                     >
+//                       {progress.percent}%
+//                     </text>
+//                   </PieChart>
+//                 </ResponsiveContainer>
+//               </div>
+//               <div className="bg-teal-500 p-2 rounded-full text-white">
+//                 {progress.percent === 100 ? <CheckCircle size={18} /> : <Lock size={18} />}
+//               </div>
+//             </div>
+//           </div>
+
+//           <div>
+//             <h3 className="text-xl font-bold text-gray-800 mb-4">Course Outline</h3>
+//             <div className="relative ml-4">
+//               <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+
+//               {lessons.map((lesson, i) => {
+//                 const isLocked = i > 0 && !videoCompleted[lessons[i - 1].id];
+//                 const hasAccess = hasAccessToPackage(lesson.packageRequired);
+
+//                 return (
+//                   <div
+//                     key={lesson.id}
+//                     onClick={() => {
+//                       if (!isLocked && hasAccess) setSelectedLesson(lesson);
+//                     }}
+//                     className={`flex items-start mb-4 relative cursor-pointer ${
+//                       isLocked || !hasAccess ? "opacity-50" : ""
+//                     }`}
+//                   >
+//                     <div className="z-10 bg-white">
+//                       <div
+//                         className={`flex items-center justify-center w-5 h-5 rounded-full border-2 ${
+//                           videoCompleted[lesson.id]
+//                             ? "bg-teal-500 border-teal-500"
+//                             : "border-teal-500 bg-white"
+//                         }`}
+//                       >
+//                         {videoCompleted[lesson.id] ? (
+//                           <CheckCircle size={14} className="text-white" />
+//                         ) : (
+//                           <PlayCircle size={14} className="text-teal-500" />
+//                         )}
+//                       </div>
+//                     </div>
+//                     <p className="ml-4 text-gray-700 text-sm hover:text-yellow-500 transition">
+//                       {lesson.title}
+//                       {!hasAccess && <Lock size={12} className="inline ml-1" />}
+//                     </p>
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Video Player
+//   return (
+//     <div className="min-h-screen bg-[#f9fafb] flex flex-col items-center py-10 px-6 md:px-16 text-gray-800">
+//       <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+//         {/* VIDEO PLAYER */}
+//         <motion.div
+//           key={selectedLesson.id}
+//           initial={{ opacity: 0, x: -50 }}
+//           animate={{ opacity: 1, x: 0 }}
+//           transition={{ duration: 0.6 }}
+//           className="col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200"
+//         >
+//           <div className="aspect-video bg-black">
+//             <iframe
+//               ref={iframeRef}
+//               src={selectedLesson.videoUrl + "?enablejsapi=1"}
+//               title={selectedLesson.title}
+//               className="w-full h-full"
+//               allowFullScreen
+//             ></iframe>
+//           </div>
+
+//           <div className="p-6 flex justify-between items-center">
+//             <div>
+//               <h2 className="text-2xl font-bold text-gray-800 mb-2">
+//                 {selectedLesson.title}
+//               </h2>
+//               <p className="text-gray-600 text-sm">
+//                 {formatTime(0)} / {selectedLesson.duration}
+//               </p>
+//             </div>
+//             <button
+//               onClick={() => setSelectedLesson(null)}
+//               className="px-4 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-md font-medium shadow hover:opacity-90"
+//             >
+//               Back
+//             </button>
+//           </div>
+//         </motion.div>
+
+//         {/* LESSON LIST */}
+//         <motion.div
+//           initial={{ opacity: 0, x: 50 }}
+//           animate={{ opacity: 1, x: 0 }}
+//           transition={{ duration: 0.6 }}
+//           className="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 flex flex-col"
+//         >
+//           <h3 className="text-xl font-semibold text-gray-800 mb-4">
+//             Course Outline
+//           </h3>
+//           <div className="space-y-3 overflow-y-auto max-h-[70vh]">
+//             {lessons.map((lesson) => {
+//               const isLocked = lessons.indexOf(lesson) > 0 && !videoCompleted[lessons[lessons.indexOf(lesson) - 1].id];
+//               const hasAccess = hasAccessToPackage(lesson.packageRequired);
+
+//               return (
+//                 <motion.div
+//                   key={lesson.id}
+//                   onClick={() => {
+//                     if (!isLocked && hasAccess) setSelectedLesson(lesson);
+//                   }}
+//                   whileHover={{ scale: hasAccess && !isLocked ? 1.02 : 1 }}
+//                   className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer border transition-all ${
+//                     selectedLesson.id === lesson.id
+//                       ? "bg-gradient-to-r from-teal-500 to-yellow-400 text-white"
+//                       : isLocked || !hasAccess
+//                       ? "bg-gray-100 opacity-60"
+//                       : "bg-gray-50 hover:bg-gray-100"
+//                   }`}
+//                 >
+//                   <div className="flex items-center gap-3">
+//                     {videoCompleted[lesson.id] ? (
+//                       <CheckCircle size={20} className="text-green-500" />
+//                     ) : (
+//                       <PlayCircle
+//                         size={20}
+//                         className={`${
+//                           selectedLesson.id === lesson.id ? "text-white" : "text-teal-500"
+//                         }`}
+//                       />
+//                     )}
+//                     <span className="text-sm font-medium">
+//                       {lesson.title.length > 45 ? lesson.title.slice(0, 45) + "..." : lesson.title}
+//                     </span>
+//                   </div>
+//                   {!hasAccess && <Lock size={16} />}
+//                 </motion.div>
+//               );
+//             })}
+//           </div>
+//         </motion.div>
+//       </div>
+
+//       {/* SUBSCRIBE MODAL */}
+//       {showSubscribeModal && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+//           <motion.div
+//             initial={{ scale: 0.8, opacity: 0 }}
+//             animate={{ scale: 1, opacity: 1 }}
+//             className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+//           >
+//             <div className="flex items-center gap-3 mb-4">
+//               <AlertCircle className="text-yellow-500" size={28} />
+//               <h3 className="text-xl font-bold">Upgrade Required</h3>
+//             </div>
+//             <p className="text-gray-600 mb-4">
+//               To continue, you need the <strong>{nextLockedPackage.toUpperCase()}</strong> package.
+//             </p>
+//             <div className="flex gap-3">
+//               <button
+//                 onClick={() => setShowSubscribeModal(false)}
+//                 className="flex-1 py-2 border border-gray-300 rounded-md"
+//               >
+//                 Cancel
+//               </button>
+//               <button className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-md font-medium">
+//                 Subscribe Now
+//               </button>
+//             </div>
+//           </motion.div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { PlayCircle, Lock, CheckCircle, AlertCircle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import images from '../../../assets/ver.jpeg'
+import { apiClient } from "../../../api/apiClient"; // Adjust path if needed
 
-// DUMMY DATA (Replace with real API later)
-const DUMMY_COURSE = {
-  id: "507f1f77bcf86cd799439016",
-  title: "Crypto Trading 101",
-  description: "Learn the basics of crypto trading from scratch.",
-  order: 1,
-  thumbnail: "https://veloxcapital.com/courses/crypto101.jpg",
-  progress: { percent: 40, completed: 2, total: 7 },
-};
-
-const DUMMY_LESSONS = [
-  {
-    id: "vid1",
-    title: "Introduction to online Forex trading",
-    videoUrl: "https://www.youtube.com/embed/0j8J7HXvR4Y",
-    duration: "10:00",
-    packageRequired: "basic",
-  },
-  {
-    id: "vid2",
-    title: "Terminologies in Forex Trading",
-    videoUrl: "https://www.youtube.com/embed/9bZkp7q19f0",
-    duration: "10:00",
-    packageRequired: "basic",
-  },
-  {
-    id: "vid3",
-    title: "Brokers Services and platforms",
-    videoUrl: "https://www.youtube.com/embed/lTTajzrSkCw",
-    duration: "10:00",
-    packageRequired: "pro",
-  },
-  {
-    id: "vid4",
-    title: "Technical analysis and fundamental analysis",
-    videoUrl: "https://www.youtube.com/embed/3fumBcKC6RE",
-    duration: "10:00",
-    packageRequired: "pro",
-  },
-  {
-    id: "vid5",
-    title: "Forex trading times and sessions",
-    videoUrl: "https://www.youtube.com/embed/VYOjWnS4cMY",
-    duration: "10:00",
-    packageRequired: "premium",
-  },
-  {
-    id: "vid6",
-    title: "Buying and selling currencies, types of orders",
-    videoUrl: "https://www.youtube.com/embed/IcrbM1l_BoI",
-    duration: "10:00",
-    packageRequired: "premium",
-  },
-  {
-    id: "vid7",
-    title: "Order types and users",
-    videoUrl: "https://www.youtube.com/embed/IcrbM1l_BoI",
-    duration: "10:00",
-    packageRequired: "premium",
-  },
-];
 
 export default function Course() {
-  const [selectedLesson, setSelectedLesson] = useState(null);
-  const [course, setCourse] = useState(null);
-  const [lessons, setLessons] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [videoLoading, setVideoLoading] = useState(false);
   const [progress, setProgress] = useState({ percent: 0, completed: 0, total: 0 });
-  const [videoCompleted, setVideoCompleted] = useState({});
-  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
-  const [nextLockedPackage, setNextLockedPackage] = useState("");
-  const iframeRef = useRef(null);
+  const [completedVideos, setCompletedVideos] = useState(new Set());
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const videoRef = useRef(null);
 
-  // MOCK: Simulate API load
+  // Fetch all active courses
   useEffect(() => {
-    setTimeout(() => {
-      setCourse(DUMMY_COURSE);
-      setLessons(DUMMY_LESSONS);
-      setProgress(DUMMY_COURSE.progress);
-    }, 800);
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await apiClient.get("/api/users/training/courses");
+        const data = res.data;
+
+        console.log("API Response - All Courses:", data); // Fixed: console.log
+
+        if (!Array.isArray(data) || data.length === 0) {
+          setError("No courses available at the moment.");
+          setLoading(false);
+          return;
+        }
+
+        // setCourses(data);
+
+        // Simulate one unlocked/free course for testing UI
+const testCourses = data.map((course, index) => {
+  if (index === 0 && course.videos?.length) {
+    course.isActive = true;
+    course.videos[0].isFree = true; // unlock first video
+  }
+  return course;
+});
+setCourses(testCourses);
+
+
+        const firstActive = data.find(c => c.isActive) || data[0];
+        setSelectedCourse(firstActive);
+        setProgress(firstActive.progress || { percent: 0, completed: 0, total: 0 });
+
+        const completed = new Set();
+        firstActive.videos?.forEach(v => {
+          if (v.completed) completed.add(v._id);
+        });
+        setCompletedVideos(completed);
+
+      } catch (err) {
+        console.error("Failed to load courses:", err.response || err); // Fixed: console
+        setError("Failed to load courses. Please check your connection and try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
   }, []);
 
-  // YouTube API to detect end
-  useEffect(() => {
-    if (!selectedLesson || !iframeRef.current) return;
+  // Load course details
+  const loadCourseDetails = async (courseId) => {
+    try {
+      setVideoLoading(true);
+      setError(null);
 
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScript = document.getElementsByTagName("script")[0];
-    firstScript.parentNode.insertBefore(tag, firstScript);
+      const res = await apiClient.get(`/api/users/training/courses/${courseId}`);
+      const course = res.data;
 
-    window.onYouTubeIframeAPIReady = () => {
-      new window.YT.Player(iframeRef.current, {
-        events: {
-          onStateChange: (event) => {
-            if (event.data === window.YT.PlayerState.ENDED) {
-              handleVideoComplete(selectedLesson.id);
-            }
-          },
-        },
+      console.log("Loaded Course Details:", course); // Debug
+
+      setSelectedCourse(course);
+      setProgress(course.progress || { percent: 0, completed: 0, total: 0 });
+
+      const completed = new Set();
+      course.videos?.forEach(v => {
+        if (v.completed) completed.add(v._id);
       });
-    };
-  }, [selectedLesson]);
+      setCompletedVideos(completed);
 
-  // MOCK: Mark video complete
-  const handleVideoComplete = async (videoId) => {
-    // Simulate API delay
-    await new Promise((r) => setTimeout(r, 500));
-
-    setVideoCompleted((prev) => ({ ...prev, [videoId]: true }));
-
-    const newCompleted = progress.completed + 1;
-    const newPercent = Math.round((newCompleted / progress.total) * 100);
-    setProgress((prev) => ({ ...prev, completed: newCompleted, percent: newPercent }));
-
-    const currentIndex = lessons.findIndex((l) => l.id === videoId);
-    const nextLesson = lessons[currentIndex + 1];
-
-    if (nextLesson) {
-      if (hasAccessToPackage(nextLesson.packageRequired)) {
-        setTimeout(() => setSelectedLesson(nextLesson), 1000);
-      } else {
-        setNextLockedPackage(nextLesson.packageRequired);
-        setShowSubscribeModal(true);
-      }
+    } catch (err) {
+      console.error("Failed to load course details:", err.response || err); // Fixed
+      setError("Failed to load course. Please try again.");
+    } finally {
+      setVideoLoading(false);
     }
   };
 
-  // MOCK: User package (change this to test)
-  const hasAccessToPackage = (pkg) => {
-    const userPackage = "basic"; // Change to "pro" or "premium" to test
-    const levels = { basic: 1, pro: 2, premium: 3 };
-    return levels[userPackage] >= levels[pkg];
+  // Mark video as complete
+  const markVideoComplete = async (videoId) => {
+    if (completedVideos.has(videoId)) return;
+
+    try {
+      const res = await apiClient.post(
+        `/api/users/training/courses/${selectedCourse._id}/videos/${videoId}/complete`
+      );
+
+      console.log("Video marked complete:", res.data); // Debug
+
+      setCompletedVideos(prev => new Set(prev).add(videoId));
+
+      const newCompleted = progress.completed + 1;
+      const newPercent = Math.round((newCompleted / progress.total) * 100);
+      setProgress(prev => ({ ...prev, completed: newCompleted, percent: newPercent }));
+
+      const currentIdx = selectedCourse.videos?.findIndex(v => v._id === videoId);
+      const nextVideo = selectedCourse.videos?.[currentIdx + 1];
+
+      if (nextVideo && nextVideo.isFree) {
+        setTimeout(() => setSelectedVideo(nextVideo), 800);
+      } else if (nextVideo && !nextVideo.isFree) {
+        setShowUpgradeModal(true);
+      }
+    } catch (err) {
+      console.error("Failed to mark video complete:", err.response || err); // Fixed
+    }
   };
+
+  // Video ended handler
+  useEffect(() => {
+    if (!selectedVideo || !videoRef.current) return;
+
+    const video = videoRef.current;
+    const handleEnded = () => markVideoComplete(selectedVideo._id);
+
+    video.addEventListener("ended", handleEnded);
+    return () => video.removeEventListener("ended", handleEnded);
+  }, [selectedVideo, selectedCourse]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
@@ -785,43 +1211,117 @@ export default function Course() {
   ];
   const COLORS = ["#14b8a6", "#e5e7eb"];
 
-  // Loading state
-  if (!course || lessons.length === 0) {
+  // Loading State
+  if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-neutral-900 flex items-center justify-center">
-        <div className="text-gray-600">Loading course...</div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-gray-600 text-lg">Loading courses...</div>
       </div>
     );
   }
 
-  // Landing UI
-  if (!selectedLesson) {
+  // Error State
+  if (error) {
     return (
-      <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
-        {/* HEADER */}
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-700 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-full font-medium hover:opacity-90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Course List (Landing)
+  if (!selectedCourse || (!selectedVideo && !selectedCourse.videos)) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center py-12 px-6 md:px-20">
+        <div className="w-full max-w-5xl space-y-8">
+          <h1 className="text-3xl font-bold text-center mb-8">Academy Courses</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.map(course => (
+              <motion.div
+                key={course._id}
+                whileHover={{ scale: 1.03 }}
+                onClick={() => loadCourseDetails(course._id)}
+                className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer border hover:shadow-lg transition"
+              >
+                <img
+                  src={course.thumbnail || "/placeholder.jpg"}
+                  alt={course.title}
+                  className="w-full h-48 object-cover"
+                  onError={(e) => e.target.src = "/placeholder.jpg"}
+                />
+                <div className="p-5">
+                  <h3 className="font-bold text-lg mb-1 line-clamp-1">{course.title}</h3>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description || "No description."}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-teal-600 font-medium">
+                      {course.progress?.completed || 0}/{course.progress?.total || 0} completed
+                    </span>
+                    <div className="w-10 h-10">
+                      <ResponsiveContainer>
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { value: course.progress?.percent || 0 },
+                              { value: 100 - (course.progress?.percent || 0) }
+                            ]}
+                            innerRadius={12}
+                            outerRadius={18}
+                            dataKey="value"
+                          >
+                            <Cell fill="#14b8a6" />
+                            <Cell fill="#e5e7eb" />
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Course Landing (Before video)
+  if (!selectedVideo) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 w-full max-w-5xl mb-10">
           <div className="flex flex-col items-center">
-            <div className="w-40 h-40 rounded-full bg-gradient-to-b from-teal-500 to-yellow-400 flex items-center justify-center shadow-lg">
+            <div className="w-40 h-40 rounded-full bg-gradient-to-b from-teal-500 to-yellow-400 flex items-center justify-center shadow-lg overflow-hidden">
               <img
-                src={course.thumbnail}
-                alt="badge"
-                className="w-full h-full object-cover rounded-full"
+                src={selectedCourse.thumbnail || "/placeholder.jpg"}
+                alt={selectedCourse.title}
+                className="w-full h-full object-cover"
+                onError={(e) => e.target.src = "/placeholder.jpg"}
               />
             </div>
           </div>
 
           <div className="text-center md:text-left max-w-md">
             <p className="text-sm text-gray-500 font-semibold mb-1">
-              Course {course.order} of 11
+              Course {selectedCourse.order} of {courses.length}
             </p>
             <h2 className="text-4xl font-extrabold text-gray-800 mb-3">
-              {course.title}
+              {selectedCourse.title}
             </h2>
-            <p className="text-gray-600 mb-5">
-              {course.description}
-            </p>
+            <p className="text-gray-600 mb-5">{selectedCourse.description}</p>
             <button
-              onClick={() => setSelectedLesson(lessons[0])}
+              onClick={() => {
+                const firstFree = selectedCourse.videos?.find(v => v.isFree);
+                if (firstFree) setSelectedVideo(firstFree);
+              }}
               className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white font-semibold rounded-full shadow-md hover:opacity-90 transition-all"
             >
               Start Course
@@ -831,14 +1331,12 @@ export default function Course() {
 
         <hr className="w-full max-w-5xl border-gray-200 my-6" />
 
-        {/* PROGRESS + OUTLINE */}
         <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
             <h3 className="text-xl font-bold text-gray-800 mb-2">Your Progress</h3>
             <p className="text-sm text-teal-600 mb-4">
               {progress.completed} of {progress.total} videos completed
             </p>
-
             <div className="flex items-center gap-4">
               <div className="w-40 h-40">
                 <ResponsiveContainer>
@@ -847,30 +1345,23 @@ export default function Course() {
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      
                       innerRadius={50}
                       outerRadius={60}
                       paddingAngle={0}
                       dataKey="value"
                     >
-                      {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                      {pieData.map((_, i) => (
+                        <Cell key={i} fill={COLORS[i]} />
                       ))}
                     </Pie>
-                    <text
-                      x="50%"
-                      y="50%"
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      className="text-2xl font-bold fill-gray-800"
-                    >
+                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-gray-800">
                       {progress.percent}%
                     </text>
                   </PieChart>
                 </ResponsiveContainer>
               </div>
               <div className="bg-teal-500 p-2 rounded-full text-white">
-                {progress.percent === 100 ? <CheckCircle size={18} /> : <Lock size={18} />}
+                {progress.percent === 100 ? <CheckCircle size={18} /> : <PlayCircle size={18} />}
               </div>
             </div>
           </div>
@@ -879,30 +1370,26 @@ export default function Course() {
             <h3 className="text-xl font-bold text-gray-800 mb-4">Course Outline</h3>
             <div className="relative ml-4">
               <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-300"></div>
-
-              {lessons.map((lesson, i) => {
-                const isLocked = i > 0 && !videoCompleted[lessons[i - 1].id];
-                const hasAccess = hasAccessToPackage(lesson.packageRequired);
+              {selectedCourse.videos?.map((video, i) => {
+                const prevVideo = selectedCourse.videos[i - 1];
+                const isLocked = i > 0 && !completedVideos.has(prevVideo?._id);
+                const canPlay = video.isFree || completedVideos.has(prevVideo?._id);
 
                 return (
                   <div
-                    key={lesson.id}
-                    onClick={() => {
-                      if (!isLocked && hasAccess) setSelectedLesson(lesson);
-                    }}
-                    className={`flex items-start mb-4 relative cursor-pointer ${
-                      isLocked || !hasAccess ? "opacity-50" : ""
-                    }`}
+                    key={video._id}
+                    onClick={() => canPlay && setSelectedVideo(video)}
+                    className={`flex items-start mb-4 relative cursor-pointer ${isLocked || !canPlay ? "opacity-50" : ""}`}
                   >
                     <div className="z-10 bg-white">
                       <div
                         className={`flex items-center justify-center w-5 h-5 rounded-full border-2 ${
-                          videoCompleted[lesson.id]
+                          completedVideos.has(video._id)
                             ? "bg-teal-500 border-teal-500"
                             : "border-teal-500 bg-white"
                         }`}
                       >
-                        {videoCompleted[lesson.id] ? (
+                        {completedVideos.has(video._id) ? (
                           <CheckCircle size={14} className="text-white" />
                         ) : (
                           <PlayCircle size={14} className="text-teal-500" />
@@ -910,8 +1397,8 @@ export default function Course() {
                       </div>
                     </div>
                     <p className="ml-4 text-gray-700 text-sm hover:text-yellow-500 transition">
-                      {lesson.title}
-                      {!hasAccess && <Lock size={12} className="inline ml-1" />}
+                      {video.title}
+                      {!video.isFree && <Lock size={12} className="inline ml-1 text-gray-400" />}
                     </p>
                   </div>
                 );
@@ -923,42 +1410,38 @@ export default function Course() {
     );
   }
 
-  // Video Player
+  // Video Player View
   return (
     <div className="min-h-screen bg-[#f9fafb] flex flex-col items-center py-10 px-6 md:px-16 text-gray-800">
       <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* VIDEO PLAYER */}
         <motion.div
-          key={selectedLesson.id}
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
           className="col-span-2 bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200"
         >
           <div className="aspect-video bg-black">
-            <iframe
-              ref={iframeRef}
-              src={selectedLesson.videoUrl + "?enablejsapi=1"}
-              title={selectedLesson.title}
+            <video
+              ref={videoRef}
+              src={selectedVideo.url}
+              controls
               className="w-full h-full"
-              allowFullScreen
-            ></iframe>
+              poster={selectedCourse.thumbnail || "/placeholder.jpg"}
+            />
           </div>
 
           <div className="p-6 flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                {selectedLesson.title}
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">{selectedVideo.title}</h2>
               <p className="text-gray-600 text-sm">
-                {formatTime(0)} / {selectedLesson.duration}
+                {formatTime(0)} / {formatTime(selectedVideo.duration)}
               </p>
             </div>
             <button
-              onClick={() => setSelectedLesson(null)}
+              onClick={() => setSelectedVideo(null)}
               className="px-4 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-md font-medium shadow hover:opacity-90"
             >
-              Back
+              Back to Course
             </button>
           </div>
         </motion.div>
@@ -967,48 +1450,44 @@ export default function Course() {
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
           className="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 flex flex-col"
         >
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Course Outline
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Course Outline</h3>
           <div className="space-y-3 overflow-y-auto max-h-[70vh]">
-            {lessons.map((lesson) => {
-              const isLocked = lessons.indexOf(lesson) > 0 && !videoCompleted[lessons[lessons.indexOf(lesson) - 1].id];
-              const hasAccess = hasAccessToPackage(lesson.packageRequired);
+            {selectedCourse.videos?.map((video) => {
+              const prevVideo = selectedCourse.videos[selectedCourse.videos.indexOf(video) - 1];
+              const isLocked = selectedCourse.videos.indexOf(video) > 0 && !completedVideos.has(prevVideo?._id);
+              const canPlay = video.isFree || completedVideos.has(prevVideo?._id);
 
               return (
                 <motion.div
-                  key={lesson.id}
-                  onClick={() => {
-                    if (!isLocked && hasAccess) setSelectedLesson(lesson);
-                  }}
-                  whileHover={{ scale: hasAccess && !isLocked ? 1.02 : 1 }}
+                  key={video._id}
+                  onClick={() => canPlay && setSelectedVideo(video)}
+                  whileHover={{ scale: canPlay ? 1.02 : 1 }}
                   className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer border transition-all ${
-                    selectedLesson.id === lesson.id
+                    selectedVideo._id === video._id
                       ? "bg-gradient-to-r from-teal-500 to-yellow-400 text-white"
-                      : isLocked || !hasAccess
+                      : isLocked || !canPlay
                       ? "bg-gray-100 opacity-60"
                       : "bg-gray-50 hover:bg-gray-100"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    {videoCompleted[lesson.id] ? (
+                    {completedVideos.has(video._id) ? (
                       <CheckCircle size={20} className="text-green-500" />
                     ) : (
                       <PlayCircle
                         size={20}
                         className={`${
-                          selectedLesson.id === lesson.id ? "text-white" : "text-teal-500"
+                          selectedVideo._id === video._id ? "text-white" : "text-teal-500"
                         }`}
                       />
                     )}
                     <span className="text-sm font-medium">
-                      {lesson.title.length > 45 ? lesson.title.slice(0, 45) + "..." : lesson.title}
+                      {video.title.length > 40 ? video.title.slice(0, 40) + "..." : video.title}
                     </span>
                   </div>
-                  {!hasAccess && <Lock size={16} />}
+                  {!video.isFree && <Lock size={16} className="text-gray-400" />}
                 </motion.div>
               );
             })}
@@ -1016,8 +1495,8 @@ export default function Course() {
         </motion.div>
       </div>
 
-      {/* SUBSCRIBE MODAL */}
-      {showSubscribeModal && (
+      {/* UPGRADE MODAL */}
+      {showUpgradeModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -1026,20 +1505,20 @@ export default function Course() {
           >
             <div className="flex items-center gap-3 mb-4">
               <AlertCircle className="text-yellow-500" size={28} />
-              <h3 className="text-xl font-bold">Upgrade Required</h3>
+              <h3 className="text-xl font-bold">Premium Content</h3>
             </div>
             <p className="text-gray-600 mb-4">
-              To continue, you need the <strong>{nextLockedPackage.toUpperCase()}</strong> package.
+              This lesson is part of the <strong>Premium Package</strong>. Upgrade to continue.
             </p>
             <div className="flex gap-3">
               <button
-                onClick={() => setShowSubscribeModal(false)}
+                onClick={() => setShowUpgradeModal(false)}
                 className="flex-1 py-2 border border-gray-300 rounded-md"
               >
                 Cancel
               </button>
               <button className="flex-1 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-md font-medium">
-                Subscribe Now
+                Upgrade Now
               </button>
             </div>
           </motion.div>
