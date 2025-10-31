@@ -47,50 +47,139 @@
 
 
 
-import React from 'react';
+import React from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
-export default function FirstStart() {
-  const rows = [
-    { pkg: '$250',   upfront: '$125',   add: 'Up to $125',   total: 'Up to $250' },
-    { pkg: '$500',   upfront: '$250',   add: 'Up to $250',   total: 'Up to $500' },
-    { pkg: '$1,000', upfront: '$500',   add: 'Up to $500',   total: 'Up to $1,000' },
-    { pkg: '$10,000',upfront: '$5,000', add: 'Up to $5,000', total: 'Up to $10,000' },
-    { pkg: '$50,000',upfront: '$25,000',add: 'Up to $25,000',total: 'Up to $50,000' },
+const FastStart = () => {
+  const barData = [
+    { week: "Week 1", earnings: 1200 },
+    { week: "Week 2", earnings: 3800 },
+    { week: "Week 3", earnings: 1600 },
   ];
 
-  return (
-    <div className="p-6">
-      <h3 className="text-2xl font-bold mb-4 text-green-600">First Start Bonus</h3>
-      <p className="mb-4 text-gray-700">
-        Earn immediate commissions on referrals who purchase a Trade Package. 50% upfront, with the rest released as ROI is withdrawn.
-      </p>
+  const pieData = [
+    { name: "1 - 3", value: 50 },
+    { name: "Pending", value: 30 },
+    { name: "Paid", value: 20 },
+  ];
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-          <thead className="bg-green-100">
-            <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Upfront (50%)</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max Additional</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Potential</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {rows.map((r, i) => (
-              <tr key={i} className="hover:bg-gray-50">
-                <td className="px-4 py-2 text-sm text-gray-900">{r.pkg}</td>
-                <td className="px-4 py-2 text-sm text-green-600">{r.upfront}</td>
-                <td className="px-4 py-2 text-sm text-blue-600">{r.add}</td>
-                <td className="px-4 py-2 text-sm font-medium text-purple-600">{r.total}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  const COLORS = ["#FACC15", "#E5E7EB", "#1E3A8A"];
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Overview Cards */}
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">Overview</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {[
+          { title: "Total Referrals", value: "48" },
+          { title: "Active Referrals", value: "36" },
+          { title: "Total Earned", value: "$42,600" },
+          { title: "Pending / Withdrawn", value: "$2,000 / $40,600" },
+        ].map((card, idx) => (
+          <div
+            key={idx}
+            className="bg-white border border-yellow-200 rounded-xl shadow-sm p-5 text-center"
+          >
+            <p className="text-sm text-gray-500">{card.title}</p>
+            <h3 className="text-2xl font-bold text-gray-900 mt-2">{card.value}</h3>
+          </div>
+        ))}
       </div>
 
-      <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded">
-        <p className="text-sm text-yellow-800"><strong>Note:</strong> Paid in USD via Bitcoin. Requires active package.</p>
+      {/* Fast Start Bonus Section */}
+      <h2 className="text-lg font-semibold text-gray-800 mb-3">
+        Fast Start Bonus Calculation
+      </h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Section */}
+        <div>
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+            Each Velox Capital package is divided into 30% Academy and 70% Trade
+            Pool. The Fast Start Bonus equals 50% of the Academy portion.
+          </p>
+
+          {/* First Table */}
+          <div className="overflow-x-auto h-auto border border-gray-200 rounded-lg mb-5">
+            <table className="w-full text-sm text-left text-gray-600">
+              <thead className="bg-gray-100 text-gray-700 font-semibold">
+                <tr>
+                  <th className="px-4 py-3">Package</th>
+                  <th className="px-4 py-3">Academy (30%)</th>
+                  <th className="px-4 py-3">Trade Pool (70%)</th>
+                  <th className="px-4 py-3">Bonus (50%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t">
+                  <td className="px-4 py-3">$2,000</td>
+                  <td className="px-4 py-3">$600</td>
+                  <td className="px-4 py-3">$1,400</td>
+                  <td className="px-4 py-3">$300</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3">$10,000</td>
+                  <td className="px-4 py-3">$3,000</td>
+                  <td className="px-4 py-3">$7,000</td>
+                  <td className="px-4 py-3">$1,500</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+         
+        </div>
+
+        {/* Right Section (Charts) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+          {/* Bar Chart */}
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+            <h3 className="text-sm font-semibold text-gray-800 mb-3">
+              Weekly Fast Start Earnings
+            </h3>
+            <div className="w-full h-52">
+              <ResponsiveContainer>
+                <BarChart data={barData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="week" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip />
+                  <Bar dataKey="earnings" fill="#1E3A8A" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Pie Chart */}
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+            <h3 className="text-sm font-semibold text-gray-800 mb-3">
+              Bonus Distribution by Package
+            </h3>
+            <div className="w-full h-52">
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={60}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend verticalAlign="bottom" height={36} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default FastStart;

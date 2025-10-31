@@ -24,7 +24,7 @@ const CompoundInterestCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#012B2E] via-[#013B43] to-[#014C5A] flex items-center justify-center p-6">
+    <div className="min-h-screen dark:text-white dark:bg-neutral-800 bg-gradient-to-br from-[#012B2E] via-[#013B43] to-[#014C5A] flex items-center justify-center p-6">
       <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl p-8 w-full max-w-md text-white">
         <h2 className="text-2xl font-bold mb-6 text-center text-[#00A991]">
           Trading Compound Interest Calculator

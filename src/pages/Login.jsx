@@ -869,6 +869,289 @@
 
 
 
+// import React, { useState, useEffect } from "react";
+// import { motion } from "framer-motion";
+// import { User, Lock, Eye, EyeOff, Type } from "lucide-react";
+// import ReactCountryFlag from "react-country-flag";
+// import { useNavigate } from "react-router-dom";
+// import logo from "../assets/logovelox.svg";
+// import { loginUser } from "../api/authApi";
+
+// // Generate captcha
+// const generateCaptcha = () => {
+//   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//   const nums = "0123456789";
+//   const pool = chars + nums;
+//   let result = "";
+//   for (let i = 0; i < 5; i++) {
+//     result += pool[Math.floor(Math.random() * pool.length)];
+//   }
+//   return result;
+// };
+
+// export default function Login() {
+//   const navigate = useNavigate();
+
+//   const [form, setForm] = useState({
+//     prefix: "velox",
+//     email: "",
+//     password: "",
+//     captcha: "",
+//   });
+//   const [captchaText, setCaptchaText] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [selectedCountry, setSelectedCountry] = useState("US");
+
+//   useEffect(() => {
+//     setCaptchaText(generateCaptcha());
+//   }, []);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     if (name === "captcha") {
+//       setForm({ ...form, [name]: value.toUpperCase() });
+//     } else {
+//       setForm({ ...form, [name]: value });
+//     }
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setError("");
+
+//     if (!form.email || !form.password || !form.captcha) {
+//       setError("All fields are required!");
+//       return;
+//     }
+
+//     if (form.prefix.trim().toLowerCase() !== "velox") {
+//       setError("Invalid security prefix!");
+//       return;
+//     }
+
+//     if (form.captcha !== captchaText) {
+//       setError("Invalid captcha! Try again.");
+//       setForm((f) => ({ ...f, captcha: "" }));
+//       setCaptchaText(generateCaptcha());
+//       return;
+//     }
+
+//     const payload = {
+//       email: form.email,
+//       password: form.password,
+//       prefix: "admincontrol20x25",
+//     };
+
+//     try {
+//       setLoading(true);
+//       const res = await loginUser(payload);
+
+//       if (res?.token) {
+//         // ✅ Use consistent key expected by ProtectedRoute
+//         localStorage.setItem("token", res.token);
+//         localStorage.setItem("user", JSON.stringify(res.user || {}));
+
+//         // ✅ Redirect to dashboard
+//         navigate("/dashboard", { replace: true });
+//       } else {
+//         setError("Invalid response. Please try again.");
+//       }
+//     } catch (err) {
+//       console.error("Login failed:", err);
+//       const msg =
+//         err.response?.data?.error ||
+//         err.response?.data?.message ||
+//         "Login failed!";
+//       setError(msg);
+//       setCaptchaText(generateCaptcha());
+//       setForm((f) => ({ ...f, captcha: "" }));
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen flex flex-col items-center justify-center bg-[#07112b] text-white relative overflow-hidden">
+//       <div className="absolute inset-0 bg-img bg-cover bg-center "></div>
+
+//       <header className="absolute top-0 left-0 w-full flex justify-between items-center px-4 sm:px-8 md:px-16 py-3 z-20 bg-transparent">
+//         <div className="flex items-center gap-2">
+//           <img
+//             src={logo}
+//             alt="Velox Logo"
+//             className="w-12 sm:w-14 md:w-20 object-contain transition-all duration-200"
+//           />
+//         </div>
+
+//         <div className="flex items-center gap-2 sm:gap-3">
+//           <ReactCountryFlag
+//             countryCode={selectedCountry}
+//             svg
+//             style={{
+//               width: "1.5em",
+//               height: "1.5em",
+//               borderRadius: "50%",
+//               boxShadow: "0 0 4px rgba(0,0,0,0.3)",
+//             }}
+//             title={selectedCountry}
+//           />
+//           <select
+//             value={selectedCountry}
+//             onChange={(e) => setSelectedCountry(e.target.value)}
+//             className="bg-transparent text-white text-xs sm:text-sm font-medium border border-[#e3b874]/40 rounded-md px-2 sm:px-3 py-1 focus:outline-none focus:ring-2 focus:ring-[#e3b874] appearance-none"
+//           >
+//             <option value="US">US</option>
+//             <option value="GB">UK</option>
+//             <option value="NG">NG</option>
+//             <option value="AE">UAE</option>
+//             <option value="IN">IN</option>
+//           </select>
+//         </div>
+//       </header>
+
+//       <div className="relative mb-10 mt-10 md:mt-0 z-10 flex flex-col md:flex-row items-center justify-center w-full px-6 md:px-16 lg:px-24 mt-20">
+//         {/* Left side */}
+//         <motion.div
+//           initial={{ opacity: 0, x: -50 }}
+//           animate={{ opacity: 1, x: 0 }}
+//           transition={{ duration: 1 }}
+//           className="w-full md:w-1/2 mb-10 md:mb-0"
+//         >
+//           <h1 className="text-3xl font-semibold text-gray-100 mb-4">
+//             Secure Client Area
+//           </h1>
+//           <h2 className="text-4xl md:text-5xl font-bold text-white leading-snug">
+//             Designed in pursuit of{" "}
+//             <span className="text-[#e3b874]">higher performance.</span>
+//           </h2>
+//         </motion.div>
+
+//         {/* Right side (form) */}
+//         <motion.div
+//           initial={{ opacity: 0, x: 50 }}
+//           animate={{ opacity: 1, x: 0 }}
+//           transition={{ duration: 1 }}
+//           className="bg-[#0a1a3a]/90 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
+//         >
+//           <h2 className="text-2xl font-bold text-[#e3b874] mb-2 text-center">
+//             Welcome!
+//           </h2>
+//           <p className="text-center text-sm text-gray-400 mb-6">
+//             By logging in, you agree to the{" "}
+//             <span className="text-[#e3b874] cursor-pointer hover:underline">
+//               Terms & Conditions
+//             </span>
+//             .
+//           </p>
+
+//           <form onSubmit={handleSubmit} className="space-y-4">
+//             <div className="flex space-x-2">
+//               <div className="relative w-1/3">
+//                 <Type className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+//                 <input
+//                   type="text"
+//                   name="prefix"
+//                   placeholder="Prefix"
+//                   value={form.prefix}
+//                   onChange={handleChange}
+//                   required
+//                   className="w-full pl-9 pr-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none"
+//                 />
+//               </div>
+
+//               <div className="relative w-2/3">
+//                 <User className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+//                 <input
+//                   type="email"
+//                   name="email"
+//                   placeholder="Email"
+//                   value={form.email}
+//                   onChange={handleChange}
+//                   required
+//                   className="w-full pl-9 pr-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none"
+//                 />
+//               </div>
+//             </div>
+
+//             <div className="relative">
+//               <Lock className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+//               <input
+//                 type={showPassword ? "text" : "password"}
+//                 name="password"
+//                 placeholder="Password"
+//                 value={form.password}
+//                 onChange={handleChange}
+//                 required
+//                 className="w-full pl-9 pr-9 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none"
+//               />
+//               <button
+//                 type="button"
+//                 onClick={() => setShowPassword(!showPassword)}
+//                 className="absolute right-3 top-2.5 text-gray-400 hover:text-[#e3b874] transition"
+//               >
+//                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+//               </button>
+//             </div>
+
+//             <div className="flex items-center space-x-3">
+//               <div className="bg-[#091631] text-[#e3b874] px-4 py-2 rounded-md font-bold select-none tracking-widest text-lg">
+//                 {captchaText}
+//               </div>
+//               <input
+//                 type="text"
+//                 name="captcha"
+//                 placeholder="Enter 5 chars"
+//                 value={form.captcha}
+//                 onChange={handleChange}
+//                 required
+//                 maxLength={5}
+//                 className="flex-1 px-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none font-mono"
+//                 style={{ letterSpacing: "0.2em" }}
+//               />
+//             </div>
+
+//             {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+//             <button
+//               type="submit"
+//               disabled={loading}
+//               className="w-full py-2 bg-gradient-to-b from-[#e3b874] to-[#c19a4a] text-[#091631] font-semibold rounded-md hover:opacity-90 transition disabled:opacity-50"
+//             >
+//               {loading ? "Logging in..." : "Login"}
+//             </button>
+
+//             <div className="text-center text-sm text-gray-400 mt-2">
+//               <a href="#" className="hover:underline">
+//                 Forgot Password?
+//               </a>
+//             </div>
+//           </form>
+
+//           <div className="text-center text-xs text-gray-400 mt-6">
+//             Need Login Assistance?{" "}
+//             <a
+//               href="mailto:contact@internationalfinanceasia.com"
+//               className="text-[#e3b874] hover:underline"
+//             >
+//               contact@veloxcapital.com
+//             </a>
+//           </div>
+//         </motion.div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { User, Lock, Eye, EyeOff, Type } from "lucide-react";
@@ -877,7 +1160,68 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logovelox.svg";
 import { loginUser } from "../api/authApi";
 
-// Generate captcha
+/* -------------------------------------------------------------
+   1. Put your media files here (inside src/assets/backgrounds/)
+   ------------------------------------------------------------- */
+import bg1 from "../assets/veloximg4.jpeg";
+import bg2 from "../assets/veloxvid1.mp4";
+import bg3 from "../assets/veloximg2.jpeg";
+import bg4 from "../assets/veloxvid2.mp4";
+
+/* -------------------------------------------------------------
+   2. List them in order – image or video, does not matter
+   ------------------------------------------------------------- */
+const backgroundMedia = [
+  { type: "image", src: bg1 },
+  { type: "video", src: bg2 },
+  { type: "image", src: bg3 },
+  { type: "video", src: bg4 },
+  // add as many as you want …
+];
+
+/* -------------------------------------------------------------
+   3. BackgroundSwitcher component
+   ------------------------------------------------------------- */
+function BackgroundSwitcher() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((i) => (i + 1) % backgroundMedia.length);
+    }, 8000);               // change every 8 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = backgroundMedia[index];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {current.type === "image" ? (
+        <img
+          src={current.src}
+          alt=""
+          className="w-full h-full object-cover transition-opacity duration-1000 opacity-0"
+          style={{ opacity: 1 }}
+        />
+      ) : (
+        <video
+          src={current.src}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover transition-opacity duration-1000 opacity-100"
+        />
+      )}
+      {/* Fade overlay so the login form stays readable */}
+      <div className="absolute inset-0 bg-[#07112b]/60" />
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------
+   4. Rest of your original component (unchanged)
+   ------------------------------------------------------------- */
 const generateCaptcha = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const nums = "0123456789";
@@ -949,11 +1293,8 @@ export default function Login() {
       const res = await loginUser(payload);
 
       if (res?.token) {
-        // ✅ Use consistent key expected by ProtectedRoute
         localStorage.setItem("token", res.token);
         localStorage.setItem("user", JSON.stringify(res.user || {}));
-
-        // ✅ Redirect to dashboard
         navigate("/dashboard", { replace: true });
       } else {
         setError("Invalid response. Please try again.");
@@ -974,7 +1315,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#07112b] text-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-img bg-cover bg-center "></div>
+      {/* NEW: rotating background */}
+      <BackgroundSwitcher />
 
       <header className="absolute top-0 left-0 w-full flex justify-between items-center px-4 sm:px-8 md:px-16 py-3 z-20 bg-transparent">
         <div className="flex items-center gap-2">
@@ -1123,8 +1465,8 @@ export default function Login() {
             </button>
 
             <div className="text-center text-sm text-gray-400 mt-2">
-              <a href="#" className="hover:underline">
-                Forgot Password?
+              <a href="/signup" >
+                Don't have an account?<span className="hover:underline text-blue-600"> Signup</span>
               </a>
             </div>
           </form>

@@ -1357,7 +1357,7 @@ import { QrCode, CheckCircle, ChevronDown, User } from "lucide-react";
 // ✅ Dummy AI Trading component (replace with your actual component)
 function AiTrading() {
   return (
-    <div className="bg-white w- rounded-2xl p-6 shadow-sm h-full">
+    <div className="bg-white w-full dark:text-white dark:bg-neutral-800  rounded-2xl p-6 shadow-sm h-full">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">AI TRADING</h3>
       <div className="space-y-4">
         <div className="flex justify-between items-center">
@@ -1380,65 +1380,65 @@ function AiTrading() {
 
 export default function Matrix() {
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[30%_1fr] gap-6 items-stretch">
+    <div className="min-h-screen dark:text-white dark:bg-neutral-800 bg-gray-50 p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl dark:text-white dark:bg-neutral-800 mx-auto">
+        <div className="grid dark:text-white dark:bg-neutral-800 grid-cols-1 lg:grid-cols-[30%_1fr] gap-6 items-stretch">
           {/* LEFT COLUMN */}
-          <div className="w-full">
-            <div className="bg-white rounded-2xl p-6 shadow-sm h-full flex flex-col">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+          <div className="w-full dark:text-white dark:bg-neutral-800">
+            <div className="bg-white dark:text-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm h-full flex flex-col">
+              <h3 className="text-lg dark:text-white dark:bg-neutral-800 font-semibold text-gray-900 mb-1">
                 MY MATRIX
               </h3>
 
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl font-bold text-amber-500">Rank</span>
-                <span className="text-2xl font-bold text-gray-900">VIP</span>
+              <div className="flex dark:text-white dark:bg-neutral-800 items-center gap-2 mb-4">
+                <span className="text-2xl font-bold text-amber-500 dark:text-white dark:bg-neutral-800">Rank</span>
+                <span className="text-2xl font-bold text-gray-900 dark:text-white dark:bg-neutral-800">VIP</span>
               </div>
 
-              <p className="text-sm text-gray-500 mb-1">User ID: 123456</p>
+              <p className="text-sm text-gray-500 mb-1 dark:text-white dark:bg-neutral-800">User ID: 123456</p>
 
               <div className="space-y-4 mt-6">
                 <div>
-                  <p className="text-sm text-gray-500">Wallet Balance</p>
-                  <p className="text-2xl font-bold text-gray-900">250 USDT</p>
+                  <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Wallet Balance</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white dark:bg-neutral-800">250 USDT</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Active Package</p>
+                  <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Active Package</p>
                   <p className="text-2xl font-bold text-green-600">$50 K</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Total Team</p>
-                  <p className="text-2xl font-bold text-gray-900">2,756</p>
+                  <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Total Team</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white dark:bg-neutral-800">2,756</p>
                 </div>
               </div>
 
               <div className="mt-6">
-                <p className="text-sm text-gray-500 mb-2">Referral Link</p>
+                <p className="text-sm text-gray-500 mb-2 dark:text-white dark:bg-neutral-800">Referral Link</p>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   <input
                     type="text"
                     value="https://example.com/refcode"
                     readOnly
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50"
+                    className="flex-1 dark:text-white dark:bg-neutral-800 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50"
                   />
-                  <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+                  <button className="px-4 dark:text-white dark:bg-neutral-800 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
                     Copy
                   </button>
                 </div>
               </div>
 
               <div className="mt-6">
-                <p className="text-sm text-gray-500 mb-1">QR Code</p>
-                <p className="text-xs text-gray-400 mb-3">for direct deposit</p>
-                <div className="flex justify-start p-4 bg-gray-50 rounded-xl">
-                  <div className="w-32 h-32 bg-gray-200 border-2 border-dashed rounded-xl flex items-center justify-center">
-                    <QrCode className="w-16 h-16 text-gray-400" />
+                <p className="text-sm dark:text-white dark:bg-neutral-800 text-gray-500 mb-1">QR Code</p>
+                <p className="text-xs dark:text-white dark:bg-neutral-800 text-gray-400 mb-3">for direct deposit</p>
+                <div className="flex justify-start p-4 bg-gray-50 dark:text-white dark:bg-neutral-800 dark:border rounded-xl">
+                  <div className="w-32 dark:text-white dark:bg-neutral-800 h-32 bg-gray-200 border-2 border-dashed rounded-xl flex items-center justify-center">
+                    <QrCode className="w-16 h-16 text-gray-400 dark:text-white dark:bg-neutral-800" />
                   </div>
                 </div>
               </div>
 
               <div className="mt-auto pt-6 border-t border-gray-200">
-                <p className="text-sm font-medium text-gray-900 mb-3">
+                <p className="text-sm font-medium text-gray-900 mb-3 dark:text-white dark:bg-neutral-800">
                   KYC Status
                 </p>
                 <div className="flex items-center gap-2">
@@ -1452,7 +1452,7 @@ export default function Matrix() {
           </div>
 
           {/* RIGHT COLUMN */}
-          <div className="w-full p-5 bg-white flex flex-col gap-6">
+          <div className="w-full dark:text-white dark:bg-neutral-800 p-5 bg-white flex flex-col gap-6">
             {/* MATRIX TREE + AI TRADING SIDE BY SIDE */}
             <div className="  w-full  p-6 h-full ">
               
@@ -1497,32 +1497,32 @@ export default function Matrix() {
                 </div>
 
                 {/* AI TRADING */}
-                <div className="flex flex-col justify-between bg-white rounded-xl md:w-[50%] w-full shadow-md border  p-5 h-full shadow-inner">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-4">
+                <div className="flex dark:text-white dark:bg-neutral-800 flex-col justify-between bg-white rounded-xl md:w-[50%] w-full shadow-md border  p-5 h-full shadow-inner">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 dark:text-white dark:bg-neutral-800">
                     AI TRADING
                   </h4>
 
                   <div className="space-y-4 text-start">
                     <div className="flex flex-col items-start">
-                      <p className="text-sm text-gray-500">Monthly ROI</p>
-                      <p className="text-lg font-semibold text-green-600">
+                      <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Monthly ROI</p>
+                      <p className="text-lg font-semibold text-green-600 dark:text-white dark:bg-neutral-800">
                         7.5
                       </p>
                     </div>
                     <div className="flex flex-col items-start">
-                      <p className="text-sm text-gray-500">Equality Growth</p>
-                      <p className="text-lg font-semibold text-gray-900">
+                      <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Equality Growth</p>
+                      <p className="text-lg font-semibold dark:text-white dark:bg-neutral-800 text-gray-900">
                         18.2%
                       </p>
                     </div>
                     <div className="flex flex-col items-start">
-                      <p className="text-sm text-gray-500">Drawdown</p>
+                      <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Drawdown</p>
                       <p className="text-lg font-semibold text-blue-600">
                         7.5%
                       </p>
                     </div>
                     <div className="flex flex-col items-start">
-                      <p className="text-sm text-gray-500">Profit share </p>
+                      <p className="text-sm text-gray-500 dark:text-white dark:bg-neutral-800">Profit share </p>
                       <p className="text-lg font-semibold text-blue-600">
                         50/50
                       </p>
@@ -1533,14 +1533,14 @@ export default function Matrix() {
             </div>
 
             {/* TEAM PERFORMANCE */}
-            <div className="bg-white  p-6 border">
-              <h3 className="text-lg font-bold text-gray-900 mb-6">
+            <div className="bg-white dark:text-white dark:bg-neutral-800 p-6 border">
+              <h3 className="text-lg font-bold text-gray-900 mb-6 dark:text-white dark:bg-neutral-800">
                 TEAM PERFORMANCE
               </h3>
-              <div className="overflow-x-auto max-h-[350px] overflow-y-auto">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-white">
-                    <tr className="text-xs text-gray-500 border-b border-gray-200">
+              <div className="overflow-x-auto dark:text-white dark:bg-neutral-800 max-h-[350px] overflow-y-auto">
+                <table className="w-full dark:text-white dark:bg-neutral-800 text-sm">
+                  <thead className="sticky dark:text-white dark:bg-neutral-800 top-0 bg-white">
+                    <tr className="text-xs dark:text-white dark:bg-neutral-800 text-gray-500 border-b border-gray-200">
                       <th className="text-left py-3 font-medium">Level</th>
                       <th className="text-center py-3 font-medium">Members</th>
                       <th className="text-right py-3 font-medium">
@@ -1582,23 +1582,23 @@ export default function Matrix() {
             </div>
 
             {/* EARNINGS SUMMARY */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="bg- dark:text-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Total Earnings</p>
-                  <p className="text-2xl font-bold text-gray-900">$1,250</p>
+                  <p className="text-sm text-gray-500 mb-1 dark:text-white dark:bg-neutral-800">Total Earnings</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white dark:bg-neutral-800">$1,250</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">
+                  <p className="text-sm dark:text-white dark:bg-neutral-800 text-gray-500 mb-1">
                     Withdrawable Profit
                   </p>
-                  <p className="text-2xl font-bold text-green-600">$890</p>
+                  <p className="text-2xl dark:text-white dark:bg-neutral-800 font-bold text-green-600">$890</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">
+                  <p className="text-sm dark:text-white dark:bg-neutral-800 text-gray-500 mb-1">
                     Active Investment
                   </p>
-                  <p className="text-xl font-bold text-gray-900">$500</p>
+                  <p className="text-xl dark:text-white dark:bg-neutral-800 font-bold text-gray-900">$500</p>
                 </div>
               </div>
 
@@ -1606,9 +1606,9 @@ export default function Matrix() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                    <span className="text-sm text-gray-600">RebaCoates</span>
+                    <span className="text-sm text-gray-600 dark:text-white dark:bg-neutral-800">RebaCoates</span>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                  <ChevronDown className="w-4 dark:text-white dark:bg-neutral-800 h-4 text-gray-400" />
                 </div>
               </div>
             </div>

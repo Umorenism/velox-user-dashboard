@@ -1,44 +1,124 @@
-// src/pages/dashboard/network/PersonalMatchingBonus.jsx
+
+
+
+
+
+
+
+
 import React from "react";
-import { Link, Percent, Users } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 
-export default function PersonalMatchingBonus() {
+export default function VeloxMatchingBonus() {
+  // Mock data for the charts
+  const barData = [
+    { name: "Level 1", amount: 1200 },
+    { name: "Level 2", amount: 900 },
+    { name: "Level 3", amount: 400 },
+  ];
+
+  const pieData = [
+    { name: "Earned", value: 60 },
+    { name: "Pending", value: 30 },
+    { name: "Withdrawn", value: 10 },
+  ];
+
+  const COLORS = ["#22c55e", "#facc15", "#3b82f6"];
+
   return (
-    <div className="space-y-8">
-      <div className="bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900 dark:to-cyan-900 p-8 rounded-2xl text-center">
-        <Link size={48} className="mx-auto text-teal-600 dark:text-teal-400 mb-3" />
-        <h2 className="text-3xl font-bold text-teal-800 dark:text-teal-200">Personal Matching Bonus</h2>
-        <p className="text-lg mt-2 text-teal-700 dark:text-teal-300">Earn 50% of your personally enrolled downline earnings</p>
-      </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-xl text-gray-800 font-semibold mb-6">Velox Matching Bonus </h1>
 
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-        <h3 className="font-bold text-lg mb-4 text-center">How It Works</h3>
-        <div className="space-y-4 text-sm">
-          <div className="flex items-center justify-between p-3 bg-teal-50 dark:bg-teal-900 rounded">
-            <span>You enroll <strong>John</strong></span>
-            <span className="text-teal-600 font-bold">→</span>
+      {/* Top Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Left Card */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4">
+            Velox Personal Matching Bonus
+          </h2>
+
+          <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+            <div>
+              <p className="text-gray-600">Eligibility:</p>
+              <p className="text-green-600 font-medium">Eligible</p>
+            </div>
+            <div>
+              <p className="text-gray-600">Amount Earned:</p>
+              <p className="text-gray-800 font-medium">$2,480</p>
+            </div>
+            <div>
+              <p className="text-gray-600">Pending Bonus:</p>
+              <p className="text-orange-500 font-medium">$780</p>
+            </div>
+            <div>
+              <p className="text-gray-600">Total Withdrawn:</p>
+              <p className="text-blue-600 font-medium">$520</p>
+            </div>
           </div>
-          <div className="flex items-center justify-between p-3 bg-cyan-50 dark:bg-cyan-900 rounded">
-            <span>John earns $1,000 this month</span>
-            <span className="text-cyan-600 font-bold">→</span>
+
+          <div className="flex items-center gap-4">
+            <button className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-md">
+              Withdraw Earnings
+            </button>
+            <button className="border border-gray-300 hover:bg-gray-100 text-sm font-medium px-4 py-2 rounded-md">
+              View History
+            </button>
           </div>
-          <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900 rounded">
-            <span className="font-bold text-emerald-600">You earn $500</span>
-            <Percent size={20} className="text-emerald-600" />
-          </div>
+        </div>
+
+        {/* Right Card - Bar Chart */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4">
+            Bonus Distribution Overview
+          </h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={barData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="amount" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="text-center text-xs text-gray-500 mt-2">amount</div>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900 dark:to-teal-900 p-5 rounded-xl">
-          <Users className="text-emerald-600 mb-2" size={24} />
-          <h4 className="font-bold">Unlimited Matches</h4>
-          <p className="text-sm">Match all your direct enrollees</p>
-        </div>
-        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900 dark:to-blue-900 p-5 rounded-xl">
-          <Percent className="text-cyan-600 mb-2" size={24} />
-          <h4 className="font-bold">50% Match</h4>
-          <p className="text-sm">Paid weekly on their commissions</p>
+      {/* Bottom Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <h2 className="text-lg font-semibold mb-4">Earnings Breakdown</h2>
+
+        <div className="flex justify-center">
+          <ResponsiveContainer width="60%" height={300}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={100}
+                label
+              >
+                {pieData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Legend verticalAlign="bottom" height={36} />
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

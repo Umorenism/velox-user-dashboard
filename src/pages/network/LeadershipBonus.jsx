@@ -1,108 +1,84 @@
-// // src/pages/dashboard/network/LeadershipBonus.jsx
-// import React from "react";
-// import { Crown, Medal, Star } from "lucide-react";
 
-// const ranks = [
-//   { rank: "Diamond", bonus: "$50,000", color: "text-purple-600" },
-//   { rank: "Platinum", bonus: "$25,000", color: "text-gray-600" },
-//   { rank: "Gold", bonus: "$10,000", color: "text-yellow-600" },
-//   { rank: "Silver", bonus: "$5,000", color: "text-gray-400" },
-// ];
+import React from "react";
+import { Check } from "lucide-react";
 
-// export default function LeadershipBonus() {
-//   return (
-//     <div className="space-y-8">
-//       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900 dark:to-purple-900 p-8 rounded-2xl text-center">
-//         <Crown size={48} className="mx-auto text-indigo-600 dark:text-indigo-400 mb-3" />
-//         <h2 className="text-3xl font-bold text-indigo-800 dark:text-indigo-200">Leadership Bonus Pool</h2>
-//         <p className="text-lg mt-2 text-indigo-700 dark:text-indigo-300">2% of company volume shared among top leaders</p>
-//       </div>
-
-//       <div className="space-y-4">
-//         {ranks.map((r) => (
-//           <div
-//             key={r.rank}
-//             className="flex items-center justify-between bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm hover:shadow-md transition"
-//           >
-//             <div className="flex items-center gap-3">
-//               <Medal size={28} className={r.color} />
-//               <div>
-//                 <h3 className="font-bold text-lg">{r.rank} Leader</h3>
-//                 <p className="text-sm text-gray-600 dark:text-gray-400">Monthly qualification</p>
-//               </div>
-//             </div>
-//             <div className="text-right">
-//               <p className="text-2xl font-bold text-green-600">{r.bonus}</p>
-//               <p className="text-xs text-gray-500">per month</p>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-
-//       <div className="bg-amber-50 dark:bg-amber-900 p-6 rounded-xl text-center">
-//         <Star className="mx-auto text-amber-600 mb-2" size={28} />
-//         <p className="font-semibold">Only 4 spots per rank — first come, first paid!</p>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-import React from 'react';
-
-export default function Leadership() {
-  const ranks = [
-    { rank: 'Executive', refs: 3,  pv: 300,  gv: '1K',   perk: 'Entry prizes' },
-    { rank: 'Silver',    refs: 6,  pv: '1K', gv: '5K',   perk: '50% Matching' },
-    { rank: 'Gold',      refs: 12, pv: '3K', gv: '20K',  perk: 'Deeper unilevel' },
-    { rank: 'Platinum',  refs: 24, pv: '10K',gv: '100K', perk: 'Enhanced residuals' },
-    { rank: 'Diamond',   refs: 50, pv: '30K',gv: '500K', perk: 'Leadership pool' },
-    { rank: 'Ambassador',refs: 100,pv: '100K',gv: '2M',   perk: 'Uncapped 2%' },
-    { rank: 'Global Ambassador', refs: '200+', pv: '500K+', gv: '10M+', perk: 'Global shares' },
-  ];
-
+const LeadershipBonus = () => {
   return (
-    <div className="p-6">
-      <h3 className="text-2xl font-bold mb-4 text-green-600">Leadership / Ranks Bonus</h3>
-      <p className="mb-4 text-gray-700">
-        Advance through 7 ranks via PV and GV. Unlock leadership pools, matching, and prizes from withdrawal fees.
-      </p>
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Top Section */}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-          <thead className="bg-green-100">
-            <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min Referrals</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min PV</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Min GV</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Key Perk</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {ranks.map((r, i) => (
-              <tr key={i} className="hover:bg-gray-50">
-                <td className="px-4 py-2 text-sm font-medium text-gray-900">{r.rank}</td>
-                <td className="px-4 py-2 text-sm text-gray-500">{r.refs}</td>
-                <td className="px-4 py-2 text-sm text-gray-500">{r.pv}</td>
-                <td className="px-4 py-2 text-sm text-gray-500">{r.gv}</td>
-                <td className="px-4 py-2 text-sm text-purple-600">{r.perk}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <h1 className="text-gray-800 text-lg mb-4 font-bold">Velox Leadership Bonus</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Current Rank */}
+        <div className="border border-blue-200 rounded-xl bg-white shadow-sm p-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-yellow-500 text-lg">👑</span>
+            <h2 className="text-gray-800 font-semibold text-lg">
+              Current Rank
+            </h2>
+          </div>
+          <h3 className="text-blue-600 text-2xl font-bold mb-1">Manager</h3>
+          <p className="text-gray-500 text-sm mb-4">Current Bonus: $3,000</p>
+
+          <button className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-md flex items-center justify-center gap-1 mx-auto">
+            Eligible for Weekly Bonus: Yes
+            <Check size={16} className="text-green-600" />
+          </button>
+        </div>
+
+        {/* Progress to Next Rank */}
+        <div className="border border-green-300 rounded-xl bg-white shadow-sm p-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-green-600 text-lg">📈</span>
+            <h2 className="text-gray-800 font-semibold text-lg">
+              Progress to Next Rank
+            </h2>
+          </div>
+          <p className="text-gray-700 text-sm mb-1">
+            Next Rank: <span className="font-medium">Director</span>
+          </p>
+          <div className="w-full bg-gray-200 h-3 rounded-full mt-2 mb-2">
+            <div
+              className="bg-green-600 h-3 rounded-full"
+              style={{ width: "25%" }}
+            ></div>
+          </div>
+          <div className="flex justify-between text-xs text-gray-500 mb-4">
+            <span>Group Volume: $25,000</span>
+            <span>Required: $100,000</span>
+          </div>
+          <button className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-1.5 rounded-md mx-auto">
+            View Team Growth Plan
+          </button>
+        </div>
+
+        {/* Next Bonus Unlock */}
+        <div className="border border-yellow-300 rounded-xl bg-white shadow-sm p-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-yellow-500 text-lg">🏅</span>
+            <h2 className="text-gray-800 font-semibold text-lg">
+              Next Bonus Unlock
+            </h2>
+          </div>
+          <h3 className="text-orange-500 text-2xl font-bold mb-1">$10,000</h3>
+          <p className="text-gray-600 text-sm mb-4">
+            Upon reaching Director rank
+          </p>
+          <button className="border border-yellow-400 hover:bg-yellow-50 text-yellow-700 text-sm font-medium px-4 py-1.5 rounded-md mx-auto">
+            View Qualification Requirements
+          </button>
+        </div>
       </div>
 
-      <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded">
-        <p className="text-sm text-red-800"><strong>Warning:</strong> Trading involves risk. This UI is for educational purposes only.</p>
+      {/* Rank Badge Section */}
+      <div className="bg-white border border-gray-100 rounded-xl shadow-sm py-10 text-center">
+        <h2 className="text-gray-800 font-semibold mb-6">Your Rank Badge</h2>
+        <div className="w-24 h-24 rounded-full border-4 border-blue-400 flex items-center justify-center mx-auto">
+          <span className="text-blue-500 text-4xl">👑</span>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default LeadershipBonus;
