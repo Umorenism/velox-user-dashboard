@@ -1,23 +1,18 @@
-// src/router/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { isTokenValid } from "./isValidToken";
-
+import { useUser } from "./UserContext";
 
 export const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  const user = localStorage.getItem("user"); // Optional: stored after signup or login
+  const { user, isTokenValid, loading } = useUser();
 
-  // No token and no user data → new user → signup
-  if (!token && !user) {
-    return <Navigate to="/signup" replace />;
-  }
+  // ⏳ Wait for token validation
+  if (loading) return <div className="text-center mt-20">Loading...</div>;
 
-  // Token exists but invalid or expired → go to login
-  if (!isTokenValid()) {
+  // ❌ No valid token → back to login
+  if (!isTokenValid() || !user) {
     return <Navigate to="/login" replace />;
   }
 
-  // All good → show dashboard
+  // ✅ Authorized → show the page
   return children;
 };

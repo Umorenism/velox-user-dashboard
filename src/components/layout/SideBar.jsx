@@ -1400,7 +1400,7 @@ export default function SideBar({ closeSidebar }) {
       animate={{ x: 0 }}
       exit={{ x: -300 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="w-72 bg-white dark:bg-neutral-900 dark:text-white shadow-md h-screen p-4 flex flex-col justify-between overflow-y-auto"
+      className="w-72 bg-white dark:bg-neutral-900 dark:text-white shadow-md h-screen p-4 flex flex-col justify-between overflow-y-auto overflow-x-hidden"
     >
       <div>
         {/* Logo & Close Button */}
@@ -1535,14 +1535,14 @@ export default function SideBar({ closeSidebar }) {
         ))}
 
         {/* Profile & Logout */}
-        <div className="flex items-center justify-between dark:bg-gray-800 rounded-lg px-3 py-2">
+        <div className="flex items-center  justify-between dark:bg-gray-800 rounded-lg py-2 mr-5">
           <div className="flex items-center gap-3">
             <img
               src={user?.profilePic || profilePic}
               alt={user?.name || "User"}
               className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-700"
             />
-            <div>
+            <div className="">
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{user?.name || "User"}</p>
               <p className="text-xs text-start text-gray-500 dark:text-gray-400">{user?.email || "No email"}</p>
             </div>

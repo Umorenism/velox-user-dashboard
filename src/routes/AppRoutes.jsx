@@ -1,4 +1,4 @@
-// // src/router/AppRouter.jsx
+// src/router/AppRouter.jsx
 // import { Routes, Route, Navigate } from "react-router-dom";
 // import React from "react";
 // import DashboardLayout from "../components/layout/DashboardLayout";
@@ -104,9 +104,9 @@
 
 
 
-// src/router/AppRouter.jsx
-import { Routes, Route, Navigate } from "react-router-dom";
 import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useUser } from "./UserContext";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -125,46 +125,48 @@ import UsersWithDrawal from "../pages/Dashboard/UserWithDrawal";
 import UsersInternalWithDrawal from "../pages/Dashboard/UserInternalWithdraw";
 import PartnerPage from "../pages/Dashboard/Partners";
 import NotFound from "../pages/Dashboard/NotFound";
+
 import CompoundCalculator from "../pages/modules/CompoundCalculator";
 import ForexLotSize from "../pages/modules/ForexLotSize";
 import Courses from "../pages/modules/academy/Courses";
+
 import LeaderBoard from "../pages/LeaderBoard";
 import CopyTrading from "../pages/copyTrading/CopyTrading";
 import Risk from "../pages/Risk/Risk";
+
 import Unilevel from "../pages/network/Unilevel";
 import Matrix from "../pages/network/Matrix";
 import LeadershipBonus from "../pages/network/LeadershipBonus";
 import PersonalMatchingBonus from "../pages/network/PersonalMatchingBonus";
 import RankAdvancement from "../pages/network/RankAdvancement";
 import FastStart from "../pages/network/FastStart";
+
 import RetirementBlog from "../pages/retirementbloq/RetirementBlog";
 import SupportPage from "../pages/SupportPage";
 
 export default function AppRouter() {
-  // 🧠 Decide where to send the user when they hit "/"
-  const token = localStorage.getItem("token");
+  const { user, isTokenValid, loading } = useUser();
 
-  /**
-   * getInitialRoute()
-   * - If logged in → redirect to dashboard
-   * - If not logged in → redirect to login
-   */
+  // ⏳ Wait for context initialization
+  if (loading) return <div className="text-center mt-20">Loading...</div>;
+
+  // 🧭 Decide where to send the user when they hit "/"
   const getInitialRoute = () => {
-    if (token) return "/dashboard";
+    if (user && isTokenValid()) return "/dashboard";
     return "/login";
   };
 
   return (
     <Routes>
-      {/* 🔄 Dynamic redirect based on token */}
+      {/* 🔄 Dynamic redirect based on token/user */}
       <Route path="/" element={<Navigate to={getInitialRoute()} replace />} />
 
-      {/* 🧩 Auth routes */}
+      {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
 
-      {/* 🛡️ Protected Dashboard Routes */}
+      {/* Protected dashboard routes */}
       <Route
         path="/dashboard"
         element={
@@ -173,32 +175,23 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       >
-        {/* Default Dashboard */}
         <Route index element={<Dashboardpage />} />
-
-        {/* User Management */}
         <Route path="users" element={<UsersMangement />} />
-
-        {/* Wallet Routes */}
         <Route path="wallet/withdrawal" element={<UsersWithDrawal />} />
         <Route path="wallet/internal-withdraw" element={<UsersInternalWithDrawal />} />
-        <Route path="wallet/deposit" element={<UsersWallet />} />
-
-        {/* Dashboard Modules */}
         <Route path="transactions" element={<Transaction />} />
+        <Route path="wallet/deposit" element={<UsersWallet />} />
         <Route path="part" element={<PartnerPage />} />
         <Route path="promotions" element={<PromotionsBanner />} />
         <Route path="setting" element={<Setting />} />
         <Route path="permission" element={<Permission />} />
 
-        {/* Tools / Calculators */}
+        {/* Modules */}
         <Route path="modules/compound-calculator" element={<CompoundCalculator />} />
         <Route path="modules/forex-lot-size" element={<ForexLotSize />} />
-
-        {/* Academy */}
         <Route path="academy/courses" element={<Courses />} />
 
-        {/* Extra Features */}
+        {/* Other features */}
         <Route path="leaderboard" element={<LeaderBoard />} />
         <Route path="copy-trading" element={<CopyTrading />} />
         <Route path="risk" element={<Risk />} />
@@ -216,8 +209,14 @@ export default function AppRouter() {
         <Route path="support" element={<SupportPage />} />
       </Route>
 
-      {/* 🚫 404 Fallback */}
+      {/* 404 fallback */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
+
+
+
+
+
+

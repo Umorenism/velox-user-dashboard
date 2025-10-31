@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
-import SideBar from './SideBar'
+import SideBar from "./SideBar";
 
 export default function DashboardLayout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // ← FIXED: Open by default
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden">
