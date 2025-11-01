@@ -403,10 +403,213 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import { buyUserPackage, getUserPackages } from "../api/userPackageApi";
+// import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+
+// const debounce = (func, wait) => {
+//   let timeout;
+//   return (...args) => {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(() => func(...args), wait);
+//   };
+// };
+
+// const UsersPackagesGrid = () => {
+//   const [packages, setPackages] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [submitting, setSubmitting] = useState({});
+//   const [messages, setMessages] = useState({});
+
+//   useEffect(() => {
+//     const fetchPackages = async () => {
+//       try {
+//         const data = await getUserPackages();
+//         setPackages(Array.isArray(data) ? data : []);
+//       } catch (error) {
+//         console.error("Failed to load packages:", error);
+//         setPackages([]);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchPackages();
+//   }, []);
+
+//   const handleSubscribe = debounce(async (packageId) => {
+//     setSubmitting((prev) => ({ ...prev, [packageId]: true }));
+//     setMessages((prev) => ({ ...prev, [packageId]: null }));
+
+//     try {
+//       await buyUserPackage(packageId);
+//       setMessages((prev) => ({
+//         ...prev,
+//         [packageId]: { type: "success", text: "Package subscribed successfully!" },
+//       }));
+
+//       setPackages((prev) =>
+//         prev.map((pkg) =>
+//           pkg.id === packageId ? { ...pkg, isSubscribed: true } : pkg
+//         )
+//       );
+
+//       setTimeout(() => {
+//         setMessages((prev) => ({ ...prev, [packageId]: null }));
+//       }, 5000);
+//     } catch (error) {
+//       setMessages((prev) => ({
+//         ...prev,
+//         [packageId]: {
+//           type: "error",
+//           text: error.response?.data?.message || "Failed to subscribe to package.",
+//         },
+//       }));
+
+//       setTimeout(() => {
+//         setMessages((prev) => ({ ...prev, [packageId]: null }));
+//       }, 5000);
+//     } finally {
+//       setSubmitting((prev) => ({ ...prev, [packageId]: false }));
+//     }
+//   }, 300);
+
+//   if (loading) {
+//     return (
+//       <div className="flex justify-center items-center p-6">
+//         <Loader2 className="animate-spin text-[#F8983B]" size={26} />
+//         <p className="ml-3 text-gray-600 dark:text-gray-300">Loading packages...</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="rounded-xl p-4 dark:bg-neutral-800 dark:text-white mx-auto">
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+//         {packages.length === 0 ? (
+//           <p className="text-center text-gray-500 dark:text-gray-300">
+//             No packages available.
+//           </p>
+//         ) : (
+//           packages.map((pkg) => {
+//             const isLoading = submitting[pkg.id] || false;
+//             const message = messages[pkg.id];
+//             const isSubscribed = pkg.isSubscribed || false;
+
+//             return (
+//               <div
+//                 key={pkg.id}
+//                 className="max-w-sm w-full bg-white dark:bg-neutral-800 rounded-lg shadow-md border border-gray-200 dark:border-neutral-700 flex flex-col justify-between overflow-hidden transition-transform hover:scale-[1.02]"
+//               >
+//                 {/* Image Section */}
+//                 {pkg.image ? (
+//                   <div className="w-full h-auto bg-gray-100 dark:bg-neutral-700 flex items-center justify-center overflow-hidden">
+//                     <img
+//                       src={pkg.image}
+//                       alt={`${pkg.name} package`}
+//                       className="w-full h-full object-cover p-4"
+//                       onError={(e) => {
+//                         e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
+//                       }}
+//                     />
+//                   </div>
+//                 ) : (
+//                   <div className="w-full h-48 bg-gray-50 dark:bg-neutral-700 flex items-center justify-center border-b">
+//                     <span className="text-gray-400 text-sm">No Image</span>
+//                   </div>
+//                 )}
+
+//                 {/* Content Section */}
+//                 <div className="md:p-6 flex flex-col flex-grow text-start p-2 md:text-start md:text-left">
+//                   {/* Package Title */}
+//                   <h2 className="md:text-lg text-sm font-semibold mb-2 text-gray-900 dark:text-white">
+//                     {pkg.name || "Opix Algo Lite"}
+//                   </h2>
+
+//                   {/* Projected Return Badge */}
+//                   <div className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded-full px-4 py-1.5 inline-flex items-center max-w-[280px] w-full justify-center mx-auto md:mx-0 mb-4 shadow-sm">
+//                     <p className="text-sm flex w-full text-gray-700 flex text-start gap-1">
+//                       Projected Monthly Return:
+//                       <span className="font-semibold text-[#00A991]">
+//                         {pkg.projectedReturn || "6% – 11%"}
+//                       </span>
+//                     </p>
+//                   </div>
+
+//                   <hr className="border-gray-200 dark:border-neutral-700 mb-4" />
+
+//                   {/* Description */}
+//                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+//                     {pkg.description ||
+//                       "Fully automated algorithmic trading that uses advanced order flow strategy, money management and probabilistic analysis. Most effective in the price consolidation stages that occupy the bulk of the market time."}
+//                   </p>
+
+//                   {/* Message */}
+//                   {message && (
+//                     <div
+//                       role="alert"
+//                       className={`flex items-center justify-center md:justify-start gap-2 mb-4 px-3 py-2 rounded-md text-sm font-medium ${
+//                         message.type === "success"
+//                           ? "bg-green-100 text-green-700"
+//                           : "bg-red-100 text-red-700"
+//                       }`}
+//                     >
+//                       {message.type === "success" ? (
+//                         <CheckCircle2 size={16} />
+//                       ) : (
+//                         <XCircle size={16} />
+//                       )}
+//                       {message.text}
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 {/* Footer Subscribe Button */}
+//                 <button
+//                   onClick={() => handleSubscribe(pkg.id)}
+//                   disabled={isLoading || isSubscribed}
+//                   aria-label={
+//                     isLoading
+//                       ? `Subscribing to ${pkg.name}`
+//                       : isSubscribed
+//                       ? `${pkg.name} is already subscribed`
+//                       : `Subscribe to ${pkg.name}`
+//                   }
+//                   className={`flex justify-center items-center gap-2 bg-[#E98B37] text-white font-medium text-sm py-3 w-full hover:bg-[#d47d30] transition-colors ${
+//                     isLoading || isSubscribed ? "opacity-70 cursor-not-allowed" : ""
+//                   }`}
+//                 >
+//                   {isLoading ? (
+//                     <>
+//                       <Loader2 size={18} className="animate-spin" />
+//                       Subscribing...
+//                     </>
+//                   ) : isSubscribed ? (
+//                     "Subscribed"
+//                   ) : (
+//                     "Subscribe"
+//                   )}
+//                 </button>
+//               </div>
+//             );
+//           })
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UsersPackagesGrid;
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 import { buyUserPackage, getUserPackages } from "../api/userPackageApi";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 
+// Debounce utility
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -420,14 +623,16 @@ const UsersPackagesGrid = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState({});
   const [messages, setMessages] = useState({});
+  const [wallets, setWallets] = useState(null);
 
+  // ✅ Fetch packages on mount
   useEffect(() => {
     const fetchPackages = async () => {
       try {
         const data = await getUserPackages();
         setPackages(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Failed to load packages:", error);
+        console.error("❌ Failed to load packages:", error);
         setPackages([]);
       } finally {
         setLoading(false);
@@ -436,33 +641,45 @@ const UsersPackagesGrid = () => {
     fetchPackages();
   }, []);
 
+  // ✅ Handle package subscription
   const handleSubscribe = debounce(async (packageId) => {
     setSubmitting((prev) => ({ ...prev, [packageId]: true }));
     setMessages((prev) => ({ ...prev, [packageId]: null }));
 
     try {
-      await buyUserPackage(packageId);
+      // ✅ Correct call — send string ID
+      const res = await buyUserPackage(packageId);
+
+      // ✅ Show success message
+      const successMsg = res?.message || "Package purchased successfully!";
       setMessages((prev) => ({
         ...prev,
-        [packageId]: { type: "success", text: "Package subscribed successfully!" },
+        [packageId]: { type: "success", text: successMsg },
       }));
 
+      // ✅ Update wallet info if returned
+      if (res?.user?.wallets) setWallets(res.user.wallets);
+
+      // ✅ Mark package as subscribed
       setPackages((prev) =>
         prev.map((pkg) =>
           pkg.id === packageId ? { ...pkg, isSubscribed: true } : pkg
         )
       );
 
+      // ✅ Auto-hide message after 5s
       setTimeout(() => {
         setMessages((prev) => ({ ...prev, [packageId]: null }));
       }, 5000);
     } catch (error) {
+      console.error("❌ Subscription failed:", error);
+      const errMsg =
+        error.response?.data?.message ||
+        "Failed to subscribe to package. Please try again.";
+
       setMessages((prev) => ({
         ...prev,
-        [packageId]: {
-          type: "error",
-          text: error.response?.data?.message || "Failed to subscribe to package.",
-        },
+        [packageId]: { type: "error", text: errMsg },
       }));
 
       setTimeout(() => {
@@ -473,17 +690,38 @@ const UsersPackagesGrid = () => {
     }
   }, 300);
 
+  // ✅ Loading indicator
   if (loading) {
     return (
       <div className="flex justify-center items-center p-6">
         <Loader2 className="animate-spin text-[#F8983B]" size={26} />
-        <p className="ml-3 text-gray-600 dark:text-gray-300">Loading packages...</p>
+        <p className="ml-3 text-gray-600 dark:text-gray-300">
+          Loading packages...
+        </p>
       </div>
     );
   }
 
   return (
     <div className="rounded-xl p-4 dark:bg-neutral-800 dark:text-white mx-auto">
+      {/* ✅ Optional wallet summary */}
+      {wallets && (
+        <div className="mb-6 p-4 bg-gradient-to-r from-teal-50 to-yellow-50 dark:from-neutral-800 dark:to-neutral-700 rounded-lg shadow-sm text-sm text-gray-700 dark:text-gray-300">
+          <p className="font-semibold text-gray-900 dark:text-white mb-2">
+            Updated Wallets:
+          </p>
+          <ul className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs md:text-sm">
+            {Object.entries(wallets).map(([key, value]) => (
+              <li key={key} className="flex justify-between">
+                <span className="capitalize">{key}</span>
+                <span className="font-semibold">{value}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* ✅ Package grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {packages.length === 0 ? (
           <p className="text-center text-gray-500 dark:text-gray-300">
@@ -508,7 +746,8 @@ const UsersPackagesGrid = () => {
                       alt={`${pkg.name} package`}
                       className="w-full h-full object-cover p-4"
                       onError={(e) => {
-                        e.target.src = "https://via.placeholder.com/300x200?text=No+Image";
+                        e.target.src =
+                          "https://via.placeholder.com/300x200?text=No+Image";
                       }}
                     />
                   </div>
@@ -520,12 +759,10 @@ const UsersPackagesGrid = () => {
 
                 {/* Content Section */}
                 <div className="md:p-6 flex flex-col flex-grow text-start p-2 md:text-start md:text-left">
-                  {/* Package Title */}
                   <h2 className="md:text-lg text-sm font-semibold mb-2 text-gray-900 dark:text-white">
                     {pkg.name || "Opix Algo Lite"}
                   </h2>
 
-                  {/* Projected Return Badge */}
                   <div className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 rounded-full px-4 py-1.5 inline-flex items-center max-w-[280px] w-full justify-center mx-auto md:mx-0 mb-4 shadow-sm">
                     <p className="text-sm flex w-full text-gray-700 flex text-start gap-1">
                       Projected Monthly Return:
@@ -537,7 +774,6 @@ const UsersPackagesGrid = () => {
 
                   <hr className="border-gray-200 dark:border-neutral-700 mb-4" />
 
-                  {/* Description */}
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
                     {pkg.description ||
                       "Fully automated algorithmic trading that uses advanced order flow strategy, money management and probabilistic analysis. Most effective in the price consolidation stages that occupy the bulk of the market time."}
@@ -575,7 +811,9 @@ const UsersPackagesGrid = () => {
                       : `Subscribe to ${pkg.name}`
                   }
                   className={`flex justify-center items-center gap-2 bg-[#E98B37] text-white font-medium text-sm py-3 w-full hover:bg-[#d47d30] transition-colors ${
-                    isLoading || isSubscribed ? "opacity-70 cursor-not-allowed" : ""
+                    isLoading || isSubscribed
+                      ? "opacity-70 cursor-not-allowed"
+                      : ""
                   }`}
                 >
                   {isLoading ? (
