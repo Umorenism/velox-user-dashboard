@@ -832,21 +832,20 @@ import { signUpUser } from "../api/authApi";
    1. Import your media files (place in src/assets/backgrounds/)
    ------------------------------------------------------------- */
 import bg1 from "../assets/veloximg2.jpeg";
-import bg2 from "../assets/veloxvid3.mp4";
+import bg2 from "../assets/veloxvid1.mp4";
 import bg3 from "../assets/veloximg2.jpeg";
 import bg4 from "../assets/veloxvid2.mp4";
+import bg5 from "../assets/veloximg6.jpeg"
+import bg6 from "../assets/veloximg7.jpeg"
 
-/* -------------------------------------------------------------
-   2. List them in order (image or video)
-   ------------------------------------------------------------- */
 const backgroundMedia = [
   { type: "image", src: bg1 },
   { type: "video", src: bg2 },
   { type: "image", src: bg3 },
   { type: "video", src: bg4 },
-  // Add more: { type: "image", src: yourImport },
+  { type: "image", src: bg5 },
+  { type: "image", src: bg6 },
 ];
-
 /* -------------------------------------------------------------
    3. BackgroundSwitcher component (same as Login)
    ------------------------------------------------------------- */
@@ -868,7 +867,7 @@ function BackgroundSwitcher() {
         <img
           src={current.src}
           alt=""
-          className="w-full h-full object-cover transition-opacity duration-1000"
+          className="w-full bg-center h-full object-cover transition-opacity duration-1000"
         />
       ) : (
         <video
@@ -877,11 +876,11 @@ function BackgroundSwitcher() {
           muted
           loop
           playsInline
-          className="w-full h-full object-cover transition-opacity duration-1000"
+          className="w-full bg-center h-full object-cover transition-opacity duration-1000"
         />
       )}
       {/* Dark overlay to keep text readable */}
-      <div className="absolute inset-0 bg-[#07112b]/60" />
+      <div className="absolute inset-0 bg-[#07112b]/20" />
     </div>
   );
 }
@@ -946,7 +945,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#07112b] text-white relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#07112b] text-white relative overflow-hidden p-4">
       {/* NEW: Rotating background */}
       <BackgroundSwitcher />
 
@@ -972,7 +971,7 @@ export default function Signup() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
-          className="bg-[#0a1a3a]/90 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
+          className="bg-[#00b4A1]/10  backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
         >
           <h2 className="text-2xl font-bold text-[#e3b874] mb-2 text-center">
             Sign Up
@@ -981,7 +980,7 @@ export default function Signup() {
             Join our platform and explore next-level opportunities.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 ">
             <input
               type="text"
               name="name"

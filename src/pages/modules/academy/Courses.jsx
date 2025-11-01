@@ -1096,17 +1096,17 @@ export default function Course() {
           return;
         }
 
-        // setCourses(data);
+       setCourses(data);
 
         // Simulate one unlocked/free course for testing UI
-const testCourses = data.map((course, index) => {
-  if (index === 0 && course.videos?.length) {
-    course.isActive = true;
-    course.videos[0].isFree = true; // unlock first video
-  }
-  return course;
-});
-setCourses(testCourses);
+// const testCourses = data.map((course, index) => {
+//   if (index === 0 && course.videos?.length) {
+//     course.isActive = true;
+//     course.videos[0].isFree = true; // unlock first video
+//   }
+//   return course;
+// });
+// setCourses(testCourses);
 
 
         const firstActive = data.find(c => c.isActive) || data[0];

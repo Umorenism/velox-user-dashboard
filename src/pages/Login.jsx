@@ -1581,12 +1581,16 @@ import bg1 from "../assets/veloximg2.jpeg";
 import bg2 from "../assets/veloxvid1.mp4";
 import bg3 from "../assets/veloximg2.jpeg";
 import bg4 from "../assets/veloxvid2.mp4";
+import bg5 from "../assets/veloximg6.jpeg"
+import bg6 from "../assets/veloximg7.jpeg"
 
 const backgroundMedia = [
   { type: "image", src: bg1 },
   { type: "video", src: bg2 },
   { type: "image", src: bg3 },
   { type: "video", src: bg4 },
+  { type: "image", src: bg5 },
+  { type: "image", src: bg6 },
 ];
 
 /* Background switcher */
@@ -1603,7 +1607,7 @@ function BackgroundSwitcher() {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {current.type === "image" ? (
-        <img src={current.src} alt="" className="w-full h-full object-cover" />
+        <img src={current.src} alt="" className="w-full h-full bg-center object-cover" />
       ) : (
         <video
           src={current.src}
@@ -1611,10 +1615,10 @@ function BackgroundSwitcher() {
           muted
           loop
           playsInline
-          className="w-full h-full object-cover"
+          className="w-full h-full bg-center object-cover"
         />
       )}
-      <div className="absolute inset-0 bg-[#07112b]/60" />
+      <div className="absolute inset-0 bg-[#07112b]/20" />
     </div>
   );
 }
@@ -1777,7 +1781,7 @@ export default function Login() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
-          className="bg-[#0a1a3a]/90 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
+          className="bg-[#00b4A1]/10 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
         >
           <h2 className="text-2xl font-bold text-[#e3b874] mb-2 text-center">
             Welcome!
@@ -1842,7 +1846,7 @@ export default function Login() {
             </div>
 
             {/* Captcha */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center  space-x-3">
               <div className="bg-[#091631] text-[#e3b874] px-4 py-2 rounded-md font-bold select-none tracking-widest text-lg">
                 {captchaText}
               </div>
@@ -1854,7 +1858,7 @@ export default function Login() {
                 onChange={handleChange}
                 required
                 maxLength={5}
-                className="flex-1 px-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none font-mono"
+                className="flex-1  px-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none font-mono"
                 style={{ letterSpacing: "0.2em" }}
               />
             </div>

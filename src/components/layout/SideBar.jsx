@@ -1439,7 +1439,7 @@ export default function SideBar({ closeSidebar }) {
         </div>
 
         {/* Navigation */}
-        <nav className="space-y-3">
+        <nav className="space-y-2 p-r-5">
           {topLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -1511,7 +1511,7 @@ export default function SideBar({ closeSidebar }) {
           />
         </nav>
 
-        <hr className="mt-10 border-gray-200 dark:border-gray-700" />
+        <hr className="mt-5 border-gray-200 dark:border-gray-700" />
       </div>
 
       {/* Bottom Section */}
