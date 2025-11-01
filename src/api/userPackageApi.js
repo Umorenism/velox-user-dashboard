@@ -1,10 +1,18 @@
 import { apiClient } from "./apiClient";
 
 // ✅ Get all packages
-export const getUserPackages = async () => {
-  const response = await apiClient.get("api/users/packages");
-  console.log("fetchpackages:",response.data)
-  return response.data;
+// export const getUserPackages = async () => {
+//   const response = await apiClient.get("api/users/packages");
+//   console.log("fetchpackages:",response.data)
+//   return response.data;
+// };
+
+
+export const getUserPackages = async (token) => {
+  const res = await apiClient.get("/api/users/packages", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
 };
 
 // ✅ Buy a package
