@@ -52,7 +52,7 @@ const CompoundCalculator = () => {
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Number of periods</label>
+            <label className="block text-sm mb-1">Number of months</label>
             <input
               type="number"
               value={periods}
@@ -62,7 +62,7 @@ const CompoundCalculator = () => {
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Gain % per period</label>
+            <label className="block text-sm mb-1">Gain % per month</label>
             <input
               type="number"
               value={gainPercent}
@@ -79,6 +79,10 @@ const CompoundCalculator = () => {
           Calculate
         </button>
         <div className="text-center mt-6 text-gray-600 italic tracking-widest">
+          <p>
+            <span className="font-semibold">STARTING BALANCE:</span>{" "}
+            {startingBalance ? `$${startingBalance}` : "-"}
+          </p>
           <p>
             <span className="font-semibold">ENDING BALANCE:</span>{" "}
             {endingBalance ? `$${endingBalance}` : "-"}

@@ -1324,6 +1324,298 @@
 
 
 
+// import React, { useState, useContext } from "react";
+// import { NavLink, useNavigate } from "react-router-dom";
+// import {
+//   LayoutDashboard,
+//   Users,
+//   CreditCard,
+//   ArrowDownCircle,
+//   Shield,
+//   LifeBuoy,
+//   LogOut,
+//   Search,
+//   X,
+//   ChevronDown,
+//   ChevronUp,
+//   Handshake,
+//   Sun,
+//   Moon,
+//   Calculator,
+//   BookOpen,
+//   LeafIcon,
+//   Copy,
+//   Network,
+// } from "lucide-react";
+// import { motion, AnimatePresence } from "framer-motion";
+// import logoimg from "../../assets/velox.svg";
+// import profilePic from "../../assets/profile.svg";
+// import { useTheme } from "../../context/ThemeContext";
+// import { UserContext } from "../../routes/UserContext";
+
+// export default function SideBar({ closeSidebar }) {
+//   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+//   const [isModulesOpen, setIsModulesOpen] = useState(false);
+//   const [isCopyTradingOpen, setIsCopyTradingOpen] = useState(false);
+//   const [isNetworkOpen, setIsNetworkOpen] = useState(false);
+
+//   const { theme, toggleTheme } = useTheme();
+//   const { user, logout } = useContext(UserContext);
+//   const navigate = useNavigate();
+
+//   const toggleSettings = () => setIsSettingsOpen((prev) => !prev);
+//   const toggleModules = () => setIsModulesOpen((prev) => !prev);
+//   const toggleCopyTrading = () => setIsCopyTradingOpen((prev) => !prev);
+//   const toggleNetwork = () => setIsNetworkOpen((prev) => !prev);
+
+//   const topLinks = [
+//     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
+//     { to: "/dashboard/users", label: "User Packages", icon: <Users size={18} /> },
+//     { to: "/dashboard/transactions", label: "Transactions", icon: <CreditCard size={18} /> },
+//     { to: "/dashboard/part", label: "Partners", icon: <Handshake size={18} /> },
+//     { to: "/dashboard/leaderboard", label: "LeaderBoard", icon: <LeafIcon size={18} /> },
+//     { to: "/dashboard/retirement-blog", label: "Retirement Bloq", icon: <BookOpen size={18} /> },
+//   ];
+
+//   const moduleSubLinks = [
+//     { to: "/dashboard/modules/compound-calculator", label: "Compound Calculator" },
+//     { to: "/dashboard/modules/forex-lot-size", label: "Forex Lot Size Calculator" },
+//     { to: "/dashboard/academy/market-overview", label: "MarkeOverview" },
+//   ];
+
+//   const academySubLinks = [
+//     { to: "/dashboard/academy/courses", label: "Courses module" },
+//     { to: "/dashboard/academy/book-a-call", label: "Book A Call" },
+    
+//   ];
+
+//   const settingsSubLinks = [
+//     { to: "/dashboard/settings/profile", label: "Profile Settings" },
+//   ];
+
+//   const bottomLinks = [
+//     { to: "/dashboard/support", label: "Support", icon: <LifeBuoy size={18} /> },
+//   ];
+
+//   return (
+//     <motion.aside
+//       initial={{ x: -300 }}
+//       animate={{ x: 0 }}
+//       exit={{ x: -300 }}
+//       transition={{ duration: 0.3, ease: "easeInOut" }}
+//       className="w-72 bg-white dark:bg-neutral-900 dark:text-white shadow-md h-screen p-4 flex flex-col justify-between overflow-y-auto overflow-x-hidden"
+//     >
+//       <div>
+//         {/* Logo & Close Button */}
+//         <div className="flex justify-between items-center mb-4 md:hidden">
+//           <img src={logoimg} alt="Velox Logo" className="w-20 object-contain" />
+//           <button onClick={closeSidebar} className="text-gray-600 dark:text-gray-300 hover:text-red-500 transition">
+//             <X size={22} />
+//           </button>
+//         </div>
+
+//         <div className="hidden md:flex justify-start mb-6">
+//           <img src={logoimg} alt="Velox Logo" className="w-20 object-contain" />
+//         </div>
+
+//         {/* Search */}
+//         <div className="relative mb-6">
+//           <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+//           <input
+//             type="text"
+//             placeholder="Search..."
+//             className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-white rounded-[6px] pl-10 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00A991]"
+//           />
+//         </div>
+
+//         {/* Theme Toggle (Mobile) */}
+//         <div className="flex md:hidden justify-between items-center px-3 mb-6">
+//           <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+//             {theme === "dark" ? "Dark Mode" : "Light Mode"}
+//           </span>
+//           <button
+//             onClick={toggleTheme}
+//             className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+//           >
+//             {theme === "dark" ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-gray-700" />}
+//           </button>
+//         </div>
+
+//         {/* Navigation */}
+//         <nav className="space-y-2 p-r-5">
+//           {topLinks.map((link) => (
+//             <NavLink
+//               key={link.to}
+//               to={link.to}
+//               onClick={closeSidebar}
+//               className={({ isActive }) =>
+//                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+//                   isActive
+//                     ? "bg-[#FFECE5] text-black"
+//                     : "text-gray-600 dark:text-white hover:bg-[#FFECE5] dark:hover:bg-gray-800"
+//                 }`
+//               }
+//             >
+//               {link.icon}
+//               {link.label}
+//             </NavLink>
+//           ))}
+
+//           {/* Copy Trading */}
+//           <DropdownSection
+//             title="Copy Trading"
+//             icon={<Copy size={18} />}
+//             isOpen={isCopyTradingOpen}
+//             toggle={toggleCopyTrading}
+//             items={[
+//               { to: "/dashboard/copy-trading", label: "Configure Copy Trading" },
+//             ]}
+//             closeSidebar={closeSidebar}
+//           />
+
+//           {/* Network */}
+//           <DropdownSection
+//             title="Network"
+//             icon={<Network size={18} />}
+//             isOpen={isNetworkOpen}
+//             toggle={toggleNetwork}
+//             items={[
+//               "Fast Start",
+//               "Unilevel",
+//               "Matrix",
+//               "Leadership Bonus",
+//               "Personal Matching Bonus",
+//               "VeloxCapitalSignals"
+//             ].map((item) => ({
+//               to: `/dashboard/network/${item.toLowerCase().replace(/ /g, "-")}`,
+//               label: item,
+//             }))}
+//             closeSidebar={closeSidebar}
+//           />
+
+//           {/* Modules (with Academy under it) */}
+//           <DropdownSection
+//             title="Academy "
+//             icon={<Calculator size={18} />}
+//             isOpen={isModulesOpen}
+//             toggle={toggleModules}
+//             items={[...moduleSubLinks, ...academySubLinks]} // academy now inside modules
+//             closeSidebar={closeSidebar}
+//           />
+
+//           {/* Security & Settings (only Profile Settings) */}
+//           <DropdownSection
+//             title="Security & Settings"
+//             icon={<Shield size={18} />}
+//             isOpen={isSettingsOpen}
+//             toggle={toggleSettings}
+//             items={settingsSubLinks}
+//             closeSidebar={closeSidebar}
+//           />
+//         </nav>
+
+//         <hr className="mt-5 border-gray-200 dark:border-gray-700" />
+//       </div>
+
+//       {/* Bottom Section */}
+//       <div className="space-y-4 mb-20">
+//         {bottomLinks.map((link) => (
+//           <NavLink
+//             key={link.to}
+//             to={link.to}
+//             onClick={closeSidebar}
+//             className={({ isActive }) =>
+//               `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+//                 isActive
+//                   ? "bg-gray-200 text-black"
+//                   : "text-gray-600 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
+//               }`
+//             }
+//           >
+//             {link.icon}
+//             {link.label}
+//           </NavLink>
+//         ))}
+
+//         {/* Profile & Logout */}
+//         <div className="flex items-center  justify-between dark:bg-gray-800 rounded-lg py-2 mr-5">
+//           <div className="flex items-center gap-3">
+//             <img
+//               src={user?.profilePic || profilePic}
+//               alt={user?.name || "User"}
+//               className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+//             />
+//             <div className="">
+//               <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{user?.name || "User"}</p>
+//               <p className="text-xs text-start text-gray-500 dark:text-gray-400">{user?.email || "No email"}</p>
+//             </div>
+//           </div>
+//           <button
+//             onClick={() => {
+//               logout();
+//               navigate("/login");
+//             }}
+//             className="text-red-500 ml-5 hover:text-red-500 transition"
+//           >
+//             <LogOut size={18} />
+//           </button>
+//         </div>
+//       </div>
+//     </motion.aside>
+//   );
+// }
+
+// // Reusable Dropdown Component
+// const DropdownSection = ({ title, icon, isOpen, toggle, items, closeSidebar }) => (
+//   <div>
+//     <button
+//       onClick={toggle}
+//       className="flex justify-between items-center w-full px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-white hover:bg-[#FFECE5] dark:hover:bg-gray-800 transition"
+//     >
+//       <div className="flex items-center gap-3">
+//         {icon}
+//         <span>{title}</span>
+//       </div>
+//       {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+//     </button>
+
+//     <AnimatePresence>
+//       {isOpen && (
+//         <motion.div
+//           initial={{ height: 0, opacity: 0 }}
+//           animate={{ height: "auto", opacity: 1 }}
+//           exit={{ height: 0, opacity: 0 }}
+//           transition={{ duration: 0.3 }}
+//           className="ml-8 mt-2 space-y-2 border-l border-gray-200 dark:border-gray-700 pl-3"
+//         >
+//           {items.map((item) => (
+//             <NavLink
+//               key={item.to}
+//               to={item.to}
+//               onClick={closeSidebar}
+//               className={({ isActive }) =>
+//                 `block px-2 py-1 rounded-md text-sm transition-all ${
+//                   isActive
+//                     ? "bg-[#FFECE5] text-black"
+//                     : "text-gray-500 dark:text-gray-300 hover:text-black dark:hover:text-white"
+//                 }`
+//               }
+//             >
+//               {item.label}
+//             </NavLink>
+//           ))}
+//         </motion.div>
+//       )}
+//     </AnimatePresence>
+//   </div>
+// );
+
+
+
+
+
+
+
 import React, { useState, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -1368,6 +1660,7 @@ export default function SideBar({ closeSidebar }) {
   const toggleCopyTrading = () => setIsCopyTradingOpen((prev) => !prev);
   const toggleNetwork = () => setIsNetworkOpen((prev) => !prev);
 
+  /* ------------------- TOP LINKS ------------------- */
   const topLinks = [
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
     { to: "/dashboard/users", label: "User Packages", icon: <Users size={18} /> },
@@ -1377,21 +1670,38 @@ export default function SideBar({ closeSidebar }) {
     { to: "/dashboard/retirement-blog", label: "Retirement Bloq", icon: <BookOpen size={18} /> },
   ];
 
-  const moduleSubLinks = [
+  /* ------------------- COPY TRADING ------------------- */
+  const copyTradingItems = [
+    { to: "/dashboard/copy-trading", label: "Configure Copy Trading" },
+  ];
+
+  /* ------------------- NETWORK ------------------- */
+  const networkItems = [
+    { to: "/dashboard/network/fast-start", label: "Fast Start" },
+    { to: "/dashboard/network/unilevel", label: "Unilevel" },
+    { to: "/dashboard/network/matrix", label: "Matrix" },
+    { to: "/dashboard/network/leadership-bonus", label: "Leadership Bonus" },
+    { to: "/dashboard/network/personal-matching-bonus", label: "Personal Matching Bonus" },
+    { to: "/dashboard/network/veloxcapitalsignals", label: "VeloxCapitalSignals" },
+  ];
+
+  /* ------------------- ACADEMY (Modules + Academy) ------------------- */
+  const academyItems = [
+    // Modules
     { to: "/dashboard/modules/compound-calculator", label: "Compound Calculator" },
     { to: "/dashboard/modules/forex-lot-size", label: "Forex Lot Size Calculator" },
     { to: "/dashboard/academy/market-overview", label: "MarkeOverview" },
-  ];
-
-  const academySubLinks = [
+    // Academy
     { to: "/dashboard/academy/courses", label: "Courses module" },
-    
+    { to: "/dashboard/academy/book-a-call", label: "Book A Call" },
   ];
 
-  const settingsSubLinks = [
+  /* ------------------- SETTINGS ------------------- */
+  const settingsItems = [
     { to: "/dashboard/settings/profile", label: "Profile Settings" },
   ];
 
+  /* ------------------- BOTTOM LINKS ------------------- */
   const bottomLinks = [
     { to: "/dashboard/support", label: "Support", icon: <LifeBuoy size={18} /> },
   ];
@@ -1408,7 +1718,10 @@ export default function SideBar({ closeSidebar }) {
         {/* Logo & Close Button */}
         <div className="flex justify-between items-center mb-4 md:hidden">
           <img src={logoimg} alt="Velox Logo" className="w-20 object-contain" />
-          <button onClick={closeSidebar} className="text-gray-600 dark:text-gray-300 hover:text-red-500 transition">
+          <button
+            onClick={closeSidebar}
+            className="text-gray-600 dark:text-gray-300 hover:text-red-500 transition"
+          >
             <X size={22} />
           </button>
         </div>
@@ -1436,12 +1749,17 @@ export default function SideBar({ closeSidebar }) {
             onClick={toggleTheme}
             className="p-2 rounded-md bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
           >
-            {theme === "dark" ? <Sun size={18} className="text-yellow-400" /> : <Moon size={18} className="text-gray-700" />}
+            {theme === "dark" ? (
+              <Sun size={18} className="text-yellow-400" />
+            ) : (
+              <Moon size={18} className="text-gray-700" />
+            )}
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="space-y-2 p-r-5">
+        <nav className="space-y-2 pr-5">
+          {/* Top Links */}
           {topLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -1466,9 +1784,7 @@ export default function SideBar({ closeSidebar }) {
             icon={<Copy size={18} />}
             isOpen={isCopyTradingOpen}
             toggle={toggleCopyTrading}
-            items={[
-              { to: "/dashboard/copy-trading", label: "Configure Copy Trading" },
-            ]}
+            items={copyTradingItems}
             closeSidebar={closeSidebar}
           />
 
@@ -1478,37 +1794,27 @@ export default function SideBar({ closeSidebar }) {
             icon={<Network size={18} />}
             isOpen={isNetworkOpen}
             toggle={toggleNetwork}
-            items={[
-              "Fast Start",
-              "Unilevel",
-              "Matrix",
-              "Leadership Bonus",
-              "Personal Matching Bonus",
-              "VeloxCapitalSignals"
-            ].map((item) => ({
-              to: `/dashboard/network/${item.toLowerCase().replace(/ /g, "-")}`,
-              label: item,
-            }))}
+            items={networkItems}
             closeSidebar={closeSidebar}
           />
 
-          {/* Modules (with Academy under it) */}
+          {/* Academy (Modules + Academy) */}
           <DropdownSection
-            title="Academy "
+            title="Academy"
             icon={<Calculator size={18} />}
             isOpen={isModulesOpen}
             toggle={toggleModules}
-            items={[...moduleSubLinks, ...academySubLinks]} // academy now inside modules
+            items={academyItems}
             closeSidebar={closeSidebar}
           />
 
-          {/* Security & Settings (only Profile Settings) */}
+          {/* Security & Settings */}
           <DropdownSection
             title="Security & Settings"
             icon={<Shield size={18} />}
             isOpen={isSettingsOpen}
             toggle={toggleSettings}
-            items={settingsSubLinks}
+            items={settingsItems}
             closeSidebar={closeSidebar}
           />
         </nav>
@@ -1537,16 +1843,20 @@ export default function SideBar({ closeSidebar }) {
         ))}
 
         {/* Profile & Logout */}
-        <div className="flex items-center  justify-between dark:bg-gray-800 rounded-lg py-2 mr-5">
+        <div className="flex items-center justify-between dark:bg-gray-800 rounded-lg py-2 mr-5">
           <div className="flex items-center gap-3">
             <img
               src={user?.profilePic || profilePic}
               alt={user?.name || "User"}
               className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-700"
             />
-            <div className="">
-              <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{user?.name || "User"}</p>
-              <p className="text-xs text-start text-gray-500 dark:text-gray-400">{user?.email || "No email"}</p>
+            <div>
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                {user?.name || "User"}
+              </p>
+              <p className="text-xs text-start text-gray-500 dark:text-gray-400">
+                {user?.email || "No email"}
+              </p>
             </div>
           </div>
           <button
@@ -1564,7 +1874,7 @@ export default function SideBar({ closeSidebar }) {
   );
 }
 
-// Reusable Dropdown Component
+/* ------------------- REUSABLE DROPDOWN ------------------- */
 const DropdownSection = ({ title, icon, isOpen, toggle, items, closeSidebar }) => (
   <div>
     <button

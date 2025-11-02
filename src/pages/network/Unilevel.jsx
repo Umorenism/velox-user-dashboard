@@ -1113,15 +1113,7 @@
 
 
 
-/* ──────────────────────────────────────────────────────────────
-   Unilevel – 100% real data, 4‑node‑per‑row tree, same UI
-   ────────────────────────────────────────────────────────────── */
-/* ──────────────────────────────────────────────────────────────
-   Unilevel – 100% real data, ORIGINAL TREE preserved
-   ────────────────────────────────────────────────────────────── */
-/* ──────────────────────────────────────────────────────────────
-   Unilevel – 100% real data, original tree, 4 nodes per row
-   ────────────────────────────────────────────────────────────── */
+
 import React, { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
@@ -1136,8 +1128,9 @@ import {
 } from "recharts";
 import Tree from "react-d3-tree";
 import { getUserProfile } from "../../api/authApi";
-import { AlertCircle, Users, DollarSign, TrendingUp } from "lucide-react";
+import { AlertCircle, Users, DollarSign } from "lucide-react";
 
+/* ---- Reusable Card ---- */
 const Card = ({ title, children }) => (
   <div className="bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 rounded-2xl shadow-sm p-5">
     {title && <h3 className="font-semibold text-[#00A991] mb-3">{title}</h3>}
@@ -1152,7 +1145,7 @@ const Unilevel = () => {
 
   /* ────── FETCH PROFILE ────── */
   useEffect(() => {
-    const token = localStorage.getItem("authToken") || "";
+    const token = localStorage.getItem("token"); // ✅ Use correct token key
     if (!token) {
       setError("No auth token found. Please log in.");
       setLoading(false);
@@ -1163,19 +1156,7 @@ const Unilevel = () => {
       .then((data) => {
         setUserData(data);
         setLoading(false);
-
-        /* ────── CONSOLE LOGS ────── */
-        console.log("%c=== RAW PROFILE PAYLOAD ===", "font-weight:bold; color:#00A991");
-        console.log(data);
-
-        console.log("%c=== unilevelBonusPerformance ===", "font-weight:bold; color:#10B981");
-        console.log(data.unilevelBonusPerformance);
-
-        console.log("%c=== bonusBreakdown ===", "font-weight:bold; color:#34D399");
-        console.log(data.bonusBreakdown);
-
-        console.log("%c=== bonusHistory ===", "font-weight:bold; color:#FACC15");
-        console.log(data.bonusHistory);
+        console.log("%cUser Profile:", "color:#00A991;font-weight:bold", data);
       })
       .catch((err) => {
         setError(err.message || "Failed to load profile.");
@@ -1183,77 +1164,11 @@ const Unilevel = () => {
       });
   }, []);
 
-  /* ────── DERIVED DATA ────── */
-  if (!userData) return null;
-
-  const uni = userData.unilevelBonusPerformance || {};
-  const bonusBreakdown = userData.bonusBreakdown || {};
-
-  /* ---- Unilevel levels ---- */
-  const unilevelLevels = Object.keys(uni)
-    .filter((k) => k.startsWith("level"))
-    .map((k) => {
-      const lvl = uni[k];
-      return {
-        level: parseInt(k.replace("level", ""), 10),
-        members: lvl.members ?? 0,
-        activeMembers: lvl.activeMembers ?? 0,
-        totalDeposit: lvl.totalDeposit ?? 0,
-        bonusEarned: lvl.bonusEarned ?? 0,
-      };
-    })
-    .sort((a, b) => a.level - b.level);
-
-  console.log("%c=== unilevelLevels (derived) ===", "font-weight:bold; color:#F59E0B");
-  console.log(unilevelLevels);
-
-  /* ---- Bonus history (last 7) ---- */
-  const bonusHistory = (userData.bonusHistory ?? [])
-    .slice(0, 7)
-    .map((h) => ({
-      date: new Date(h.date).toLocaleDateString(),
-      type: h.type?.replace(/_/g, " ") ?? "UNKNOWN",
-      amount: h.amount ?? 0,
-      status: h.status ?? "pending",
-    }));
-
-  console.log("%c=== bonusHistory (derived) ===", "font-weight:bold; color:#EF4444");
-  console.log(bonusHistory);
-
-  /* ---- Tree data (original UI) ---- */
-  const treeData = {
-    name: userData.name,
-    attributes: { rank: userData.rank },
-    children: [
-      {
-        name: userData.referrer?.name || "No Upline",
-        children: unilevelLevels.map((lvl) => ({
-          name: `Level ${lvl.level} (${lvl.members} members)`,
-          attributes: { active: lvl.activeMembers, volume: `$${lvl.totalDeposit}` },
-        })),
-      },
-    ],
-  };
-
-  console.log("%c=== TREE DATA (for react-d3-tree) ===", "font-weight:bold; color:#8B5CF6");
-  console.log(JSON.parse(JSON.stringify(treeData)));
-
-  /* ---- Chart data ---- */
-  const barData = unilevelLevels.map((lvl) => ({
-    level: `L${lvl.level}`,
-    bonus: lvl.bonusEarned,
-  }));
-  const lineData = bonusHistory.map((h) => ({
-    date: h.date,
-    bonus: h.amount,
-  }));
-  const COLORS = ["#00A991", "#10B981", "#34D399"];
-
-  /* ────── RENDER ────── */
+  /* ────── HANDLE STATES ────── */
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]" />
         <span className="ml-3 text-lg text-gray-700">Loading Unilevel…</span>
       </div>
     );
@@ -1278,9 +1193,55 @@ const Unilevel = () => {
     );
   }
 
+  if (!userData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        <p>No user data found. Please log in again.</p>
+      </div>
+    );
+  }
+
+  /* ────── DERIVED DATA ────── */
+  const uni = userData?.unilevelBonusPerformance || {};
+  const bonusBreakdown = userData?.bonusBreakdown || {};
+  const bonusHistory = userData?.bonusHistory || [];
+
+  const unilevelLevels = Object.keys(uni).map((k) => {
+    const lvl = uni[k];
+    return {
+      level: parseInt(k.replace("level", ""), 10),
+      members: lvl.members ?? 0,
+      activeMembers: lvl.activeMembers ?? 0,
+      totalDeposit: lvl.totalDeposit ?? 0,
+      bonusEarned: lvl.bonusEarned ?? 0,
+    };
+  });
+
+  const treeData = {
+    name: userData.name,
+    attributes: { rank: userData.rank },
+    children: [
+      {
+        name: userData.referrer?.name || "No Upline",
+        children: unilevelLevels.map((lvl) => ({
+          name: `Level ${lvl.level} (${lvl.members} members)`,
+          attributes: { active: lvl.activeMembers, volume: `$${lvl.totalDeposit}` },
+        })),
+      },
+    ],
+  };
+
+  const lineData = bonusHistory.map((b) => ({
+    date: new Date(b.date).toLocaleDateString(),
+    bonus: b.amount,
+  }));
+
+  const COLORS = ["#00A991", "#10B981", "#34D399"];
+
+  /* ────── RENDER ────── */
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-      {/* ────── LEFT COLUMN ────── */}
+      {/* LEFT COLUMN */}
       <div className="space-y-6">
         <Card title="Total Unilevel Bonus">
           <div className="text-3xl font-bold text-gray-900 flex items-center">
@@ -1299,16 +1260,16 @@ const Unilevel = () => {
             </div>
             <div>
               <p className="text-gray-500">PGV</p>
-              <p className="font-semibold">${userData.groupVolume.toLocaleString()}</p>
+              <p className="font-semibold">
+                ${userData.groupVolume?.toLocaleString()}
+              </p>
             </div>
             <div>
-              <p className="text-gray-500">Global Bonus</p>
+              <p className="text-gray-500">Global Bonus %</p>
               <p className="font-semibold">
-                {(() => {
-                  const bonus = bonusBreakdown.unilevel_bonus ?? 0;
-                  const volume = userData.groupVolume ?? 0;
-                  return volume > 0 ? `${((bonus / volume) * 100).toFixed(1)}%` : "0.0%";
-                })()}
+                {userData.groupVolume > 0
+                  ? `${((bonusBreakdown.unilevel_bonus / userData.groupVolume) * 100).toFixed(1)}%`
+                  : "0.0%"}
               </p>
             </div>
           </div>
@@ -1316,13 +1277,13 @@ const Unilevel = () => {
 
         <Card title="Bonus by Level">
           <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={barData}>
+            <BarChart data={unilevelLevels}>
               <XAxis dataKey="level" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip formatter={(v) => `$${v}`} />
-              <Bar dataKey="bonus" radius={[6, 6, 0, 0]}>
-                {barData.map((e, i) => (
-                  <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
+              <Bar dataKey="bonusEarned" radius={[6, 6, 0, 0]}>
+                {unilevelLevels.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Bar>
             </BarChart>
@@ -1335,28 +1296,33 @@ const Unilevel = () => {
               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Line type="monotone" dataKey="bonus" stroke="#00A991" strokeWidth={3} dot={{ fill: "#00A991" }} />
+              <Line
+                type="monotone"
+                dataKey="bonus"
+                stroke="#00A991"
+                strokeWidth={3}
+                dot={{ fill: "#00A991" }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </Card>
       </div>
 
-      {/* ────── MIDDLE COLUMN ────── */}
+      {/* MIDDLE COLUMN */}
       <div className="space-y-6">
-        {/* ── ORIGINAL TREE + 4 NODES PER ROW ── */}
         <Card title="Network Structure">
-          <div className="h-[380px] w-full  rounded-lg overflow-hidden relative">
+          <div className="h-[380px] w-full rounded-lg overflow-hidden relative">
             {treeData.children?.[0]?.children?.length ? (
               <Tree
                 data={treeData}
-                 translate={{ x: 180, y: 190 }}
+                translate={{ x: 180, y: 190 }}
                 zoom={0.7}
                 zoomable
                 collapsible={false}
                 orientation="vertical"
                 pathFunc="step"
                 separation={{ siblings: 0.9, nonSiblings: 1.3 }}
-                nodeSize={{ x: 190, y: 100 }}   // 4 nodes per row
+                nodeSize={{ x: 190, y: 100 }}
                 styles={{
                   links: { stroke: "#00A991", strokeWidth: 2 },
                   nodes: {
@@ -1389,86 +1355,84 @@ const Unilevel = () => {
         </Card>
       </div>
 
-      {/* ────── RIGHT COLUMN ────── */}
+      {/* RIGHT COLUMN */}
       <div className="space-y-6">
         <Card title="Bonus Breakdown">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-gray-100">
-              <thead className="bg-gradient-to-r from-[#00A991] to-[#10B981] text-white">
-                <tr>
-                  <th className="p-2 text-left">Level</th>
-                  <th className="p-2 text-left">Members</th>
-                  <th className="p-2 text-left">Active</th>
-                  <th className="p-2 text-left">Volume</th>
-                  <th className="p-2 text-left">Bonus</th>
-                </tr>
-              </thead>
-              <tbody>
-                {unilevelLevels.map((lvl) => (
-                  <tr key={lvl.level} className="border-t hover:bg-gray-50">
-                    <td className="p-2 font-medium">Level {lvl.level}</td>
-                    <td className="p-2">{lvl.members}</td>
-                    <td className="p-2 text-green-600">{lvl.activeMembers}</td>
-                    <td className="p-2">${lvl.totalDeposit.toLocaleString()}</td>
-                    <td className="p-2 font-semibold text-[#00A991]">
-                      ${lvl.bonusEarned.toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
-                <tr className="border-t font-bold bg-yellow-50">
-                  <td className="p-2" colSpan={4}>
-                    Total Unilevel Bonus
-                  </td>
-                  <td className="p-2 text-[#00A991]">
-                    ${userData.totalUnilevelBonus.toLocaleString()}
+          <table className="w-full text-sm border border-gray-100">
+            <thead className="bg-gradient-to-r from-[#00A991] to-[#10B981] text-white">
+              <tr>
+                <th className="p-2 text-left">Level</th>
+                <th className="p-2 text-left">Members</th>
+                <th className="p-2 text-left">Active</th>
+                <th className="p-2 text-left">Volume</th>
+                <th className="p-2 text-left">Bonus</th>
+              </tr>
+            </thead>
+            <tbody>
+              {unilevelLevels.map((lvl) => (
+                <tr key={lvl.level} className="border-t hover:bg-gray-50">
+                  <td className="p-2 font-medium">Level {lvl.level}</td>
+                  <td className="p-2">{lvl.members}</td>
+                  <td className="p-2 text-green-600">{lvl.activeMembers}</td>
+                  <td className="p-2">${lvl.totalDeposit.toLocaleString()}</td>
+                  <td className="p-2 font-semibold text-[#00A991]">
+                    ${lvl.bonusEarned.toLocaleString()}
                   </td>
                 </tr>
-              </tbody>
-            </table>
-          </div>
+              ))}
+              <tr className="border-t font-bold bg-yellow-50">
+                <td className="p-2" colSpan={4}>
+                  Total Unilevel Bonus
+                </td>
+                <td className="p-2 text-[#00A991]">
+                  ${userData.totalUnilevelBonus.toLocaleString()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </Card>
 
         <Card title="Recent Bonus History">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-gray-100">
-              <thead className="bg-gray-50 text-gray-700">
-                <tr>
-                  <th className="p-2 text-left">Date</th>
-                  <th className="p-2 text-left">Type</th>
-                  <th className="p-2 text-left">Amount</th>
-                  <th className="p-2 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {bonusHistory.length ? (
-                  bonusHistory.map((h, i) => (
-                    <tr key={i} className="border-t">
-                      <td className="p-2 text-xs">{h.date}</td>
-                      <td className="p-2">{h.type}</td>
-                      <td className="p-2 font-medium">${h.amount}</td>
-                      <td className="p-2">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            h.status === "approved"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-yellow-100 text-yellow-800"
-                          }`}
-                        >
-                          {h.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="p-4 text-center text-gray-500">
-                      No bonus history
+          <table className="w-full text-sm border border-gray-100">
+            <thead className="bg-gray-50 text-gray-700">
+              <tr>
+                <th className="p-2 text-left">Date</th>
+                <th className="p-2 text-left">Type</th>
+                <th className="p-2 text-left">Amount</th>
+                <th className="p-2 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bonusHistory.length ? (
+                bonusHistory.map((h, i) => (
+                  <tr key={i} className="border-t">
+                    <td className="p-2 text-xs">
+                      {new Date(h.date).toLocaleDateString()}
+                    </td>
+                    <td className="p-2">{h.type}</td>
+                    <td className="p-2 font-medium">${h.amount}</td>
+                    <td className="p-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          h.status === "approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {h.status}
+                      </span>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="p-4 text-center text-gray-500">
+                    No bonus history
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </Card>
       </div>
     </div>
@@ -1476,3 +1440,367 @@ const Unilevel = () => {
 };
 
 export default Unilevel;
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState } from "react";
+// import {
+//   ResponsiveContainer,
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   LineChart,
+//   Line,
+//   Cell,
+// } from "recharts";
+// import Tree from "react-d3-tree";
+// import { getUserProfile } from "../../api/authApi";
+// import { AlertCircle, Users, DollarSign, TrendingUp } from "lucide-react";
+
+// const Card = ({ title, children }) => (
+//   <div className="bg-white dark:bg-neutral-900 border border-gray-100 dark:border-neutral-800 rounded-2xl shadow-sm p-5">
+//     {title && <h3 className="font-semibold text-[#00A991] mb-3">{title}</h3>}
+//     {children}
+//   </div>
+// );
+
+// const Unilevel = () => {
+//   const [userData, setUserData] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   /* ────── FETCH PROFILE ────── */
+//  useEffect(() => {
+//   const token = localStorage.getItem("authToken");
+
+//   if (!token) {
+//     setError("Session expired. Please log in again.");
+//     setLoading(false);
+//     return;
+//   }
+
+//   getUserProfile(token)
+//     .then((data) => {
+//       setUserData(data);
+//       setLoading(false);
+//     })
+//     .catch((err) => {
+//       console.error("Profile fetch error:", err);
+//       if (err.response?.status === 401) {
+//         localStorage.removeItem("authToken");
+//         setError("Session expired. Redirecting to login...");
+//         setTimeout(() => {
+//           window.location.href = "/login";
+//         }, 2000);
+//       } else {
+//         setError(err.message || "Failed to load profile.");
+//       }
+//       setLoading(false);
+//     });
+// }, []);
+
+//   /* ────── RENDER ────── */
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+//         <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]"></div>
+//         <span className="ml-3 text-lg text-gray-700">Loading Unilevel…</span>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+//         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
+//           <AlertCircle className="h-10 w-10 text-red-600 mx-auto mb-3" />
+//           <p className="text-red-800 font-medium">{error}</p>
+//           {error.includes("Unauthorized") && (
+//             <button
+//               onClick={() => (window.location.href = "/login")}
+//               className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+//             >
+//               Go to Login
+//             </button>
+//           )}
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // REMOVED: if (!userData) return null;
+//   // → Now we safely proceed knowing userData exists
+
+//   /* ────── DERIVED DATA ────── */
+//   const uni = userData.unilevelBonusPerformance || {};
+//   const bonusBreakdown = userData.bonusBreakdown || {};
+
+//   /* ---- Unilevel levels ---- */
+//   const unilevelLevels = Object.keys(uni)
+//     .filter((k) => k.startsWith("level"))
+//     .map((k) => {
+//       const lvl = uni[k];
+//       return {
+//         level: parseInt(k.replace("level", ""), 10),
+//         members: lvl.members ?? 0,
+//         activeMembers: lvl.activeMembers ?? 0,
+//         totalDeposit: lvl.totalDeposit ?? 0,
+//         bonusEarned: lvl.bonusEarned ?? 0,
+//       };
+//     })
+//     .sort((a, b) => a.level - b.level);
+
+//   console.log("%c=== unilevelLevels (derived) ===", "font-weight:bold; color:#F59E0B");
+//   console.log(unilevelLevels);
+
+//   /* ---- Bonus history (last 7) ---- */
+//   const bonusHistory = (userData.bonusHistory ?? [])
+//     .slice(0, 7)
+//     .map((h) => ({
+//       date: new Date(h.date).toLocaleDateString(),
+//       type: h.type?.replace(/_/g, " ") ?? "UNKNOWN",
+//       amount: h.amount ?? 0,
+//       status: h.status ?? "pending",
+//     }));
+
+//   console.log("%c=== bonusHistory (derived) ===", "font-weight:bold; color:#EF4444");
+//   console.log(bonusHistory);
+
+//   /* ---- Tree data (original UI) ---- */
+//   const treeData = {
+//     name: userData.name,
+//     attributes: { rank: userData.rank },
+//     children: [
+//       {
+//         name: userData.referrer?.name || "No Upline",
+//         children: unilevelLevels.map((lvl) => ({
+//           name: `Level ${lvl.level} (${lvl.members} members)`,
+//           attributes: { active: lvl.activeMembers, volume: `$${lvl.totalDeposit}` },
+//         })),
+//       },
+//     ],
+//   };
+
+//   console.log("%c=== TREE DATA (for react-d3-tree) ===", "font-weight:bold; color:#8B5CF6");
+//   console.log(JSON.parse(JSON.stringify(treeData)));
+
+//   /* ---- Chart data ---- */
+//   const barData = unilevelLevels.map((lvl) => ({
+//     level: `L${lvl.level}`,
+//     bonus: lvl.bonusEarned,
+//   }));
+//   const lineData = bonusHistory.map((h) => ({
+//     date: h.date,
+//     bonus: h.amount,
+//   }));
+//   const COLORS = ["#00A991", "#10B981", "#34D399"];
+
+//   /* ────── MAIN UI ────── */
+//   return (
+//     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+//       {/* ────── LEFT COLUMN ────── */}
+//       <div className="space-y-6">
+//         <Card title="Total Unilevel Bonus">
+//           <div className="text-3xl font-bold text-gray-900 flex items-center">
+//             <DollarSign className="h-8 w-8 text-[#00A991] mr-1" />
+//             ${userData.totalUnilevelBonus?.toLocaleString() ?? 0}
+//           </div>
+
+//           <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
+//             <div>
+//               <p className="text-gray-500">Rank</p>
+//               <p className="font-semibold capitalize">{userData.rank}</p>
+//             </div>
+//             <div>
+//               <p className="text-gray-500">PVP</p>
+//               <p className="font-semibold">${userData.personalVolume}</p>
+//             </div>
+//             <div>
+//               <p className="text-gray-500">PGV</p>
+//               <p className="font-semibold">${userData.groupVolume.toLocaleString()}</p>
+//             </div>
+//             <div>
+//               <p className="text-gray-500">Global Bonus</p>
+//               <p className="font-semibold">
+//                 {(() => {
+//                   const bonus = bonusBreakdown.unilevel_bonus ?? 0;
+//                   const volume = userData.groupVolume ?? 0;
+//                   return volume > 0 ? `${((bonus / volume) * 100).toFixed(1)}%` : "0.0%";
+//                 })()}
+//               </p>
+//             </div>
+//           </div>
+//         </Card>
+
+//         <Card title="Bonus by Level">
+//           <ResponsiveContainer width="100%" height={180}>
+//             <BarChart data={barData}>
+//               <XAxis dataKey="level" tick={{ fontSize: 12 }} />
+//               <YAxis tick={{ fontSize: 12 }} />
+//               <Tooltip formatter={(v) => `$${v}`} />
+//               <Bar dataKey="bonus" radius={[6, 6, 0, 0]}>
+//                 {barData.map((e, i) => (
+//                   <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
+//                 ))}
+//               </Bar>
+//             </BarChart>
+//           </ResponsiveContainer>
+//         </Card>
+
+//         <Card title="Weekly ROI Trend">
+//           <ResponsiveContainer width="100%" height={180}>
+//             <LineChart data={lineData}>
+//               <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+//               <YAxis tick={{ fontSize: 11 }} />
+//               <Tooltip />
+//               <Line type="monotone" dataKey="bonus" stroke="#00A991" strokeWidth={3} dot={{ fill: "#00A991" }} />
+//             </LineChart>
+//           </ResponsiveContainer>
+//         </Card>
+//       </div>
+
+//       {/* ────── MIDDLE COLUMN ────── */}
+//       <div className="space-y-6">
+//         {/* ── ORIGINAL TREE + 4 NODES PER ROW ── */}
+//         <Card title="Network Structure">
+//           <div className="h-[380px] w-full rounded-lg overflow-hidden relative">
+//             {treeData.children?.[0]?.children?.length ? (
+//               <Tree
+//                 data={treeData}
+//                 translate={{ x: 180, y: 190 }}
+//                 zoom={0.7}
+//                 zoomable
+//                 collapsible={false}
+//                 orientation="vertical"
+//                 pathFunc="step"
+//                 separation={{ siblings: 0.9, nonSiblings: 1.3 }}
+//                 nodeSize={{ x: 190, y: 100 }}
+//                 styles={{
+//                   links: { stroke: "#00A991", strokeWidth: 2 },
+//                   nodes: {
+//                     node: {
+//                       circle: { fill: "#00A991", r: 11 },
+//                       name: { fill: "#111", fontWeight: "600", fontSize: 13 },
+//                     },
+//                     leafNode: { circle: { fill: "#34D399" } },
+//                   },
+//                 }}
+//               />
+//             ) : (
+//               <div className="flex flex-col items-center justify-center h-full text-gray-500">
+//                 <Users className="h-10 w-10 mb-2 text-gray-300" />
+//                 <p className="text-sm">No downline data</p>
+//               </div>
+//             )}
+//           </div>
+//         </Card>
+
+//         <Card title="Bonus Performance">
+//           <ResponsiveContainer width="100%" height={180}>
+//             <BarChart data={unilevelLevels}>
+//               <XAxis dataKey="level" tickFormatter={(v) => `L${v}`} />
+//               <YAxis />
+//               <Tooltip formatter={(v) => `$${v.toLocaleString()}`} />
+//               <Bar dataKey="totalDeposit" fill="#10B981" radius={[6, 6, 0, 0]} />
+//             </BarChart>
+//           </ResponsiveContainer>
+//         </Card>
+//       </div>
+
+//       {/* ────── RIGHT COLUMN ────── */}
+//       <div className="space-y-6">
+//         <Card title="Bonus Breakdown">
+//           <div className="overflow-x-auto">
+//             <table className="w-full text-sm border border-gray-100">
+//               <thead className="bg-gradient-to-r from-[#00A991] to-[#10B981] text-white">
+//                 <tr>
+//                   <th className="p-2 text-left">Level</th>
+//                   <th className="p-2 text-left">Members</th>
+//                   <th className="p-2 text-left">Active</th>
+//                   <th className="p-2 text-left">Volume</th>
+//                   <th className="p-2 text-left">Bonus</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {unilevelLevels.map((lvl) => (
+//                   <tr key={lvl.level} className="border-t hover:bg-gray-50">
+//                     <td className="p-2 font-medium">Level {lvl.level}</td>
+//                     <td className="p-2">{lvl.members}</td>
+//                     <td className="p-2 text-green-600">{lvl.activeMembers}</td>
+//                     <td className="p-2">${lvl.totalDeposit.toLocaleString()}</td>
+//                     <td className="p-2 font-semibold text-[#00A991]">
+//                       ${lvl.bonusEarned.toLocaleString()}
+//                     </td>
+//                   </tr>
+//                 ))}
+//                 <tr className="border-t font-bold bg-yellow-50">
+//                   <td className="p-2" colSpan={4}>
+//                     Total Unilevel Bonus
+//                   </td>
+//                   <td className="p-2 text-[#00A991]">
+//                     ${userData.totalUnilevelBonus.toLocaleString()}
+//                   </td>
+//                 </tr>
+//               </tbody>
+//             </table>
+//           </div>
+//         </Card>
+
+//         <Card title="Recent Bonus History">
+//           <div className="overflow-x-auto">
+//             <table className="w-full text-sm border border-gray-100">
+//               <thead className="bg-gray-50 text-gray-700">
+//                 <tr>
+//                   <th className="p-2 text-left">Date</th>
+//                   <th className="p-2 text-left">Type</th>
+//                   <th className="p-2 text-left">Amount</th>
+//                   <th className="p-2 text-left">Status</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {bonusHistory.length ? (
+//                   bonusHistory.map((h, i) => (
+//                     <tr key={i} className="border-t">
+//                       <td className="p-2 text-xs">{h.date}</td>
+//                       <td className="p-2">{h.type}</td>
+//                       <td className="p-2 font-medium">${h.amount}</td>
+//                       <td className="p-2">
+//                         <span
+//                           className={`px-2 py-1 rounded-full text-xs font-medium ${
+//                             h.status === "approved"
+//                               ? "bg-green-100 text-green-800"
+//                               : "bg-yellow-100 text-yellow-800"
+//                           }`}
+//                         >
+//                           {h.status}
+//                         </span>
+//                       </td>
+//                     </tr>
+//                   ))
+//                 ) : (
+//                   <tr>
+//                     <td colSpan={4} className="p-4 text-center text-gray-500">
+//                       No bonus history
+//                     </td>
+//                   </tr>
+//                 )}
+//               </tbody>
+//             </table>
+//           </div>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Unilevel;
+
+

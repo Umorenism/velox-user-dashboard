@@ -1534,6 +1534,271 @@
 
 
 
+// import React, { useState, useEffect, useRef } from "react";
+// import { motion } from "framer-motion";
+// import {
+//   Play,
+//   Lock,
+//   CheckCircle,
+//   AlertCircle,
+//   Volume2,
+//   VolumeX,
+// } from "lucide-react";
+// import {apiClient} from "../../../api/apiClient";
+// import { getUserPackages } from "../../../api/userPackageApi";
+// import { useNavigate } from "react-router-dom";
+
+// export default function Course() {
+//   const [courses, setCourses] = useState([]);
+//   const [selectedCourse, setSelectedCourse] = useState(null);
+//   const [progress, setProgress] = useState({ percent: 0, completed: 0, total: 0 });
+//   const [completedVideos, setCompletedVideos] = useState(new Set());
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+//   const [userPackages, setUserPackages] = useState([]);
+//   const [volume, setVolume] = useState(0.8); // ✅ Default volume at 80%
+//   const [isMuted, setIsMuted] = useState(false);
+//   const videoRef = useRef(null);
+//   const navigate = useNavigate();
+
+
+//   // ✅ Fetch user packages and courses
+//   useEffect(() => {
+//     const init = async () => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+
+//         const userPackages = await getUserPackages();
+//         setUserPackages(userPackages);
+
+//         if (!userPackages || userPackages.length === 0) {
+//           setError("You currently have no active packages. Please buy a package to access courses.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         const res = await apiClient.get("/api/users/training/courses");
+//         const data = res.data;
+
+//         if (!Array.isArray(data) || data.length === 0) {
+//           setError("No courses available at the moment.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         const accessibleCourses = data.filter(course =>
+//           userPackages.some(pkg => pkg.level >= (course.requiredLevel || 1))
+//         );
+
+//         if (accessibleCourses.length === 0) {
+//           setError("Your current package does not grant access to any courses. Please upgrade your package.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         setCourses(accessibleCourses);
+//         const first = accessibleCourses.find(c => c.isActive) || accessibleCourses[0];
+//         setSelectedCourse(first);
+//         setProgress(first.progress || { percent: 0, completed: 0, total: 0 });
+
+//         const completed = new Set();
+//         first.videos?.forEach(v => {
+//           if (v.completed) completed.add(v._id);
+//         });
+//         setCompletedVideos(completed);
+//       } catch (err) {
+//         console.error("Failed to load data:", err);
+//         setError("Failed to load data. Please try again later.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     init();
+//   }, []);
+
+//   // ✅ Volume handler
+//   const handleVolumeChange = (e) => {
+//     const newVolume = parseFloat(e.target.value);
+//     setVolume(newVolume);
+//     if (videoRef.current) videoRef.current.volume = newVolume;
+//     if (newVolume > 0) setIsMuted(false);
+//   };
+
+//   const toggleMute = () => {
+//     setIsMuted(!isMuted);
+//     if (videoRef.current) videoRef.current.muted = !isMuted;
+//   };
+
+//   // ✅ Handle video completion
+//   const handleVideoEnd = (videoId) => {
+//     if (!completedVideos.has(videoId)) {
+//       const updated = new Set(completedVideos);
+//       updated.add(videoId);
+//       setCompletedVideos(updated);
+//       setProgress(prev => ({
+//         ...prev,
+//         completed: prev.completed + 1,
+//         percent: Math.min(((prev.completed + 1) / prev.total) * 100, 100),
+//       }));
+//     }
+//   };
+
+//   if (loading)
+//     return (
+//       <div className="flex items-center justify-center h-screen bg-white">
+//         <p className="text-gray-500 text-lg">Loading courses...</p>
+//       </div>
+//     );
+
+//   if (error)
+//     return (
+//       <div className="min-h-screen bg-white flex items-center justify-center p-6">
+//         <div className="text-center max-w-md">
+//           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+//           <p className="text-gray-700 mb-4">{error}</p>
+//           <button
+//            onClick={() => navigate("/dashboard/users")}
+//             className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-full font-medium hover:opacity-90"
+//           >
+//             View Packages
+//           </button>
+//         </div>
+//       </div>
+//     );
+
+//   return (
+//     <div className="flex flex-col md:flex-row min-h-screen bg-white">
+//       {/* Video Section */}
+//       <div className="flex-1 p-6">
+//         {selectedCourse && (
+//           <motion.div
+//             key={selectedCourse._id}
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="bg-gray-50 rounded-2xl p-4 shadow"
+//           >
+//             <h2 className="text-xl font-bold text-gray-800 mb-4">{selectedCourse.title}</h2>
+//             <video
+//               ref={videoRef}
+//               key={selectedCourse._id}
+//               src={selectedCourse.currentVideoUrl || ""}
+//               controls
+//               onEnded={() => handleVideoEnd(selectedCourse.currentVideoId)}
+//               className="rounded-xl w-full mb-3"
+//               style={{ aspectRatio: "16/9" }}
+//               volume={volume}
+//               muted={isMuted}
+//             ></video>
+
+//             {/* ✅ Volume Control */}
+//             <div className="flex items-center gap-3 mt-2">
+//               <button onClick={toggleMute} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
+//                 {isMuted || volume === 0 ? (
+//                   <VolumeX className="text-gray-600" size={20} />
+//                 ) : (
+//                   <Volume2 className="text-gray-600" size={20} />
+//                 )}
+//               </button>
+//               <input
+//                 type="range"
+//                 min="0"
+//                 max="1"
+//                 step="0.01"
+//                 value={volume}
+//                 onChange={handleVolumeChange}
+//                 className="w-32 accent-teal-500"
+//               />
+//               <span className="text-gray-600 text-sm">{Math.round(volume * 100)}%</span>
+//             </div>
+//           </motion.div>
+//         )}
+//       </div>
+
+//       {/* Course Outline */}
+//       <div className="md:w-96 border-l border-gray-200 p-6 overflow-y-auto">
+//         <h3 className="text-lg font-semibold mb-4 text-gray-800">Course Outline</h3>
+//         {courses.map((course) => (
+//           <div key={course._id} className="mb-4">
+//             <h4 className="font-medium text-gray-700 mb-2">{course.title}</h4>
+//             {course.videos?.map((video, i) => {
+//               const prevVideo = course.videos[i - 1];
+//               const canPlay =
+//                 video.isFree ||
+//                 completedVideos.has(prevVideo?._id) ||
+//                 userPackages.some(pkg => pkg.level >= (course.requiredLevel || 1));
+
+//               return (
+//                 <motion.div
+//                   key={video._id}
+//                   className={`flex items-center justify-between p-2 rounded-lg mb-2 cursor-pointer transition-all ${
+//                     canPlay ? "hover:bg-gray-100" : "bg-gray-50 opacity-70 cursor-not-allowed"
+//                   }`}
+//                   onClick={() => {
+//                     if (canPlay) {
+//                       setSelectedCourse({
+//                         ...course,
+//                         currentVideoUrl: video.url,
+//                         currentVideoId: video._id,
+//                       });
+//                     } else {
+//                       setShowUpgradeModal(true);
+//                     }
+//                   }}
+//                 >
+//                   <div className="flex items-center gap-2">
+//                     {completedVideos.has(video._id) ? (
+//                       <CheckCircle className="w-5 h-5 text-green-500" />
+//                     ) : (
+//                       <Play className="w-5 h-5 text-gray-400" />
+//                     )}
+//                     <span className="text-sm text-gray-700">{video.title}</span>
+//                   </div>
+//                   {!canPlay && <Lock className="w-4 h-4 text-gray-400" />}
+//                 </motion.div>
+//               );
+//             })}
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Upgrade Modal */}
+//       {showUpgradeModal && (
+//         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+//           <div className="bg-white p-6 rounded-xl shadow-lg text-center w-80">
+//             <Lock className="w-10 h-10 text-yellow-400 mx-auto mb-3" />
+//             <h3 className="text-lg font-semibold mb-2">Premium Content</h3>
+//             <p className="text-sm text-gray-600 mb-5">
+//               Upgrade your package to unlock this course and more exclusive lessons.
+//             </p>
+//             <div className="flex justify-center gap-4">
+//               <button
+//                 onClick={() => setShowUpgradeModal(false)}
+//                 className="px-4 py-2 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100"
+//               >
+//                 Cancel
+//               </button>
+//               <button
+//                 onClick={() => (window.location.href = "/packages")}
+//                 className="px-4 py-2 rounded-full bg-gradient-to-r from-teal-500 to-yellow-400 text-white font-semibold shadow hover:opacity-90"
+//               >
+//                 Upgrade
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
+
+
+
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
@@ -1544,9 +1809,10 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import {apiClient} from "../../../api/apiClient";
+import { apiClient } from "../../../api/apiClient";
 import { getUserPackages } from "../../../api/userPackageApi";
 import { useNavigate } from "react-router-dom";
+import PackageSelection from "../../../utlis/PackageSelection"; // ✅ Adjust path
 
 export default function Course() {
   const [courses, setCourses] = useState([]);
@@ -1557,13 +1823,13 @@ export default function Course() {
   const [error, setError] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [userPackages, setUserPackages] = useState([]);
-  const [volume, setVolume] = useState(0.8); // ✅ Default volume at 80%
+  const [volume, setVolume] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
+  const [showPackageModal, setShowPackageModal] = useState(false);
   const videoRef = useRef(null);
   const navigate = useNavigate();
 
-
-  // ✅ Fetch user packages and courses
+  // ✅ Fetch user packages & courses
   useEffect(() => {
     const init = async () => {
       try {
@@ -1619,7 +1885,7 @@ export default function Course() {
     init();
   }, []);
 
-  // ✅ Volume handler
+  // ✅ Volume handlers
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
@@ -1646,6 +1912,7 @@ export default function Course() {
     }
   };
 
+  // ✅ Loading state
   if (loading)
     return (
       <div className="flex items-center justify-center h-screen bg-white">
@@ -1653,22 +1920,29 @@ export default function Course() {
       </div>
     );
 
+  // ✅ Error state with modal trigger
   if (error)
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-white flex items-center justify-center p-6 relative">
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <p className="text-gray-700 mb-4">{error}</p>
           <button
-           onClick={() => navigate("/dashboard/users")}
+            onClick={() => setShowPackageModal(true)}
             className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-full font-medium hover:opacity-90"
           >
             View Packages
           </button>
         </div>
+
+        {/* ✅ Package Modal */}
+        {showPackageModal && (
+          <PackageSelection onClose={() => setShowPackageModal(false)} />
+        )}
       </div>
     );
 
+  // ✅ Main course UI
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white">
       {/* Video Section */}
@@ -1680,7 +1954,10 @@ export default function Course() {
             animate={{ opacity: 1 }}
             className="bg-gray-50 rounded-2xl p-4 shadow"
           >
-            <h2 className="text-xl font-bold text-gray-800 mb-4">{selectedCourse.title}</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              {selectedCourse.title}
+            </h2>
+
             <video
               ref={videoRef}
               key={selectedCourse._id}
@@ -1693,9 +1970,12 @@ export default function Course() {
               muted={isMuted}
             ></video>
 
-            {/* ✅ Volume Control */}
+            {/* Volume Control */}
             <div className="flex items-center gap-3 mt-2">
-              <button onClick={toggleMute} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200">
+              <button
+                onClick={toggleMute}
+                className="p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+              >
                 {isMuted || volume === 0 ? (
                   <VolumeX className="text-gray-600" size={20} />
                 ) : (
@@ -1711,7 +1991,9 @@ export default function Course() {
                 onChange={handleVolumeChange}
                 className="w-32 accent-teal-500"
               />
-              <span className="text-gray-600 text-sm">{Math.round(volume * 100)}%</span>
+              <span className="text-gray-600 text-sm">
+                {Math.round(volume * 100)}%
+              </span>
             </div>
           </motion.div>
         )}
@@ -1719,10 +2001,14 @@ export default function Course() {
 
       {/* Course Outline */}
       <div className="md:w-96 border-l border-gray-200 p-6 overflow-y-auto">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">Course Outline</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-800">
+          Course Outline
+        </h3>
         {courses.map((course) => (
           <div key={course._id} className="mb-4">
-            <h4 className="font-medium text-gray-700 mb-2">{course.title}</h4>
+            <h4 className="font-medium text-gray-700 mb-2">
+              {course.title}
+            </h4>
             {course.videos?.map((video, i) => {
               const prevVideo = course.videos[i - 1];
               const canPlay =
@@ -1734,7 +2020,9 @@ export default function Course() {
                 <motion.div
                   key={video._id}
                   className={`flex items-center justify-between p-2 rounded-lg mb-2 cursor-pointer transition-all ${
-                    canPlay ? "hover:bg-gray-100" : "bg-gray-50 opacity-70 cursor-not-allowed"
+                    canPlay
+                      ? "hover:bg-gray-100"
+                      : "bg-gray-50 opacity-70 cursor-not-allowed"
                   }`}
                   onClick={() => {
                     if (canPlay) {
@@ -1754,7 +2042,9 @@ export default function Course() {
                     ) : (
                       <Play className="w-5 h-5 text-gray-400" />
                     )}
-                    <span className="text-sm text-gray-700">{video.title}</span>
+                    <span className="text-sm text-gray-700">
+                      {video.title}
+                    </span>
                   </div>
                   {!canPlay && <Lock className="w-4 h-4 text-gray-400" />}
                 </motion.div>
@@ -1781,7 +2071,7 @@ export default function Course() {
                 Cancel
               </button>
               <button
-                onClick={() => (window.location.href = "/packages")}
+                onClick={() => setShowPackageModal(true)} // open the same modal
                 className="px-4 py-2 rounded-full bg-gradient-to-r from-teal-500 to-yellow-400 text-white font-semibold shadow hover:opacity-90"
               >
                 Upgrade
@@ -1790,7 +2080,11 @@ export default function Course() {
           </div>
         </div>
       )}
+
+      {/* Package Modal (from both error or upgrade trigger) */}
+      {showPackageModal && (
+        <PackageSelection onClose={() => setShowPackageModal(false)} />
+      )}
     </div>
   );
 }
-
