@@ -143,6 +143,8 @@ import FastStart from "../pages/network/FastStart";
 
 import RetirementBlog from "../pages/retirementbloq/RetirementBlog";
 import SupportPage from "../pages/SupportPage";
+import VeloxCapitalSignals from "../pages/network/VeloxCapitalSignals";
+import MarketOverviewCashFX from "../pages/network/RankAdvancement";
 
 export default function AppRouter() {
   const { user, isTokenValid, loading } = useUser();
@@ -202,7 +204,8 @@ export default function AppRouter() {
         <Route path="network/matrix" element={<Matrix />} />
         <Route path="network/leadership-bonus" element={<LeadershipBonus />} />
         <Route path="network/personal-matching-bonus" element={<PersonalMatchingBonus />} />
-        <Route path="network/rank-advancement" element={<RankAdvancement />} />
+        <Route path="network/veloxcapitalsignals" element={<VeloxCapitalSignals />} />
+        <Route path="academy/market-overview" element={<MarketOverviewCashFX />} />
 
         {/* Blog + Support */}
         <Route path="retirement-blog" element={<RetirementBlog />} />

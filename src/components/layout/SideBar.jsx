@@ -1380,10 +1380,12 @@ export default function SideBar({ closeSidebar }) {
   const moduleSubLinks = [
     { to: "/dashboard/modules/compound-calculator", label: "Compound Calculator" },
     { to: "/dashboard/modules/forex-lot-size", label: "Forex Lot Size Calculator" },
+    { to: "/dashboard/academy/market-overview", label: "MarkeOverview" },
   ];
 
   const academySubLinks = [
-    { to: "/dashboard/academy/courses", label: "Academy" },
+    { to: "/dashboard/academy/courses", label: "Courses module" },
+    
   ];
 
   const settingsSubLinks = [
@@ -1482,7 +1484,7 @@ export default function SideBar({ closeSidebar }) {
               "Matrix",
               "Leadership Bonus",
               "Personal Matching Bonus",
-              "Rank Advancement",
+              "VeloxCapitalSignals"
             ].map((item) => ({
               to: `/dashboard/network/${item.toLowerCase().replace(/ /g, "-")}`,
               label: item,
@@ -1492,7 +1494,7 @@ export default function SideBar({ closeSidebar }) {
 
           {/* Modules (with Academy under it) */}
           <DropdownSection
-            title="Modules"
+            title="Academy "
             icon={<Calculator size={18} />}
             isOpen={isModulesOpen}
             toggle={toggleModules}
