@@ -412,6 +412,279 @@
 
 
 
+// import React, { useEffect, useState, useMemo } from "react";
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell,
+//   Legend,
+// } from "recharts";
+// import {  getUserPackages } from "../../api/userPackageApi";
+// import { getUserProfile } from "../../api/authApi";
+// import { Package, AlertCircle, TrendingUp } from "lucide-react";
+
+// const FastStart = React.memo(() => {
+//   const [profile, setProfile] = useState(null);
+//   const [packages, setPackages] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const token = localStorage.getItem("authToken") || "";
+//     Promise.all([getUserProfile(token), getUserPackages(token)])
+//       .then(([p, pkgs]) => {
+//         setProfile(p);
+//         setPackages(pkgs);
+//         setLoading(false);
+//       })
+//       .catch(() => {
+//         setError("Failed to load data.");
+//         setLoading(false);
+//       });
+//   }, []);
+
+//   // ——————————————————— DATA CALC ———————————————————
+//   const paidPackages = useMemo(
+//     () =>
+//       packages
+//         .filter((pkg) => !pkg.isFree)
+//         .map((pkg) => {
+//           const academy = Math.round(pkg.price * 0.3);
+//           const tradePool = Math.round(pkg.price * 0.7);
+//           const bonus = Math.round(academy * 0.5);
+//           return { id: pkg.id, name: pkg.name, academy, tradePool, bonus };
+//         }),
+//     [packages]
+//   );
+
+//   const fastStart = profile?.fastStartPerformance || {};
+//   const totalEarned = fastStart.bonus50PerPackage || 0;
+
+//   const barData = useMemo(
+//     () => [
+//       { name: "Academy (30%)", value: fastStart.academy30 || 0 },
+//       { name: "Trade Pool (70%)", value: fastStart.tradePool70 || 0 },
+//       { name: "Fast Start Bonus", value: fastStart.bonus50PerPackage || 0 },
+//     ],
+//     [fastStart]
+//   );
+
+//   const pieData = useMemo(() => {
+//     const total =
+//       (fastStart.academy30 || 0) +
+//       (fastStart.tradePool70 || 0) +
+//       (fastStart.bonus50PerPackage || 0);
+//     return total > 0
+//       ? [
+//           { name: "Academy", value: fastStart.academy30 || 0 },
+//           { name: "Trade Pool", value: fastStart.tradePool70 || 0 },
+//           { name: "Bonus", value: fastStart.bonus50PerPackage || 0 },
+//         ]
+//       : [];
+//   }, [fastStart]);
+
+//   const COLORS = ["#FACC15", "#1E3A8A", "#10B981"];
+
+//   // ——————————————————— RENDER ———————————————————
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+//         <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-yellow-500"></div>
+//         <span className="ml-3 text-lg text-gray-700">Loading your dashboard...</span>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+//         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
+//           <AlertCircle className="h-10 w-10 text-red-600 mx-auto mb-3" />
+//           <p className="text-red-800 font-medium">{error}</p>
+//           <button
+//             onClick={() => window.location.reload()}
+//             className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+//           >
+//             Retry
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
+//       {/* ==================== Overview Cards ==================== */}
+//       <div className="max-w-7xl mx-auto">
+//         <h2 className="text-xl font-bold text-gray-800 mb-5 flex items-center">
+//           <TrendingUp className="mr-2 h-6 w-6 text-yellow-600" />
+//           Fast Start Overview
+//         </h2>
+
+//         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+//           {[
+//             { title: "Total Referrals", value: profile?.totalReferral || 0, icon: "users" },
+//             { title: "Active Downline", value: profile?.totalDownline || 0, icon: "network" },
+//             { title: "Total Earned", value: `$${totalEarned.toLocaleString()}`, icon: "dollar" },
+//             { title: "Pending / Withdrawn", value: "$0 / $0", icon: "clock" },
+//           ].map((card, i) => (
+//             <div
+//               key={i}
+//               className="bg-white/80 backdrop-blur-sm border border-yellow-200 rounded-xl shadow-md p-5 text-center transform transition hover:scale-105"
+//             >
+//               <p className="text-sm text-gray-500 flex items-center justify-center">
+//                 <Package className="h-4 w-4 mr-1 text-yellow-600" />
+//                 {card.title}
+//               </p>
+//               <h3 className="text-2xl font-bold text-gray-900 mt-2">{card.value}</h3>
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* ==================== Fast Start Bonus Section ==================== */}
+//         <h2 className="text-xl font-bold text-gray-800 mb-5">Fast Start Bonus Calculation</h2>
+
+//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+//           {/* ——————— Left: Package Table ——————— */}
+//           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-5">
+//             <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+//               Each Velox Capital package is split: <strong>30% Academy</strong> + <strong>70% Trade Pool</strong>.  
+//               You earn <strong>50% of Academy</strong> as Fast Start Bonus.
+//             </p>
+
+//             <div className="overflow-x-auto rounded-lg border border-gray-200">
+//               <table className="w-full text-sm text-left text-gray-700">
+//                 <thead className="bg-gradient-to-r from-yellow-50 to-yellow-100 text-gray-800 font-semibold sticky top-0 z-10">
+//                   <tr>
+//                     <th className="px-4 py-3">Package</th>
+//                     <th className="px-4 py-3">Academy (30%)</th>
+//                     <th className="px-4 py-3">Trade Pool (70%)</th>
+//                     <th className="px-4 py-3">Bonus (50%)</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {paidPackages.length > 0 ? (
+//                     paidPackages.map((pkg) => (
+//                       <tr
+//                         key={pkg.id}
+//                         className="border-t hover:bg-yellow-50 transition"
+//                         role="row"
+//                       >
+//                         <td className="px-4 py-3 font-medium">{pkg.name}</td>
+//                         <td className="px-4 py-3">${pkg.academy.toLocaleString()}</td>
+//                         <td className="px-4 py-3">${pkg.tradePool.toLocaleString()}</td>
+//                         <td className="px-4 py-3 font-semibold text-green-600">
+//                           ${pkg.bonus.toLocaleString()}
+//                         </td>
+//                       </tr>
+//                     ))
+//                   ) : (
+//                     <tr>
+//                       <td colSpan="4" className="px-4 py-4 text-center text-gray-500">
+//                         <Package className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+//                         <p>No paid packages yet.</p>
+//                         <button className="mt-2 text-yellow-600 underline text-sm">
+//                           Explore Packages →
+//                         </button>
+//                       </td>
+//                     </tr>
+//                   )}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+
+//           {/* ——————— Right: Charts ——————— */}
+//           <div className="grid grid-cols-1 gap-6">
+//             {/* Bar Chart */}
+//             <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-5">
+//               <h3 className="text-sm font-semibold text-gray-800 mb-3">
+//                 Earnings Breakdown
+//               </h3>
+//               {barData.every((d) => d.value === 0) ? (
+//                 <div className="h-52 flex items-center justify-center text-gray-400">
+//                   <p>No earnings data</p>
+//                 </div>
+//               ) : (
+//                 <ResponsiveContainer width="100%" height={208}>
+//                   <BarChart data={barData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+//                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
+//                     <XAxis
+//                       dataKey="name"
+//                       tick={{ fontSize: 11 }}
+//                       angle={-20}
+//                       textAnchor="end"
+//                       height={60}
+//                     />
+//                     <YAxis tick={{ fontSize: 12 }} />
+//                     <Tooltip formatter={(v) => `$${v.toLocaleString()}`} />
+//                     <Bar dataKey="value" fill="#1E3A8A" radius={[4, 4, 0, 0]} />
+//                   </BarChart>
+//                 </ResponsiveContainer>
+//               )}
+//             </div>
+
+//             {/* Pie Chart */}
+//             <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-5">
+//               <h3 className="text-sm font-semibold text-gray-800 mb-3">
+//                 Distribution
+//               </h3>
+//               {pieData.length === 0 ? (
+//                 <div className="h-52 flex items-center justify-center text-gray-400">
+//                   <p>No data</p>
+//                 </div>
+//               ) : (
+//                 <ResponsiveContainer width="100%" height={208}>
+//                   <PieChart>
+//                     <Pie
+//                       data={pieData}
+//                       cx="50%"
+//                       cy="50%"
+//                       innerRadius={38}
+//                       outerRadius={68}
+//                       dataKey="value"
+//                       label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+//                     >
+//                       {pieData.map((_, i) => (
+//                         <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
+//                       ))}
+//                     </Pie>
+//                     <Tooltip formatter={(v) => `$${v.toLocaleString()}`} />
+//                     <Legend verticalAlign="bottom" height={36} />
+//                   </PieChart>
+//                 </ResponsiveContainer>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* CTA */}
+//         <div className="mt-8 text-center">
+//           <button className="inline-flex items-center px-6 py-3 bg-yellow-500 text-white font-medium rounded-lg shadow-lg hover:bg-yellow-600 transition transform hover:scale-105">
+//             <Package className="mr-2 h-5 w-5" />
+//             Upgrade Your Package
+//           </button>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// });
+
+// export default FastStart;
+
+
+
+
+
+
+
 import React, { useEffect, useState, useMemo } from "react";
 import {
   BarChart,
@@ -426,9 +699,20 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import {  getUserPackages } from "../../api/userPackageApi";
 import { getUserProfile } from "../../api/authApi";
-import { Package, AlertCircle, TrendingUp } from "lucide-react";
+import { getUserPackages } from "../../api/userPackageApi";
+import { motion } from "framer-motion";
+import {
+  Package,
+  AlertCircle,
+  TrendingUp,
+  Users,
+  DollarSign,
+  Trophy,
+  Wallet,
+} from "lucide-react";
+
+const COLORS = ["#FACC15", "#1E3A8A", "#10B981"]; // Academy, Trade Pool, Bonus
 
 const FastStart = React.memo(() => {
   const [profile, setProfile] = useState(null);
@@ -436,21 +720,50 @@ const FastStart = React.memo(() => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  /* ------------------- FETCH DATA ------------------- */
   useEffect(() => {
     const token = localStorage.getItem("authToken") || "";
+
     Promise.all([getUserProfile(token), getUserPackages(token)])
       .then(([p, pkgs]) => {
         setProfile(p);
         setPackages(pkgs);
         setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load data.");
+      .catch((err) => {
+        console.error("Load error:", err);
+        setError("Failed to load dashboard data.");
         setLoading(false);
       });
   }, []);
 
-  // ——————————————————— DATA CALC ———————————————————
+  /* ------------------- DERIVED DATA ------------------- */
+  const fastStart = profile?.fastStartPerformance || {};
+  const totalEarned = fastStart.bonus50PerPackage || 0;
+
+  // Bar chart data (direct from API)
+  const barData = useMemo(
+    () => [
+      { name: "Academy (30%)", value: fastStart.academy30 || 0 },
+      { name: "Trade Pool (70%)", value: fastStart.tradePool70 || 0 },
+      { name: "Fast Start Bonus", value: fastStart.bonus50PerPackage || 0 },
+    ],
+    [fastStart]
+  );
+
+  // Pie chart data
+  const pieData = useMemo(() => {
+    const total = Object.values(fastStart).reduce((a, b) => a + b, 0);
+    return total > 0
+      ? [
+          { name: "Academy", value: fastStart.academy30 || 0 },
+          { name: "Trade Pool", value: fastStart.tradePool70 || 0 },
+          { name: "Bonus", value: fastStart.bonus50PerPackage || 0 },
+        ]
+      : [];
+  }, [fastStart]);
+
+  // Optional: show breakdown per paid package (if you want)
   const paidPackages = useMemo(
     () =>
       packages
@@ -464,47 +777,21 @@ const FastStart = React.memo(() => {
     [packages]
   );
 
-  const fastStart = profile?.fastStartPerformance || {};
-  const totalEarned = fastStart.bonus50PerPackage || 0;
-
-  const barData = useMemo(
-    () => [
-      { name: "Academy (30%)", value: fastStart.academy30 || 0 },
-      { name: "Trade Pool (70%)", value: fastStart.tradePool70 || 0 },
-      { name: "Fast Start Bonus", value: fastStart.bonus50PerPackage || 0 },
-    ],
-    [fastStart]
-  );
-
-  const pieData = useMemo(() => {
-    const total =
-      (fastStart.academy30 || 0) +
-      (fastStart.tradePool70 || 0) +
-      (fastStart.bonus50PerPackage || 0);
-    return total > 0
-      ? [
-          { name: "Academy", value: fastStart.academy30 || 0 },
-          { name: "Trade Pool", value: fastStart.tradePool70 || 0 },
-          { name: "Bonus", value: fastStart.bonus50PerPackage || 0 },
-        ]
-      : [];
-  }, [fastStart]);
-
-  const COLORS = ["#FACC15", "#1E3A8A", "#10B981"];
-
-  // ——————————————————— RENDER ———————————————————
+  /* ------------------- LOADING / ERROR ------------------- */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-yellow-500"></div>
-        <span className="ml-3 text-lg text-gray-700">Loading your dashboard...</span>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-yellow-500" />
+          <span className="text-lg font-medium text-gray-700">Loading Fast Start...</span>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
           <AlertCircle className="h-10 w-10 text-red-600 mx-auto mb-3" />
           <p className="text-red-800 font-medium">{error}</p>
@@ -519,80 +806,88 @@ const FastStart = React.memo(() => {
     );
   }
 
+  /* ------------------- MAIN UI ------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
-      {/* ==================== Overview Cards ==================== */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-xl font-bold text-gray-800 mb-5 flex items-center">
-          <TrendingUp className="mr-2 h-6 w-6 text-yellow-600" />
-          Fast Start Overview
-        </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* HEADER */}
+        <header className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 flex items-center justify-center gap-3">
+            <Trophy className="h-10 w-10 text-yellow-500" />
+            Fast Start Performance
+          </h1>
+          <p className="text-gray-600 mt-3 text-lg">
+            Welcome back, <strong>{profile.name}</strong> • Rank: <strong className="text-yellow-600">{profile.rank}</strong>
+          </p>
+        </header>
+
+        {/* OVERVIEW CARDS */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {[
-            { title: "Total Referrals", value: profile?.totalReferral || 0, icon: "users" },
-            { title: "Active Downline", value: profile?.totalDownline || 0, icon: "network" },
-            { title: "Total Earned", value: `$${totalEarned.toLocaleString()}`, icon: "dollar" },
-            { title: "Pending / Withdrawn", value: "$0 / $0", icon: "clock" },
+            { title: "Total Referrals", value: profile.totalReferral, icon: Users, color: "text-blue-600" },
+            { title: "Active Downline", value: profile.totalDownline, icon: Users, color: "text-indigo-600" },
+            { title: "Fast Start Earned", value: `$${totalEarned.toLocaleString()}`, icon: DollarSign, color: "text-green-600" },
+            { title: "Group Volume", value: `$${profile.groupVolume.toLocaleString()}`, icon: Wallet, color: "text-teal-600" },
           ].map((card, i) => (
-            <div
+            <motion.div
               key={i}
-              className="bg-white/80 backdrop-blur-sm border border-yellow-200 rounded-xl shadow-md p-5 text-center transform transition hover:scale-105"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+              className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-xl transition-all"
             >
-              <p className="text-sm text-gray-500 flex items-center justify-center">
-                <Package className="h-4 w-4 mr-1 text-yellow-600" />
-                {card.title}
-              </p>
-              <h3 className="text-2xl font-bold text-gray-900 mt-2">{card.value}</h3>
-            </div>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-sm text-gray-500">{card.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+                </div>
+                <card.icon className={`h-8 w-8 ${card.color}`} />
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </section>
 
-        {/* ==================== Fast Start Bonus Section ==================== */}
-        <h2 className="text-xl font-bold text-gray-800 mb-5">Fast Start Bonus Calculation</h2>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* ——————— Left: Package Table ——————— */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-5">
-            <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-              Each Velox Capital package is split: <strong>30% Academy</strong> + <strong>70% Trade Pool</strong>.  
-              You earn <strong>50% of Academy</strong> as Fast Start Bonus.
+        {/* FAST START BREAKDOWN */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          {/* LEFT: Package Table */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <Package className="h-5 w-5 text-yellow-600" />
+              Package Breakdown
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              30% → Academy | 70% → Trade Pool | <strong>50% of Academy = Fast Start Bonus</strong>
             </p>
 
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
-              <table className="w-full text-sm text-left text-gray-700">
-                <thead className="bg-gradient-to-r from-yellow-50 to-yellow-100 text-gray-800 font-semibold sticky top-0 z-10">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gradient-to-r from-yellow-50 to-amber-50 text-gray-700">
                   <tr>
-                    <th className="px-4 py-3">Package</th>
-                    <th className="px-4 py-3">Academy (30%)</th>
-                    <th className="px-4 py-3">Trade Pool (70%)</th>
-                    <th className="px-4 py-3">Bonus (50%)</th>
+                    <th className="px-4 py-3 text-left font-medium">Package</th>
+                    <th className="px-4 py-3 text-left font-medium">Academy</th>
+                    <th className="px-4 py-3 text-left font-medium">Trade Pool</th>
+                    <th className="px-4 py-3 text-left font-medium">Bonus</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-gray-100">
                   {paidPackages.length > 0 ? (
                     paidPackages.map((pkg) => (
-                      <tr
-                        key={pkg.id}
-                        className="border-t hover:bg-yellow-50 transition"
-                        role="row"
-                      >
+                      <tr key={pkg.id} className="hover:bg-gray-50 transition">
                         <td className="px-4 py-3 font-medium">{pkg.name}</td>
                         <td className="px-4 py-3">${pkg.academy.toLocaleString()}</td>
                         <td className="px-4 py-3">${pkg.tradePool.toLocaleString()}</td>
-                        <td className="px-4 py-3 font-semibold text-green-600">
+                        <td className="px-4 py-3 font-bold text-green-600">
                           ${pkg.bonus.toLocaleString()}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="px-4 py-4 text-center text-gray-500">
-                        <Package className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-                        <p>No paid packages yet.</p>
-                        <button className="mt-2 text-yellow-600 underline text-sm">
-                          Explore Packages →
-                        </button>
+                      <td colSpan="4" className="px-4 py-6 text-center text-gray-400">
+                        <Package className="h-10 w-10 mx-auto mb-2 opacity-50" />
+                        <p>No paid packages</p>
                       </td>
                     </tr>
                   )}
@@ -601,45 +896,31 @@ const FastStart = React.memo(() => {
             </div>
           </div>
 
-          {/* ——————— Right: Charts ——————— */}
-          <div className="grid grid-cols-1 gap-6">
+          {/* RIGHT: Charts */}
+          <div className="space-y-6">
             {/* Bar Chart */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-5">
-              <h3 className="text-sm font-semibold text-gray-800 mb-3">
-                Earnings Breakdown
-              </h3>
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Earnings Breakdown</h3>
               {barData.every((d) => d.value === 0) ? (
-                <div className="h-52 flex items-center justify-center text-gray-400">
-                  <p>No earnings data</p>
-                </div>
+                <div className="h-52 flex items-center justify-center text-gray-400">No data</div>
               ) : (
                 <ResponsiveContainer width="100%" height={208}>
-                  <BarChart data={barData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 11 }}
-                      angle={-20}
-                      textAnchor="end"
-                      height={60}
-                    />
+                  <BarChart data={barData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" angle={-15} textAnchor="end" height={60} tick={{ fontSize: 11 }} />
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip formatter={(v) => `$${v.toLocaleString()}`} />
-                    <Bar dataKey="value" fill="#1E3A8A" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="value" fill="#1E3A8A" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
             </div>
 
             {/* Pie Chart */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-5">
-              <h3 className="text-sm font-semibold text-gray-800 mb-3">
-                Distribution
-              </h3>
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Distribution</h3>
               {pieData.length === 0 ? (
-                <div className="h-52 flex items-center justify-center text-gray-400">
-                  <p>No data</p>
-                </div>
+                <div className="h-52 flex items-center justify-center text-gray-400">No data</div>
               ) : (
                 <ResponsiveContainer width="100%" height={208}>
                   <PieChart>
@@ -647,8 +928,8 @@ const FastStart = React.memo(() => {
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={38}
-                      outerRadius={68}
+                      innerRadius={40}
+                      outerRadius={70}
                       dataKey="value"
                       label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                     >
@@ -663,14 +944,19 @@ const FastStart = React.memo(() => {
               )}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* CTA */}
-        <div className="mt-8 text-center">
-          <button className="inline-flex items-center px-6 py-3 bg-yellow-500 text-white font-medium rounded-lg shadow-lg hover:bg-yellow-600 transition transform hover:scale-105">
+        <div className="text-center mt-10">
+          <button className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
             <Package className="mr-2 h-5 w-5" />
-            Upgrade Your Package
+            Upgrade Package Now
           </button>
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-16 text-center text-xs text-gray-500">
+          <p>Velox Capital © 2025 | Fast Start Engine v1.0</p>
         </div>
       </div>
     </div>

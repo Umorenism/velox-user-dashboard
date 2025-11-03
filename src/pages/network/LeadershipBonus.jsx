@@ -1,6 +1,202 @@
 
+// import React, { useEffect, useState } from "react";
+// import { Check, Crown } from "lucide-react";
+// import { getUserProfile } from "../../api/authApi";
+
+// const LeadershipBonus = () => {
+//   const [profile, setProfile] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   /* ────── FETCH USER PROFILE ────── */
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         // ✅ Try all possible token keys
+//         const token =
+//           localStorage.getItem("authToken") ||
+//           localStorage.getItem("token") ||
+//           sessionStorage.getItem("authToken");
+
+//         if (!token) {
+//           setError("No auth token found. Please log in.");
+//           setLoading(false);
+//           return;
+//         }
+
+//         // ✅ Fetch profile with proper Authorization header
+//         const data = await getUserProfile(token);
+
+//         if (!data || !data.userId) {
+//           throw new Error("Invalid user profile response");
+//         }
+
+//         setProfile(data);
+//       } catch (err) {
+//         setError(err.message || "Failed to load profile.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProfile();
+//   }, []);
+
+//   /* ────── LOADING UI ────── */
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+//         <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]"></div>
+//         <span className="ml-3 text-lg text-gray-700">
+//           Loading Leadership Bonus…
+//         </span>
+//       </div>
+//     );
+//   }
+
+//   /* ────── ERROR UI ────── */
+//   if (error) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+//         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
+//           <p className="text-red-800 font-medium">{error}</p>
+//           <button
+//             onClick={() => (window.location.href = "/login")}
+//             className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+//           >
+//             Go to Login
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   if (!profile) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center text-gray-600">
+//         <p>No user data found. Please log in again.</p>
+//       </div>
+//     );
+//   }
+
+//   /* ────── EXTRACT DATA FROM PROFILE ────── */
+//   const lb = profile.leadershipBonus || {};
+//   const progress = lb.progressToNextRank || {};
+
+//   const currentRank = lb.currentRank ?? "Unknown";
+//   const currentBonus = lb.currentBonus ?? 0;
+//   const nextRank = progress.nextRank ?? "—";
+//   const groupVolume = progress.groupVolume ?? 0;
+//   const required = progress.required ?? 0;
+//   const progressPercent = parseFloat(progress.progressPercent ?? "0");
+//   const nextBonus = 10000; // optional placeholder if backend doesn’t provide
+
+//   /* ────── MAIN UI (UNCHANGED LAYOUT) ────── */
+//   return (
+//     <div className="min-h-screen bg-gray-50 p-6">
+//       {/* Top Section */}
+//       <h1 className="text-gray-800 text-lg mb-4 font-bold">
+//         Velox Leadership Bonus
+//       </h1>
+
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+//         {/* ── Current Rank ── */}
+//         <div className="border border-blue-200 rounded-xl bg-white shadow-sm p-6 text-center">
+//           <div className="flex items-center justify-center gap-2 mb-3">
+//             <span className="text-yellow-500 text-lg">
+//               <Crown />
+//             </span>
+//             <h2 className="text-gray-800 font-semibold text-lg">
+//               Current Rank
+//             </h2>
+//           </div>
+//           <h3 className="text-blue-600 text-2xl font-bold mb-1">
+//             {currentRank}
+//           </h3>
+//           <p className="text-gray-500 text-sm mb-4">
+//             Current Bonus: ${currentBonus.toLocaleString()}
+//           </p>
+
+//           <button className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-md flex items-center justify-center gap-1 mx-auto">
+//             Eligible for Weekly Bonus: Yes
+//             <Check size={16} className="text-green-600" />
+//           </button>
+//         </div>
+
+//         {/* ── Progress to Next Rank ── */}
+//         <div className="border border-green-300 rounded-xl bg-white shadow-sm p-6 text-center">
+//           <div className="flex items-center justify-center gap-2 mb-3">
+//             <span className="text-green-600 text-sm">Chart Up</span>
+//             <h2 className="text-gray-800 font-semibold text-sm">
+//               Progress to Next Rank
+//             </h2>
+//           </div>
+//           <p className="text-gray-700 text-sm mb-1">
+//             Next Rank: <span className="font-medium">{nextRank}</span>
+//           </p>
+
+//           <div className="w-full bg-gray-200 h-3 rounded-full mt-2 mb-2">
+//             <div
+//               className="bg-green-600 h-3 rounded-full transition-all duration-500"
+//               style={{ width: `${progressPercent}%` }}
+//             />
+//           </div>
+
+//           <div className="flex justify-between text-xs text-gray-500 mb-4">
+//             <span>Group Volume: ${groupVolume.toLocaleString()}</span>
+//             <span>Required: ${required.toLocaleString()}</span>
+//           </div>
+
+//           <button className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-1.5 rounded-md mx-auto">
+//             View Team Growth Plan
+//           </button>
+//         </div>
+
+//         {/* ── Next Bonus Unlock ── */}
+//         <div className="border border-yellow-300 rounded-xl bg-white shadow-sm p-6 text-center">
+//           <div className="flex items-center justify-center gap-2 mb-3">
+//             <span className="text-yellow-500 text-lg">Medal</span>
+//             <h2 className="text-gray-800 font-semibold text-lg">
+//               Next Bonus Unlock
+//             </h2>
+//           </div>
+//           <h3 className="text-orange-500 text-2xl font-bold mb-1">
+//             ${nextBonus.toLocaleString()}
+//           </h3>
+//           <p className="text-gray-600 text-sm mb-4">
+//             Upon reaching {nextRank} rank
+//           </p>
+
+//           <button className="border border-yellow-400 hover:bg-yellow-50 text-yellow-700 text-sm font-medium px-4 py-1.5 rounded-md mx-auto">
+//             View Qualification Requirements
+//           </button>
+//         </div>
+//       </div>
+
+//       {/* ── Rank Badge Section ── */}
+//       <div className="bg-white border border-gray-100 rounded-xl shadow-sm py-10 text-center">
+//         <h2 className="text-gray-800 font-semibold mb-6">Your Rank Badge</h2>
+//         <div className="w-24 h-24 rounded-full border-4 border-blue-400 flex items-center justify-center mx-auto">
+//           <span className="text-blue-500 text-4xl">
+//             <Crown />
+//           </span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default LeadershipBonus;
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
-import { Check, Crown } from "lucide-react";
+import { Check, Crown, TrendingUp, Award, Target, Star } from "lucide-react";
 import { getUserProfile } from "../../api/authApi";
 
 const LeadershipBonus = () => {
@@ -12,7 +208,6 @@ const LeadershipBonus = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // ✅ Try all possible token keys
         const token =
           localStorage.getItem("authToken") ||
           localStorage.getItem("token") ||
@@ -24,13 +219,8 @@ const LeadershipBonus = () => {
           return;
         }
 
-        // ✅ Fetch profile with proper Authorization header
         const data = await getUserProfile(token);
-
-        if (!data || !data.userId) {
-          throw new Error("Invalid user profile response");
-        }
-
+        if (!data?.userId) throw new Error("Invalid profile data");
         setProfile(data);
       } catch (err) {
         setError(err.message || "Failed to load profile.");
@@ -42,27 +232,27 @@ const LeadershipBonus = () => {
     fetchProfile();
   }, []);
 
-  /* ────── LOADING UI ────── */
+  /* ────── LOADING STATE ────── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]"></div>
-        <span className="ml-3 text-lg text-gray-700">
-          Loading Leadership Bonus…
-        </span>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]" />
+          <span className="text-lg font-medium text-gray-700">Loading Leadership Dashboard…</span>
+        </div>
       </div>
     );
   }
 
-  /* ────── ERROR UI ────── */
+  /* ────── ERROR STATE ────── */
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
           <p className="text-red-800 font-medium">{error}</p>
           <button
             onClick={() => (window.location.href = "/login")}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
           >
             Go to Login
           </button>
@@ -79,107 +269,153 @@ const LeadershipBonus = () => {
     );
   }
 
-  /* ────── EXTRACT DATA FROM PROFILE ────── */
+  /* ────── EXTRACT LEADERSHIP DATA ────── */
   const lb = profile.leadershipBonus || {};
   const progress = lb.progressToNextRank || {};
 
-  const currentRank = lb.currentRank ?? "Unknown";
-  const currentBonus = lb.currentBonus ?? 0;
-  const nextRank = progress.nextRank ?? "—";
-  const groupVolume = progress.groupVolume ?? 0;
-  const required = progress.required ?? 0;
-  const progressPercent = parseFloat(progress.progressPercent ?? "0");
-  const nextBonus = 10000; // optional placeholder if backend doesn’t provide
+  const currentRank = lb.currentRank || "Unknown";
+  const currentBonus = lb.currentBonus || 0;
+  const nextRank = progress.nextRank || "—";
+  const groupVolume = progress.groupVolume || 0;
+  const required = progress.required || 0;
+  const progressPercent = parseFloat(progress.progressPercent || "0");
+  const volumeNeeded = required - groupVolume;
 
-  /* ────── MAIN UI (UNCHANGED LAYOUT) ────── */
+  const formatCurrency = (val) => `$${val?.toLocaleString() ?? 0}`;
+
+  /* ────── MAIN UI ────── */
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {/* Top Section */}
-      <h1 className="text-gray-800 text-lg mb-4 font-bold">
-        Velox Leadership Bonus
-      </h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* ── Current Rank ── */}
-        <div className="border border-blue-200 rounded-xl bg-white shadow-sm p-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-yellow-500 text-lg">
-              <Crown />
-            </span>
-            <h2 className="text-gray-800 font-semibold text-lg">
-              Current Rank
-            </h2>
-          </div>
-          <h3 className="text-blue-600 text-2xl font-bold mb-1">
-            {currentRank}
-          </h3>
-          <p className="text-gray-500 text-sm mb-4">
-            Current Bonus: ${currentBonus.toLocaleString()}
-          </p>
-
-          <button className="bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium px-4 py-1.5 rounded-md flex items-center justify-center gap-1 mx-auto">
-            Eligible for Weekly Bonus: Yes
-            <Check size={16} className="text-green-600" />
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+            Velox Capital <span className="text-[#00A991]">Leadership Bonus</span>
+          </h1>
+          <p className="text-gray-600 mt-2">Track your rank, bonus, and path to the top</p>
         </div>
 
-        {/* ── Progress to Next Rank ── */}
-        <div className="border border-green-300 rounded-xl bg-white shadow-sm p-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-green-600 text-sm">Chart Up</span>
-            <h2 className="text-gray-800 font-semibold text-sm">
-              Progress to Next Rank
-            </h2>
-          </div>
-          <p className="text-gray-700 text-sm mb-1">
-            Next Rank: <span className="font-medium">{nextRank}</span>
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {/* ── CURRENT RANK CARD ── */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-800">Current Rank</h3>
+              <Crown className="h-7 w-7 text-amber-500" />
+            </div>
 
-          <div className="w-full bg-gray-200 h-3 rounded-full mt-2 mb-2">
-            <div
-              className="bg-green-600 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
-            />
+            <div className="text-center">
+              <p className="text-3xl font-bold text-[#00A991] capitalize">{currentRank}</p>
+              <p className="text-sm text-gray-500 mt-1">Leadership Level</p>
+            </div>
+
+            <div className="mt-5 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl">
+              <p className="text-sm text-gray-600">Current Monthly Bonus</p>
+              <p className="text-2xl font-bold text-amber-600">{formatCurrency(currentBonus)}</p>
+            </div>
+
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm">
+              <Check className="h-4 w-4 text-green-600" />
+              <span className="text-green-600 font-medium">Weekly Bonus Eligible</span>
+            </div>
           </div>
 
-          <div className="flex justify-between text-xs text-gray-500 mb-4">
-            <span>Group Volume: ${groupVolume.toLocaleString()}</span>
-            <span>Required: ${required.toLocaleString()}</span>
+          {/* ── PROGRESS TO NEXT RANK ── */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-800">Next Rank: {nextRank}</h3>
+              <TrendingUp className="h-7 w-7 text-[#00A991]" />
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-gray-600">Group Volume</span>
+                  <span className="font-medium">{progressPercent}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#00A991] to-[#10B981] rounded-full transition-all duration-700"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>{formatCurrency(groupVolume)}</span>
+                  <span>{formatCurrency(required)}</span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-gradient-to-r from-[#00A991]/10 to-[#10B981]/10 rounded-lg border border-[#00A991]/20">
+                <p className="text-xs text-gray-600">You need</p>
+                <p className="text-lg font-bold text-[#00A991]">{formatCurrency(volumeNeeded)}</p>
+                <p className="text-xs text-gray-500">more in Group Volume</p>
+              </div>
+            </div>
+
+            <button className="mt-4 w-full py-2 bg-[#00A991] hover:bg-[#009981] text-white font-medium rounded-lg transition text-sm">
+              View Team Growth Plan
+            </button>
           </div>
 
-          <button className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-1.5 rounded-md mx-auto">
-            View Team Growth Plan
-          </button>
+          {/* ── NEXT BONUS UNLOCK ── */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-800">Next Bonus Unlock</h3>
+              <Award className="h-7 w-7 text-purple-600" />
+            </div>
+
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 mb-3">
+                <Star className="h-8 w-8 text-purple-600" />
+              </div>
+              <p className="text-3xl font-bold text-purple-600">
+                {formatCurrency(currentBonus * 3)} {/* Example: 3x current */}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">Estimated at {nextRank}</p>
+            </div>
+
+            <div className="mt-5 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+              <p className="text-sm text-gray-600">Unlock Conditions</p>
+              <ul className="text-xs text-gray-700 mt-1 space-y-1">
+                <li>Reach {nextRank} rank</li>
+                <li>Maintain active status</li>
+                <li>Group Volume ≥ {formatCurrency(required)}</li>
+              </ul>
+            </div>
+
+            <button className="mt-4 w-full py-2 border border-purple-400 hover:bg-purple-50 text-purple-700 font-medium rounded-lg transition text-sm">
+              View Full Requirements
+            </button>
+          </div>
         </div>
 
-        {/* ── Next Bonus Unlock ── */}
-        <div className="border border-yellow-300 rounded-xl bg-white shadow-sm p-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-yellow-500 text-lg">Medal</span>
-            <h2 className="text-gray-800 font-semibold text-lg">
-              Next Bonus Unlock
-            </h2>
+        {/* ── RANK BADGE SHOWCASE ── */}
+        <div className="bg-white rounded-2xl shadow-sm p-8 text-center border border-gray-100">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Leadership Badge</h2>
+          <div className="inline-block relative">
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#00A991] to-[#10B981] p-1">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                <Crown className="h-16 w-16 text-[#00A991]" />
+              </div>
+            </div>
+            <div className="absolute -top-1 -right-1 w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center shadow-lg">
+              <Star className="h-6 w-6 text-white" />
+            </div>
           </div>
-          <h3 className="text-orange-500 text-2xl font-bold mb-1">
-            ${nextBonus.toLocaleString()}
-          </h3>
-          <p className="text-gray-600 text-sm mb-4">
-            Upon reaching {nextRank} rank
-          </p>
-
-          <button className="border border-yellow-400 hover:bg-yellow-50 text-yellow-700 text-sm font-medium px-4 py-1.5 rounded-md mx-auto">
-            View Qualification Requirements
-          </button>
+          <p className="mt-5 text-lg font-bold text-[#00A991] capitalize">{currentRank}</p>
+          <p className="text-sm text-gray-500">Leadership Achievement</p>
         </div>
-      </div>
 
-      {/* ── Rank Badge Section ── */}
-      <div className="bg-white border border-gray-100 rounded-xl shadow-sm py-10 text-center">
-        <h2 className="text-gray-800 font-semibold mb-6">Your Rank Badge</h2>
-        <div className="w-24 h-24 rounded-full border-4 border-blue-400 flex items-center justify-center mx-auto">
-          <span className="text-blue-500 text-4xl">
-            <Crown />
-          </span>
+        {/* ── MOTIVATIONAL FOOTER ── */}
+        <div className="mt-10 text-center">
+          <p className="text-sm text-gray-500">
+            <Target className="inline h-4 w-4 text-[#00A991] mr-1" />
+            Keep growing your team — <strong className="text-[#00A991]">{volumeNeeded > 0 ? `${formatCurrency(volumeNeeded)} to go!` : "You're ready for promotion!"}</strong>
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 text-center text-xs text-gray-500">
+          <p>Velox Capital © 2025 | Leadership Engine v3.0</p>
         </div>
       </div>
     </div>

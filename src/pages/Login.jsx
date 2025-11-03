@@ -1798,7 +1798,7 @@ export default function Login() {
             {/* Prefix + Email */}
             <div className="flex space-x-2">
               <div className="relative w-1/3">
-                <Type className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
+                <User className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   name="prefix"

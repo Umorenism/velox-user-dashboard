@@ -2146,8 +2146,224 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import { QrCode, Copy, Check, CheckCircle } from "lucide-react";
+// import QRCode from "qrcode";
+// import { getUserProfile } from "../../api/authApi";
+
+// const Matrix = () => {
+//   const [profile, setProfile] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [qrUrl, setQrUrl] = useState("");
+//   const [copied, setCopied] = useState(false);
+
+//   // ─────── FETCH USER PROFILE ───────
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         const token = localStorage.getItem("authToken");
+
+//         if (!token) {
+//           console.warn("No token found — showing UI without data");
+//           setLoading(false);
+//           return;
+//         }
+
+//         const data = await getUserProfile();
+//         setProfile(data);
+
+//         const qr = await QRCode.toDataURL(
+//           `https://veloxcapital.com/ref/${data.referralCode}`,
+//           { width: 200, margin: 2 }
+//         );
+//         setQrUrl(qr);
+//       } catch (err) {
+//         console.error("Failed to load profile:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProfile();
+//   }, []);
+
+//   const copyReferralLink = () => {
+//     if (profile?.referralCode) {
+//       navigator.clipboard.writeText(
+//         `https://veloxcapital.com/ref/${profile.referralCode}`
+//       );
+//       setCopied(true);
+//       setTimeout(() => setCopied(false), 2000);
+//     }
+//   };
+
+//   const shortUserId = (id) => {
+//     if (!id || id.length <= 12) return id;
+//     return `${id.slice(0, 6)}...${id.slice(-4)}`;
+//   };
+
+//   // ─────── EXTRACT RELEVANT DATA ───────
+//   const matrix = profile?.matrix || {};
+//   const wallets = profile?.wallets || {};
+//   const rank = profile?.rank || "—";
+//   const position = matrix?.position || "—";
+//   const parent = matrix?.parent || "—";
+//   const totalDownline = profile?.totalDownline || 0;
+//   const walletBalance = profile?.walletBalance || 0;
+//   const activePackage = profile?.activePackage?.name || "—";
+//   const referralCode = profile?.referralCode || "";
+//   const referralLink = `https://veloxcapital.com/ref/${referralCode}`;
+
+//   // ─────── LOADING STATE ───────
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+//         <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]"></div>
+//         <span className="ml-3 text-lg text-gray-700">Loading Matrix Data…</span>
+//       </div>
+//     );
+//   }
+
+//   // ─────── MAIN MATRIX UI (unchanged structure) ───────
+//   return (
+//     <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-gray-50 p-4 md:p-6 lg:p-8">
+//       <div className="max-w-7xl mx-auto">
+//         <div className="grid grid-cols-1 lg:grid-cols-[30%_1fr] gap-6 items-stretch">
+//           {/* LEFT PANEL */}
+//           <div className="w-full">
+//             <div className="bg-white dark:bg-neutral-800 rounded-2xl p-4 shadow-sm h-full flex flex-col">
+//               <h3 className="text-lg font-semibold text-gray-900 mb-1">
+//                 MY MATRIX
+//               </h3>
+
+//               <div className="flex items-center gap-2 mb-4">
+//                 <span className="text-2xl font-bold text-amber-500">Rank</span>
+//                 <span className="text-2xl font-bold capitalize">{rank}</span>
+//               </div>
+
+//               <p className="text-sm text-gray-500 mb-1">
+//                 User ID:{" "}
+//                 <span className="font-mono">{shortUserId(profile?.userId)}</span>
+//               </p>
+
+//               <div className="space-y-4 mt-6">
+//                 <div>
+//                   <p className="text-sm text-gray-500">Wallet Balance</p>
+//                   <p className="text-2xl font-bold text-gray-900">
+//                     ${walletBalance.toLocaleString()}
+//                   </p>
+//                 </div>
+
+//                 <div>
+//                   <p className="text-sm text-gray-500">Active Package</p>
+//                   <p className="text-2xl font-bold text-green-600">
+//                     {activePackage}
+//                   </p>
+//                 </div>
+
+//                 <div>
+//                   <p className="text-sm text-gray-500">Total Downline</p>
+//                   <p className="text-2xl font-bold text-gray-900">
+//                     {totalDownline}
+//                   </p>
+//                 </div>
+
+//                 <div>
+//                   <p className="text-sm text-gray-500">Matrix Position</p>
+//                   <p className="text-lg font-mono text-gray-700">{position}</p>
+//                 </div>
+
+//                 <div>
+//                   <p className="text-sm text-gray-500">Upline (Parent)</p>
+//                   <p className="text-lg font-medium text-gray-900">{parent}</p>
+//                 </div>
+//               </div>
+
+//               {/* Referral Link Section */}
+//               <div className="mt-6">
+//                 <p className="text-sm text-gray-500 mb-2">Referral Link</p>
+//                 <div className="flex items-center gap-2">
+//                   <input
+//                     type="text"
+//                     value={referralLink}
+//                     readOnly
+//                     className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 font-mono text-xs"
+//                   />
+//                   <button
+//                     onClick={copyReferralLink}
+//                     className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition flex items-center gap-1"
+//                   >
+//                     {copied ? (
+//                       <>
+//                         <Check size={14} className="text-green-600" />
+//                         Copied
+//                       </>
+//                     ) : (
+//                       <>
+//                         <Copy size={14} />
+//                         Copy
+//                       </>
+//                     )}
+//                   </button>
+//                 </div>
+//               </div>
+
+//               {/* QR Code */}
+//               <div className="mt-6">
+//                 <p className="text-sm text-gray-500 mb-1">QR Code</p>
+//                 <p className="text-xs text-gray-400 mb-3">For direct referrals</p>
+//                 <div className="flex justify-center p-4 bg-gray-50 rounded-xl">
+//                   {qrUrl ? (
+//                     <img src={qrUrl} alt="Referral QR" className="w-32 h-32" />
+//                   ) : (
+//                     <div className="w-32 h-32 bg-gray-200 border-2 border-dashed rounded-xl flex items-center justify-center">
+//                       <QrCode className="w-16 h-16 text-gray-400" />
+//                     </div>
+//                   )}
+//                 </div>
+//               </div>
+
+//               {/* KYC Section */}
+//               <div className="mt-auto pt-6 border-t border-gray-200">
+//                 <p className="text-sm font-medium text-gray-900 mb-3">KYC Status</p>
+//                 <div className="flex items-center gap-2">
+//                   <CheckCircle className="w-5 h-5 text-green-500" />
+//                   <span className="text-sm text-green-600 font-medium">
+//                     Verified
+//                   </span>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* RIGHT PANEL (Your existing matrix network structure stays untouched) */}
+//           <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6">
+//             {/* You can continue your Matrix tree / team members visualization here */}
+//             <h2 className="text-lg font-semibold text-gray-800 mb-4">
+//               Team Overview
+//             </h2>
+//             <p className="text-sm text-gray-600 mb-4">
+//               Matrix Bonus: $
+//               {profile?.bonusBreakdown?.matrix_bonus?.toLocaleString() || 0}
+//             </p>
+//             <div className="border border-gray-200 rounded-lg p-4 text-center text-sm text-gray-500">
+//               Matrix position: <b>{position}</b> | Upline:{" "}
+//               <b>{parent}</b>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Matrix;
+
+
+
+
 import React, { useEffect, useState } from "react";
-import { QrCode, Copy, Check, CheckCircle } from "lucide-react";
+import { QrCode, Copy, Check, CheckCircle, Users, TrendingUp, Award } from "lucide-react";
 import QRCode from "qrcode";
 import { getUserProfile } from "../../api/authApi";
 
@@ -2161,20 +2377,19 @@ const Matrix = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-
+        const token = localStorage.getItem("authToken") || localStorage.getItem("token");
         if (!token) {
-          console.warn("No token found — showing UI without data");
           setLoading(false);
           return;
         }
 
-        const data = await getUserProfile();
+        const data = await getUserProfile(token);
         setProfile(data);
 
+        // Generate QR Code
         const qr = await QRCode.toDataURL(
           `https://veloxcapital.com/ref/${data.referralCode}`,
-          { width: 200, margin: 2 }
+          { width: 180, margin: 2, color: { dark: "#00A991", light: "#ffffff" } }
         );
         setQrUrl(qr);
       } catch (err) {
@@ -2189,168 +2404,242 @@ const Matrix = () => {
 
   const copyReferralLink = () => {
     if (profile?.referralCode) {
-      navigator.clipboard.writeText(
-        `https://veloxcapital.com/ref/${profile.referralCode}`
-      );
+      const link = `https://veloxcapital.com/ref/${profile.referralCode}`;
+      navigator.clipboard.writeText(link);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  const shortUserId = (id) => {
-    if (!id || id.length <= 12) return id;
-    return `${id.slice(0, 6)}...${id.slice(-4)}`;
-  };
+  const shortUserId = (id) => (id ? `${id.slice(0, 6)}...${id.slice(-4)}` : "—");
 
-  // ─────── EXTRACT RELEVANT DATA ───────
+  // ─────── EXTRACT DATA ───────
   const matrix = profile?.matrix || {};
-  const wallets = profile?.wallets || {};
-  const rank = profile?.rank || "—";
   const position = matrix?.position || "—";
   const parent = matrix?.parent || "—";
+  const matrixBonus = profile?.bonusBreakdown?.matrix_bonus || 0;
   const totalDownline = profile?.totalDownline || 0;
   const walletBalance = profile?.walletBalance || 0;
   const activePackage = profile?.activePackage?.name || "—";
+  const rank = profile?.rank || "—";
   const referralCode = profile?.referralCode || "";
   const referralLink = `https://veloxcapital.com/ref/${referralCode}`;
+
+  // Parse matrix position: e.g., "1-2-3" → [1, 2, 3]
+  const positionPath = position !== "—" ? position.split("-").map(Number) : [];
 
   // ─────── LOADING STATE ───────
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]"></div>
-        <span className="ml-3 text-lg text-gray-700">Loading Matrix Data…</span>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
+        <div className="flex items-center space-x-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-[#00A991]" />
+          <span className="text-lg font-medium text-gray-700">Loading Matrix Dashboard…</span>
+        </div>
       </div>
     );
   }
 
-  // ─────── MAIN MATRIX UI (unchanged structure) ───────
+  // ─────── MAIN UI ───────
   return (
-    <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-gray-50 p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[30%_1fr] gap-6 items-stretch">
-          {/* LEFT PANEL */}
-          <div className="w-full">
-            <div className="bg-white dark:bg-neutral-800 rounded-2xl p-4 shadow-sm h-full flex flex-col">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                MY MATRIX
-              </h3>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+            Velox Capital <span className="text-[#00A991]">Matrix Dashboard</span>
+          </h1>
+          <p className="text-gray-600 mt-2">Your position, team, and matrix earnings</p>
+        </div>
 
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl font-bold text-amber-500">Rank</span>
-                <span className="text-2xl font-bold capitalize">{rank}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+          {/* LEFT PANEL: User Info */}
+          <div className="space-y-5">
+            {/* My Matrix Card */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-xl font-bold text-[#00A991]">My Matrix</h3>
+                <Award className="h-6 w-6 text-amber-500" />
               </div>
 
-              <p className="text-sm text-gray-500 mb-1">
-                User ID:{" "}
-                <span className="font-mono">{shortUserId(profile?.userId)}</span>
-              </p>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Rank</span>
+                  <span className="text-lg font-bold capitalize text-gray-900">{rank}</span>
+                </div>
 
-              <div className="space-y-4 mt-6">
-                <div>
-                  <p className="text-sm text-gray-500">Wallet Balance</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">User ID</span>
+                  <span className="font-mono text-sm">{shortUserId(profile?.userId)}</span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Wallet Balance</span>
+                  <span className="text-lg font-bold text-gray-900">
                     ${walletBalance.toLocaleString()}
-                  </p>
+                  </span>
                 </div>
 
-                <div>
-                  <p className="text-sm text-gray-500">Active Package</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {activePackage}
-                  </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Active Package</span>
+                  <span className="text-lg font-bold text-green-600">{activePackage}</span>
                 </div>
 
-                <div>
-                  <p className="text-sm text-gray-500">Total Downline</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {totalDownline}
-                  </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Total Downline</span>
+                  <span className="text-lg font-bold text-gray-900">{totalDownline}</span>
                 </div>
 
-                <div>
-                  <p className="text-sm text-gray-500">Matrix Position</p>
-                  <p className="text-lg font-mono text-gray-700">{position}</p>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Matrix Position</span>
+                  <span className="font-mono text-lg text-[#00A991]">{position}</span>
                 </div>
 
-                <div>
-                  <p className="text-sm text-gray-500">Upline (Parent)</p>
-                  <p className="text-lg font-medium text-gray-900">{parent}</p>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Upline (Parent)</span>
+                  <span className="text-base font-medium text-gray-900">{parent}</span>
                 </div>
               </div>
 
-              {/* Referral Link Section */}
-              <div className="mt-6">
-                <p className="text-sm text-gray-500 mb-2">Referral Link</p>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={referralLink}
-                    readOnly
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 font-mono text-xs"
-                  />
-                  <button
-                    onClick={copyReferralLink}
-                    className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition flex items-center gap-1"
-                  >
-                    {copied ? (
-                      <>
-                        <Check size={14} className="text-green-600" />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={14} />
-                        Copy
-                      </>
-                    )}
-                  </button>
+              {/* Matrix Bonus */}
+              <div className="mt-6 p-4 bg-gradient-to-r from-[#00A991]/10 to-[#10B981]/10 rounded-xl border border-[#00A991]/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Matrix Bonus Earned</p>
+                    <p className="text-2xl font-bold text-[#00A991]">${matrixBonus.toLocaleString()}</p>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-[#00A991]" />
                 </div>
+              </div>
+            </div>
+
+            {/* Referral Link */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Referral Link</h3>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={referralLink}
+                  readOnly
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 font-mono text-xs"
+                />
+                <button
+                  onClick={copyReferralLink}
+                  className={`px-4 py-2 rounded-lg font-medium transition flex items-center gap-1 ${
+                    copied
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {copied ? (
+                    <>
+                      <Check size={16} /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy size={16} /> Copy
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* QR Code */}
-              <div className="mt-6">
-                <p className="text-sm text-gray-500 mb-1">QR Code</p>
-                <p className="text-xs text-gray-400 mb-3">For direct referrals</p>
-                <div className="flex justify-center p-4 bg-gray-50 rounded-xl">
+              <div className="mt-5 text-center">
+                <p className="text-sm text-gray-500 mb-2">Scan to Join</p>
+                <div className="inline-block p-3 bg-white rounded-xl shadow-sm border">
                   {qrUrl ? (
-                    <img src={qrUrl} alt="Referral QR" className="w-32 h-32" />
+                    <img src={qrUrl} alt="Referral QR" className="w-40 h-40" />
                   ) : (
-                    <div className="w-32 h-32 bg-gray-200 border-2 border-dashed rounded-xl flex items-center justify-center">
+                    <div className="w-40 h-40 bg-gray-100 rounded-xl flex items-center justify-center">
                       <QrCode className="w-16 h-16 text-gray-400" />
                     </div>
                   )}
                 </div>
               </div>
+            </div>
 
-              {/* KYC Section */}
-              <div className="mt-auto pt-6 border-t border-gray-200">
-                <p className="text-sm font-medium text-gray-900 mb-3">KYC Status</p>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-sm text-green-600 font-medium">
-                    Verified
-                  </span>
+            {/* KYC Status */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Account Status</h3>
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-6 h-6 text-green-500" />
+                <div>
+                  <p className="font-medium text-green-600">KYC Verified</p>
+                  <p className="text-xs text-gray-500">Full access enabled</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT PANEL (Your existing matrix network structure stays untouched) */}
-          <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6">
-            {/* You can continue your Matrix tree / team members visualization here */}
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Team Overview
-            </h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Matrix Bonus: $
-              {profile?.bonusBreakdown?.matrix_bonus?.toLocaleString() || 0}
-            </p>
-            <div className="border border-gray-200 rounded-lg p-4 text-center text-sm text-gray-500">
-              Matrix position: <b>{position}</b> | Upline:{" "}
-              <b>{parent}</b>
+          {/* RIGHT PANEL: Matrix Tree */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">Matrix Structure</h2>
+              <Users className="h-6 w-6 text-[#00A991]" />
+            </div>
+
+            {/* Matrix Path Visualization */}
+            <div className="mb-6 p-5 bg-gradient-to-r from-[#00A991]/5 to-[#10B981]/5 rounded-xl border border-[#00A991]/20">
+              <p className="text-sm text-gray-600 mb-3">Your Position Path</p>
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                {positionPath.length > 0 ? (
+                  positionPath.map((level, i) => (
+                    <React.Fragment key={i}>
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg transition-all ${
+                          i === positionPath.length - 1
+                            ? "bg-[#00A991] ring-4 ring-[#00A991]/30 scale-110"
+                            : "bg-[#10B981]"
+                        }`}
+                      >
+                        {level}
+                      </div>
+                      {i < positionPath.length - 1 && (
+                        <div className="w-16 h-1 bg-gradient-to-r from-[#00A991] to-[#10B981]" />
+                      )}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic">No matrix position</p>
+                )}
+              </div>
+              <div className="mt-4 text-center">
+                <p className="text-sm">
+                  <span className="font-medium">Upline:</span> <strong>{parent}</strong>
+                </p>
+              </div>
+            </div>
+
+            {/* Matrix Stats */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-50 p-4 rounded-xl text-center">
+                <p className="text-sm text-gray-500">Matrix Level</p>
+                <p className="text-2xl font-bold text-[#00A991]">
+                  {positionPath.length > 0 ? positionPath.length : 0}
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-xl text-center">
+                <p className="text-sm text-gray-500">Team Size</p>
+                <p className="text-2xl font-bold text-gray-900">{totalDownline}</p>
+              </div>
+            </div>
+
+            {/* Placeholder for Full Matrix Tree (Future) */}
+            <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+              <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm text-gray-500">
+                Full matrix tree visualization coming soon
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                View all your downline members in a 3xN structure
+              </p>
             </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-12 text-center text-xs text-gray-500">
+          <p>Velox Capital © 2025 | Matrix Engine v2.0</p>
         </div>
       </div>
     </div>
