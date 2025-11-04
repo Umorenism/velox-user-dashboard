@@ -380,14 +380,14 @@ export default function VeloxRetirementInvestorUI() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-6xl dark:bg-neutral-800 dark:text-white mx-auto p-4 sm:p-6 space-y-6">
       {/* Header */}
-      <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-extrabold">
+      <header className="flex dark:bg-neutral-800 dark:text-white flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="dark:bg-neutral-800 dark:text-white">
+          <h1 className="text-xl dark:bg-neutral-800 dark:text-white sm:text-2xl font-extrabold">
             Velox Capital — Retirement Investor Portal
           </h1>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm dark:bg-neutral-800 dark:text-white text-gray-600">
             Designed for retirement personnel: invest, track, and withdraw
             profit after tenure
           </p>
@@ -403,33 +403,33 @@ export default function VeloxRetirementInvestorUI() {
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-12 dark:bg-neutral-800 dark:text-white gap-6">
         {/* Left Section */}
-        <section className="col-span-12 md:col-span-6 bg-white p-4 rounded-2xl shadow-sm">
-          <h2 className="text-lg font-bold mb-3">Investment Details</h2>
+        <section className="col-span-12 dark:bg-neutral-800 dark:text-white md:col-span-6 bg-white p-4 rounded-2xl shadow-sm">
+          <h2 className="text-lg dark:bg-neutral-800 dark:text-white font-bold mb-3">Investment Details</h2>
 
           {/* Amount */}
-          <label className="block mb-2 text-sm font-medium">Amount (USD)</label>
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+          <label className="block dark:bg-neutral-800 dark:text-white mb-2 text-sm font-medium">Amount (USD)</label>
+          <div className="flex dark:bg-neutral-800 dark:text-white flex-col sm:flex-row gap-2 mb-4">
             <input
               type="number"
               min={0}
               step={100}
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="flex-1 p-2 border rounded"
+              className="flex-1 dark:bg-neutral-800 dark:text-white p-2 border rounded"
             />
             <button
               type="button"
               onClick={() => setAmount(0)}
-              className="px-3 py-2 rounded bg-gray-100"
+              className="px-3 dark:bg-neutral-800 dark:text-white dark:border dark:bg-teal-600 py-2 rounded bg-gray-100"
             >
               Clear
             </button>
           </div>
 
           {/* Years */}
-          <label className="block mb-2 text-sm font-medium">
+          <label className="block mb-2 text-sm font-medium dark:bg-neutral-800 dark:text-white">
             Compound period (years) — min {MIN_YEARS}
           </label>
           <input
@@ -439,11 +439,11 @@ export default function VeloxRetirementInvestorUI() {
             onChange={(e) =>
               setYears(Math.max(Number(e.target.value), MIN_YEARS))
             }
-            className="w-full sm:w-32 p-2 border rounded mb-4"
+            className="w-full dark:bg-neutral-800 dark:text-white sm:w-32 p-2 border rounded mb-4"
           />
 
           {/* Annual Rate */}
-          <label className="block mb-2 text-sm font-medium">
+          <label className="block dark:bg-neutral-800 dark:text-white mb-2 text-sm font-medium">
             Annual Rate (%) — min {MIN_RATE}
           </label>
           <input
@@ -454,37 +454,37 @@ export default function VeloxRetirementInvestorUI() {
             onChange={(e) =>
               setAnnualRate(Math.max(Number(e.target.value), MIN_RATE))
             }
-            className="w-full sm:w-32 p-2 border rounded mb-4"
+            className="w-full dark:bg-neutral-800 dark:text-white sm:w-32 p-2 border rounded mb-4"
           />
 
           {/* Start Date */}
-          <label className="block mb-2 text-sm font-medium">Start date</label>
+          <label className="block mb-2 text-sm font-medium dark:bg-neutral-800 dark:text-white">Start date</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="p-2 border rounded mb-4 w-full sm:w-auto"
+            className="p-2 border dark:bg-neutral-800 dark:text-white rounded mb-4 w-full sm:w-auto"
           />
 
           {/* Wallet */}
-          <label className="block mb-2 text-sm font-medium">
+          <label className="block dark:bg-neutral-800 dark:text-white mb-2 text-sm font-medium">
             USDT Wallet (credit to)
           </label>
           <input
             type="text"
             value={walletAddress}
             onChange={(e) => setWalletAddress(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
+            className="w-full dark:bg-neutral-800 dark:text-white p-2 border rounded mb-4"
           />
 
           {/* Presets */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+          <div className="grid dark:bg-neutral-800 dark:text-white grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
             {presets.map((p) => (
               <button
                 key={p}
                 type="button"
                 onClick={() => setAmount(p)}
-                className={`p-2 rounded-lg border ${
+                className={`p-2 dark:bg-neutral-800 dark:text-white rounded-lg border ${
                   amount === p ? "ring-2 ring-indigo-300" : ""
                 }`}
               >
@@ -494,7 +494,7 @@ export default function VeloxRetirementInvestorUI() {
           </div>
 
           {/* Proof Upload */}
-          <label className="block mb-2 text-sm font-medium">
+          <label className="block dark:bg-neutral-800 dark:text-white mb-2 text-sm font-medium">
             Upload proof of payment
           </label>
           <input
@@ -504,15 +504,15 @@ export default function VeloxRetirementInvestorUI() {
             className="mb-2"
           />
           {proofFile && (
-            <div className="text-xs mb-4">Selected: {proofFile.name}</div>
+            <div className="text-xs dark:bg-neutral-800 dark:text-white mb-4">Selected: {proofFile.name}</div>
           )}
 
           {/* QR Upload */}
-          <div className="mb-4">
-            <label className="block mb-2 text-sm font-medium">
+          <div className="mb-4 dark:bg-neutral-800 dark:text-white">
+            <label className="block dark:bg-neutral-800 dark:text-white  mb-2 text-sm font-medium">
               USDT QR Code
             </label>
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex dark:bg-neutral-800 dark:text-white flex-col sm:flex-row items-center gap-4">
               <div className="w-32 h-32 bg-gray-50 rounded flex items-center justify-center border">
                 {qrSrc ? (
                   <img
@@ -521,7 +521,7 @@ export default function VeloxRetirementInvestorUI() {
                     className="max-w-full max-h-full rounded"
                   />
                 ) : (
-                  <div className="text-xs text-gray-500 text-center">
+                  <div className="text-xs  text-gray-500 text-center">
                     QR Placeholder
                   </div>
                 )}
@@ -538,7 +538,7 @@ export default function VeloxRetirementInvestorUI() {
           </div>
 
           {/* Risk */}
-          <div className="text-xs text-red-700 bg-red-50 p-3 rounded mb-4">
+          <div className="text-xs text-red-700 bg-red-50 p-3 rounded mb-4 dark:bg-neutral-800 dark:text-white dark:border">
             Investing involves risks. Past performance does not guarantee
             future results. By submitting, you acknowledge the 50/50 profit
             share and agree to the terms.
@@ -562,12 +562,12 @@ export default function VeloxRetirementInvestorUI() {
         </section>
 
         {/* Right Section */}
-        <aside className="col-span-12 md:col-span-6 space-y-4">
+        <aside className="col-span-12 dark:bg-neutral-800 dark:text-white  md:col-span-6 space-y-4">
           {/* Chart */}
-          <div className="bg-white p-4 rounded-2xl shadow-sm">
-            <h3 className="font-bold text-lg mb-3">Projected Growth</h3>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-1/2 h-56">
+          <div className="bg-white dark:border dark:bg-neutral-800 dark:text-white  p-4 rounded-2xl shadow-sm">
+            <h3 className="font-bold dark:bg-neutral-800 dark:text-white  text-lg mb-3">Projected Growth</h3>
+            <div className="flex flex-col dark:bg-neutral-800 dark:text-white  sm:flex-row gap-4">
+              <div className="w-full dark:bg-neutral-800 dark:text-white  sm:w-1/2 h-56">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -585,20 +585,20 @@ export default function VeloxRetirementInvestorUI() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="text-sm space-y-1">
-                <div>
+              <div className="text-sm dark:bg-neutral-800 dark:text-white  space-y-1">
+                <div className="dark:bg-neutral-800 dark:text-white ">
                   Principal:{" "}
                   <span className="font-semibold">
                     {formatCurrency(Number(amount))}
                   </span>
                 </div>
-                <div>
+                <div className="dark:bg-neutral-800 dark:text-white ">
                   Final Balance:{" "}
                   <span className="font-semibold">
                     {formatCurrency(breakdown.finalBalance)}
                   </span>
                 </div>
-                <div>
+                <div className="dark:bg-neutral-800 dark:text-white ">
                   Profit:{" "}
                   <span className="font-semibold">
                     {formatCurrency(breakdown.profit)}
@@ -608,7 +608,7 @@ export default function VeloxRetirementInvestorUI() {
             </div>
 
             {/* Progress Bar */}
-            <div className="mt-4">
+            <div className="mt-4 dark:bg-neutral-800 dark:text-white ">
               <div className="flex justify-between text-sm">
                 <div>Progress</div>
                 <div>{progressPercent}%</div>
@@ -623,7 +623,7 @@ export default function VeloxRetirementInvestorUI() {
           </div>
 
           {/* Breakdown */}
-          <div className="bg-white p-4 rounded-2xl shadow-sm">
+          <div className="bg-white p-4 dark:bg-neutral-800 dark:text-white dark:border rounded-2xl shadow-sm">
             <h3 className="font-bold text-lg">Monthly Breakdown</h3>
             <div className="max-h-48 overflow-auto mt-2 text-sm">
               {breakdown.monthlyBalances.slice(0, 12).map((m) => (
