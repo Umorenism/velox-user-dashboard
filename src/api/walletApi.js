@@ -13,10 +13,19 @@ export const initiateFund = async ({ amount, payCurrency }) => {
 
 // ──────────────────────── Transfer ────────────────────────
 export const transferFunds = async ({ toUserId, amount }) => {
-  const response = await apiClient.post("/api/users/transfer", {
-    toUserId,
-    amount,
-  });
-  console.log("Transfer Funds:", response.data);
-  return response.data;
+  try {
+    const response = await apiClient.post("/api/users/transfer", {
+      toUserId,
+      amount,
+    });
+    console.log("Transfer API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Transfer API error:", error.response?.data || error.message);
+    throw error;
+  }
 };
+
+// ──────────────────────── Withdraw ────────────────────────
+export const withdrawal = (payload) =>
+  apiClient.post("/api/users/withdrawal", payload);

@@ -2245,7 +2245,7 @@ export default function Dashboardpage() {
     },
     {
       title: "Account Balance",
-      amount: formatAmount(wallets.earnings || profile?.walletBalance),
+      amount: formatAmount(profile?.activeInvestment),
       icon: <ArrowRightLeft size={20} />,
       buttons: ["withdraw", "transfer"],
     },
