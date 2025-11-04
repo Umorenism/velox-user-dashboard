@@ -2202,6 +2202,8 @@ export default function Dashboardpage() {
   const [withdrawalResult, setWithdrawalResult] = useState(null);
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
 
+  const [userData, setUserData] = useState(null);
+
   /* -------------------------- FETCH PROFILE -------------------------- */
   useEffect(() => {
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -2215,6 +2217,18 @@ export default function Dashboardpage() {
       .catch((err) => setError(err.message || "Failed to load profile."))
       .finally(() => setLoading(false));
   }, []);
+
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      const data = await getUserProfile(token);
+      setUserData(data);
+    };
+    fetchProfile();
+  }, []);
+
+  if (!userData) return <div>Loading...</div>;
 
   /* -------------------------- HELPERS -------------------------- */
   const formatAmount = (amt, cur = "USD") => {
@@ -2442,7 +2456,7 @@ export default function Dashboardpage() {
         className="py-6 flex flex-col lg:flex-row gap-6 w-full max-w-[1400px] px-4 sm:px-6"
       >
         <div className="w-full lg:w-[65%]">
-          <PortfolioOverview profile={profile} />
+          <PortfolioOverview userData={userData} />
         </div>
         <div className="w-full lg:w-[35%]">
           <ReferralCard profile={profile} />

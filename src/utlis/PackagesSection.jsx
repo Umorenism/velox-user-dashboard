@@ -16,7 +16,7 @@ const UserPackagesSection = () => {
       : packages.filter((pkg) => pkg.name === activeTab);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800">
+    <div className="max-w-7xl  mx-auto p-6 bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
        Packages
       </h2>
@@ -40,12 +40,12 @@ const UserPackagesSection = () => {
 
       {/* Content */}
       {filteredPackages.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-gray-50 dark:bg-neutral-800 rounded-lg">
+        <div className="flex flex-col overflow-x-auto  items-center justify-center py-16 min-h-[800px] bg-gray-50 dark:bg-neutral-800 rounded-lg">
           <AlertTriangle className="text-gray-400 mb-4 w-12 h-12" />
           <p className="text-gray-500 dark:text-gray-300 text-lg font-medium">
             No packages found
           </p>
-          <p className="text-gray-400 dark:text-gray-400 text-sm mt-1">
+          <p className="text-gray-400 text-center dark:text-gray-400 text-sm mt-1">
             Try switching to a different tab or refreshing the page
           </p>
         </div>
