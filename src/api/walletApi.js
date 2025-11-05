@@ -29,3 +29,21 @@ export const transferFunds = async ({ toUserId, amount }) => {
 // ──────────────────────── Withdraw ────────────────────────
 export const withdrawal = (payload) =>
   apiClient.post("/api/users/withdrawal", payload);
+
+
+// utils/paymentStatus.js
+
+
+export async function checkPaymentStatus(paymentId, token) {
+  if (!paymentId || !token) return null;
+  try {
+    const res = await apiClient.get(`/api/users/wallet/check-status/${paymentId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  } catch (err) {
+    console.error("Payment status check failed:", err);
+    return null;
+  }
+}
+

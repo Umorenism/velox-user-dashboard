@@ -1880,7 +1880,13 @@ export default function Login() {
                 Don't have an account?
                 <span className="hover:underline text-blue-600"> Signup</span>
               </a>
+             
             </div>
+            <div className="text-center text-sm text-[#e3b874]">
+               <a href="/forget-password" className="underline">Forgot password</a>
+             
+            </div>
+            
           </form>
 
           <div className="text-center text-xs text-gray-400 mt-6">

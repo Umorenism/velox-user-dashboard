@@ -40,6 +40,8 @@ import MarketOverviewCashFX from "../pages/network/RankAdvancement";
 import BookACall from "../pages/modules/BookACall";
 import Unilevel from "../pages/network/Unilevel";
 import PersonalMatchingBonus from "../pages/network/PersonalMatchingBonus";
+import ForgetPassword from "../pages/ForgetPassword";
+import ResetPassword from "../pages/RestPassword";
 
 export default function AppRouter() {
   const { user, isTokenValid, loading } = useUser();
@@ -59,6 +61,8 @@ export default function AppRouter() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/verify-email" element={<VerifyEmail />} />
+      <Route path="/forget-password" element={<ForgetPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Dashboard */}
       <Route

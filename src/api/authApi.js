@@ -29,6 +29,24 @@ export const signUpUser = async (userData) => {
     throw error;
   }
 };
+export const forgetPassword = async (forgetData) => {
+  try {
+    const res = await apiClient.post("/api/auth/forgot-password", forgetData);
+    return res.data;
+  } catch (error) {
+    console.error("Signup failed:", error.response?.data || error.message);
+    throw error;
+  }
+};
+export const resetPassword = async (forgetData) => {
+  try {
+    const res = await apiClient.post("api/auth/reset-password", forgetData);
+    return res.data;
+  } catch (error) {
+    console.error("Signup failed:", error.response?.data || error.message);
+    throw error;
+  }
+};
 
 /**
  * ✅ Verify Email
