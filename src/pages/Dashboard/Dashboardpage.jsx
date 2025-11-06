@@ -108,7 +108,7 @@ const DepositModal = ({
   copyToClipboard,
 }) => {
   const handleMinClick = () => setFundData({ ...fundData, amount: "100" });
-  const currentStatus = paymentStatus?.transaction?.status || (paymentId ? "waiting" : null);
+  const currentStatus = paymentStatus?.transaction?.status || (paymentId );
   const payAddress = fundResult?.data?.payAddress || paymentStatus?.payAddress;
   const payAmount = fundResult?.data?.payAmount || paymentStatus?.transaction?.amount;
 
