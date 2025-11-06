@@ -2122,6 +2122,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { apiClient } from "../../../api/apiClient";
 import { useNavigate, useLocation } from "react-router-dom";
 import PackageSelection from "../../../utlis/PackageSelection";
+import courseThumb from '../../../assets/veloximg1.jpeg'
 
 export default function Course() {
   const [courses, setCourses] = useState([]);
@@ -2434,11 +2435,12 @@ export default function Course() {
           <div className="flex flex-col items-center">
             <div className="w-40 h-40 rounded-full bg-gradient-to-b from-teal-500 to-yellow-400 flex items-center justify-center shadow-lg overflow-hidden">
               <img
-                src={selectedCourse.thumbnail || "/placeholder.jpg"}
-                alt={selectedCourse.title}
-                className="w-full h-full object-cover"
-                onError={(e) => e.target.src = "/placeholder.jpg"}
-              />
+  src={selectedCourse.thumbnail || courseThumb}
+  alt={selectedCourse.title}
+  className="w-full h-full object-cover"
+  onError={(e) => { e.target.src = courseThumb; }}
+/>
+
             </div>
           </div>
 
@@ -2468,81 +2470,132 @@ export default function Course() {
 
         <hr className="w-full max-w-5xl border-gray-200 my-6" />
 
-        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Your Progress</h3>
-            <p className="text-sm text-teal-600 mb-4">
-              {progress.completed} of {progress.total} videos completed
-            </p>
-            <div className="flex items-center gap-4">
-              <div className="w-40 h-40">
-                <ResponsiveContainer>
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={60}
-                      paddingAngle={0}
-                      dataKey="value"
-                    >
-                      {pieData.map((_, i) => (
-                        <Cell key={i} fill={COLORS[i]} />
-                      ))}
-                    </Pie>
-                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-gray-800">
-                      {progress.percent}%
-                    </text>
-                  </PieChart>
-                </ResponsiveContainer>
+        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-2xl shadow-sm">
+
+  {/* ─── Progress Section ─── */}
+  <div className="flex flex-col items-center md:items-start">
+    <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+      Your Progress
+    </h3>
+    <p className="text-sm text-teal-600 dark:text-teal-400 mb-6">
+      {progress.completed} of {progress.total} videos completed
+    </p>
+
+    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full">
+      {/* Pie chart */}
+      <div className="w-full sm:w-72 h-72">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={pieData}
+              cx="50%"
+              cy="50%"
+              innerRadius={85}
+              outerRadius={105}
+              paddingAngle={1}
+              dataKey="value"
+            >
+              {pieData.map((_, i) => (
+                <Cell key={i} fill={COLORS[i]} />
+              ))}
+            </Pie>
+            <text
+              x="50%"
+              y="50%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="text-4xl sm:text-5xl font-extrabold fill-gray-800 dark:fill-gray-100"
+            >
+              {progress.percent}%
+            </text>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Icon */}
+      <div
+        className={`p-4 rounded-full shadow-md mt-4 sm:mt-0 ${
+          progress.percent === 100 ? "bg-teal-600 text-white" : "bg-yellow-500 text-white"
+        }`}
+      >
+        {progress.percent === 100 ? <CheckCircle size={28} /> : <PlayCircle size={28} />}
+      </div>
+    </div>
+  </div>
+
+  {/* ─── Course Outline Section ─── */}
+  <div>
+    <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+      Course Outline
+    </h3>
+
+    <div className="space-y-2">
+      {selectedCourse.videos?.map((video, i) => {
+        const prevVideo = selectedCourse.videos[i - 1];
+        const isLocked = i > 0 && !completedVideos.has(prevVideo?._id);
+        const canPlay = video.isFree || completedVideos.has(prevVideo?._id);
+        const isCompleted = completedVideos.has(video._id);
+        const isActive = currentVideo?._id === video._id;
+
+        return (
+          <div
+            key={video._id}
+            onClick={() => (canPlay ? setCurrentVideo(video) : setShowPackageModal(true))}
+            className={`grid grid-cols-[50px_1fr_60px] sm:grid-cols-[70px_1fr_80px] items-start gap-2 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 rounded-lg transition-all cursor-pointer
+              ${isLocked || !canPlay ? "opacity-60" : "hover:bg-gray-50 dark:hover:bg-neutral-800"}
+              ${isActive ? "bg-teal-50 dark:bg-neutral-800 ring-2 ring-teal-500/30" : ""}`}
+          >
+            {/* Icon column */}
+            <div className="flex flex-col items-center relative">
+              <div
+                className={`flex items-center justify-center w-8 sm:w-10 h-8 sm:h-10 rounded-full border-2 z-10
+                  ${isCompleted ? "bg-teal-500 border-teal-500" : "bg-white dark:bg-neutral-900 border-teal-500"}`}
+              >
+                {isCompleted ? (
+                  <CheckCircle size={18} className="text-white" />
+                ) : (
+                  <PlayCircle
+                    size={18}
+                    className={`${isActive ? "text-yellow-500" : "text-teal-500"}`}
+                  />
+                )}
               </div>
-              <div className="bg-teal-500 p-2 rounded-full text-white">
-                {progress.percent === 100 ? <CheckCircle size={18} /> : <PlayCircle size={18} />}
+
+              {i < selectedCourse.videos.length - 1 && (
+                <div className="absolute top-[50%] translate-y-[20px] w-[2px] bg-gray-300 dark:bg-neutral-700"
+                     style={{ height: "calc(100% - 10px)", left: "50%", transform: "translateX(-50%) translateY(20px)" }}
+                />
+              )}
+            </div>
+
+            {/* Title column */}
+            <div className="flex flex-col">
+              <p className={`text-sm sm:text-base md:text-lg font-medium leading-tight ${
+                isLocked ? "text-gray-400 dark:text-gray-600" : "text-gray-800 dark:text-gray-200"
+              }`}>
+                {video.title}
+                {!video.isFree && <Lock size={16} className="inline ml-1 sm:ml-2 text-gray-400 dark:text-gray-500" />}
+              </p>
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {video.duration ? `${video.duration} mins` : "—"}
+              </span>
+            </div>
+
+            {/* Time column */}
+            <div className="flex items-center justify-end">
+              <div className="h-6 sm:h-8 w-[1.5px] bg-gray-300 dark:bg-neutral-700 rounded-sm mr-2 sm:mr-4" />
+              <div className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 min-w-[50px] sm:min-w-[60px] text-right">
+                {video.length || video.time || "10:00"}
               </div>
             </div>
           </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
 
-          <div>
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Course Outline</h3>
-            <div className="relative ml-4">
-              <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-300"></div>
-              {selectedCourse.videos?.map((video, i) => {
-                const prevVideo = selectedCourse.videos[i - 1];
-                const isLocked = i > 0 && !completedVideos.has(prevVideo?._id);
-                const canPlay = video.isFree || completedVideos.has(prevVideo?._id);
 
-                return (
-                  <div
-                    key={video._id}
-                    onClick={() => canPlay ? setCurrentVideo(video) : setShowPackageModal(true)}
-                    className={`flex items-start mb-4 relative cursor-pointer ${isLocked || !canPlay ? "opacity-50" : ""}`}
-                  >
-                    <div className="z-10 bg-white">
-                      <div
-                        className={`flex items-center justify-center w-5 h-5 rounded-full border-2 ${
-                          completedVideos.has(video._id)
-                            ? "bg-teal-500 border-teal-500"
-                            : "border-teal-500 bg-white"
-                        }`}
-                      >
-                        {completedVideos.has(video._id) ? (
-                          <CheckCircle size={14} className="text-white" />
-                        ) : (
-                          <PlayCircle size={14} className="text-teal-500" />
-                        )}
-                      </div>
-                    </div>
-                    <p className="ml-4 text-gray-700 text-sm hover:text-yellow-500 transition">
-                      {video.title}
-                      {!video.isFree && <Lock size={12} className="inline ml-1 text-gray-400" />}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
 
         {/* PACKAGE MODAL */}
         {showPackageModal && (
@@ -2555,7 +2608,7 @@ export default function Course() {
   // Video Player
   return (
     <div className="min-h-screen bg-[#f9fafb] flex flex-col items-center py-10 px-6 md:px-16 text-gray-800">
-      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
         <motion.div
           ref={videoSectionRef}
           initial={{ opacity: 0, x: -50 }}
@@ -2635,7 +2688,117 @@ export default function Course() {
             })}
           </div>
         </motion.div>
+      </div> */}
+
+
+      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+  {/* ─────────────── Main Video Section ─────────────── */}
+  <motion.div
+    ref={videoSectionRef}
+    initial={{ opacity: 0, x: -50 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="col-span-2 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-neutral-800"
+  >
+    {/* Video Player */}
+    <div className="relative aspect-video bg-black">
+      <video
+        ref={videoRef}
+        src={currentVideo.url}
+        controls
+        autoPlay
+        className="w-full h-full object-cover"
+        poster={selectedCourse.thumbnail || "/placeholder.jpg"}
+      />
+
+      {/* Subtle Overlay for Depth */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4 flex justify-between items-end">
+        <div className="text-white">
+          <h2 className="text-xl md:text-2xl font-semibold mb-1">{currentVideo.title}</h2>
+          <p className="text-sm text-gray-200">
+            {formatTime(0)} / {formatTime(currentVideo.duration || 0)}
+          </p>
+        </div>
+        <button
+          onClick={() => setCurrentVideo(null)}
+          className="px-4 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white rounded-lg font-medium shadow hover:opacity-90"
+        >
+          Back to Course
+        </button>
       </div>
+    </div>
+
+    {/* Divider Line */}
+    <div className="h-[1px] bg-gray-200 dark:bg-neutral-700" />
+
+    {/* Video Description / Controls area (optional future use) */}
+    <div className="p-6 flex justify-between items-center">
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          Now Playing
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">
+          {selectedCourse.title || "Course Module"}
+        </p>
+      </div>
+    </div>
+  </motion.div>
+
+  {/* ─────────────── Course Outline Section ─────────────── */}
+  <motion.div
+    initial={{ opacity: 0, x: 50 }}
+    animate={{ opacity: 1, x: 0 }}
+    className="bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-gray-200 dark:border-neutral-800 p-5 flex flex-col"
+  >
+    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center justify-between">
+      Course Outline
+      <span className="text-xs text-gray-500 dark:text-gray-400">
+        {selectedCourse.videos?.length || 0} Lessons
+      </span>
+    </h3>
+
+    <div className="space-y-3 overflow-y-auto max-h-[70vh] pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700">
+      {selectedCourse.videos?.map((video) => {
+        const prevVideo = selectedCourse.videos[selectedCourse.videos.indexOf(video) - 1];
+        const isLocked =
+          selectedCourse.videos.indexOf(video) > 0 && !completedVideos.has(prevVideo?._id);
+        const canPlay = video.isFree || completedVideos.has(prevVideo?._id);
+
+        return (
+          <motion.div
+            key={video._id}
+            onClick={() => (canPlay ? setCurrentVideo(video) : setShowPackageModal(true))}
+            whileHover={{ scale: canPlay ? 1.03 : 1 }}
+            className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer border transition-all ${
+              currentVideo._id === video._id
+                ? "bg-gradient-to-r from-teal-500 to-yellow-400 text-white border-none"
+                : isLocked || !canPlay
+                ? "bg-gray-100 dark:bg-neutral-800 opacity-60 border-gray-200 dark:border-neutral-700"
+                : "bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 border-gray-200 dark:border-neutral-700"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              {completedVideos.has(video._id) ? (
+                <CheckCircle size={20} className="text-green-500" />
+              ) : (
+                <PlayCircle
+                  size={20}
+                  className={`${
+                    currentVideo._id === video._id ? "text-white" : "text-teal-500"
+                  }`}
+                />
+              )}
+              <span className="text-sm font-medium truncate max-w-[200px]">
+                {video.title}
+              </span>
+            </div>
+            {!video.isFree && <Lock size={16} className="text-gray-400" />}
+          </motion.div>
+        );
+      })}
+    </div>
+  </motion.div>
+</div>
+
 
       {/* UPGRADE MODAL */}
       {showUpgradeModal && (
@@ -2683,3 +2846,17 @@ export default function Course() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
