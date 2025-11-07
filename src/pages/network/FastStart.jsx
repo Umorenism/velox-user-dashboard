@@ -741,7 +741,7 @@ const FastStart = React.memo(() => {
   const fastStart = profile?.fastStartPerformance || {};
   const totalEarned = fastStart.bonus50PerPackage || 0;
 
-  // Bar chart data (direct from API)
+  // Bar chart data
   const barData = useMemo(
     () => [
       { name: "Academy (30%)", value: fastStart.academy30 || 0 },
@@ -763,7 +763,7 @@ const FastStart = React.memo(() => {
       : [];
   }, [fastStart]);
 
-  // Optional: show breakdown per paid package (if you want)
+  // Paid packages breakdown
   const paidPackages = useMemo(
     () =>
       packages
@@ -777,27 +777,30 @@ const FastStart = React.memo(() => {
     [packages]
   );
 
-  /* ------------------- LOADING / ERROR ------------------- */
+  /* ------------------- LOADING STATE ------------------- */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center dark:bg-neutral-900 dark:text-white p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 flex items-center justify-center p-6 transition-colors">
         <div className="flex items-center space-x-3">
           <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-yellow-500" />
-          <span className="text-lg font-medium text-gray-700 dark:bg-neutral-900 dark:text-white">Loading Fast Start...</span>
+          <span className="text-lg font-medium text-gray-700 dark:text-gray-200">
+            Loading Fast Start...
+          </span>
         </div>
       </div>
     );
   }
 
+  /* ------------------- ERROR STATE ------------------- */
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center dark:bg-neutral-900 dark:text-white justify-center p-6">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
-          <AlertCircle className="h-10 w-10 text-red-600 mx-auto mb-3" />
-          <p className="text-red-800 font-medium">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 flex items-center justify-center p-6 transition-colors">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6 max-w-md text-center">
+          <AlertCircle className="h-10 w-10 text-red-600 dark:text-red-400 mx-auto mb-3" />
+          <p className="text-red-800 dark:text-red-300 font-medium">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+            className="mt-4 px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition"
           >
             Retry
           </button>
@@ -808,27 +811,32 @@ const FastStart = React.memo(() => {
 
   /* ------------------- MAIN UI ------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 dark:bg-neutral-900 dark:text-white sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto dark:bg-neutral-900 dark:text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 p-4 sm:p-6 lg:p-8 transition-colors">
+      <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}
-        <header className="text-center dark:bg-neutral-900 dark:text-white mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 flex items-center justify-center gap-3">
-            <Trophy className="h-10 w-10 text-yellow-500" />
+        <header className="text-center mb-10">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-3"
+          >
+            <Trophy className="h-10 w-10 text-yellow-500 dark:text-yellow-400" />
             Fast Start Performance
-          </h1>
-          <p className="text-gray-600 mt-3 text-lg">
-            Welcome back, <strong>{profile.name}</strong> • Rank: <strong className="text-yellow-600">{profile.rank}</strong>
+          </motion.h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-3 text-lg">
+            Welcome back, <strong className="text-gray-800 dark:text-gray-200">{profile.name}</strong> • Rank:{" "}
+            <strong className="text-yellow-600 dark:text-yellow-400">{profile.rank}</strong>
           </p>
         </header>
 
         {/* OVERVIEW CARDS */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {[
-            { title: "Total Referrals", value: profile.totalReferral, icon: Users, color: "text-blue-600" },
-            { title: "Active Downline", value: profile.totalDownline, icon: Users, color: "text-indigo-600" },
-            { title: "Fast Start Earned", value: `$${totalEarned.toLocaleString()}`, icon: DollarSign, color: "text-green-600" },
-            { title: "Group Volume", value: `$${profile.groupVolume.toLocaleString()}`, icon: Wallet, color: "text-teal-600" },
+            { title: "Total Referrals", value: profile.totalReferral, icon: Users, color: "text-blue-600 dark:text-blue-400" },
+            { title: "Active Downline", value: profile.totalDownline, icon: Users, color: "text-indigo-600 dark:text-indigo-400" },
+            { title: "Fast Start Earned", value: `$${totalEarned.toLocaleString()}`, icon: DollarSign, color: "text-green-600 dark:text-green-400" },
+            { title: "Group Volume", value: `$${profile.groupVolume.toLocaleString()}`, icon: Wallet, color: "text-teal-600 dark:text-teal-400" },
           ].map((card, i) => (
             <motion.div
               key={i}
@@ -836,12 +844,12 @@ const FastStart = React.memo(() => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ scale: 1.05 }}
-              className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100 hover:shadow-xl transition-all"
+              className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700 hover:shadow-xl dark:hover:shadow-2xl transition-all"
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="text-sm text-gray-500">{card.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{card.title}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</p>
                 </div>
                 <card.icon className={`h-8 w-8 ${card.color}`} />
               </div>
@@ -850,20 +858,24 @@ const FastStart = React.memo(() => {
         </section>
 
         {/* FAST START BREAKDOWN */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 dark:bg-neutral-900 dark:text-white mb-10">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
           {/* LEFT: Package Table */}
-          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-              <Package className="h-5 w-5 text-yellow-600" />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
+              <Package className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               Package Breakdown
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              30% → Academy | 70% → Trade Pool | <strong>50% of Academy = Fast Start Bonus</strong>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              30% → Academy | 70% → Trade Pool | <strong className="text-green-600 dark:text-green-400">50% of Academy = Fast Start Bonus</strong>
             </p>
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gradient-to-r from-yellow-50 to-amber-50 text-gray-700">
+                <thead className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 text-gray-700 dark:text-gray-300">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Package</th>
                     <th className="px-4 py-3 text-left font-medium">Academy</th>
@@ -871,21 +883,21 @@ const FastStart = React.memo(() => {
                     <th className="px-4 py-3 text-left font-medium">Bonus</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-neutral-700">
                   {paidPackages.length > 0 ? (
                     paidPackages.map((pkg) => (
-                      <tr key={pkg.id} className="hover:bg-gray-50 transition">
-                        <td className="px-4 py-3 font-medium">{pkg.name}</td>
-                        <td className="px-4 py-3">${pkg.academy.toLocaleString()}</td>
-                        <td className="px-4 py-3">${pkg.tradePool.toLocaleString()}</td>
-                        <td className="px-4 py-3 font-bold text-green-600">
+                      <tr key={pkg.id} className="hover:bg-gray-50 dark:hover:bg-neutral-700/50 transition">
+                        <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">{pkg.name}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">${pkg.academy.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">${pkg.tradePool.toLocaleString()}</td>
+                        <td className="px-4 py-3 font-bold text-green-600 dark:text-green-400">
                           ${pkg.bonus.toLocaleString()}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="px-4 py-6 text-center text-gray-400">
+                      <td colSpan="4" className="px-4 py-6 text-center text-gray-400 dark:text-gray-500">
                         <Package className="h-10 w-10 mx-auto mb-2 opacity-50" />
                         <p>No paid packages</p>
                       </td>
@@ -894,33 +906,57 @@ const FastStart = React.memo(() => {
                 </tbody>
               </table>
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT: Charts */}
           <div className="space-y-6">
             {/* Bar Chart */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Earnings Breakdown</h3>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700"
+            >
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Earnings Breakdown</h3>
               {barData.every((d) => d.value === 0) ? (
-                <div className="h-52 flex items-center justify-center text-gray-400">No data</div>
+                <div className="h-52 flex items-center justify-center text-gray-400 dark:text-gray-500">No data</div>
               ) : (
                 <ResponsiveContainer width="100%" height={208}>
                   <BarChart data={barData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-15} textAnchor="end" height={60} tick={{ fontSize: 11 }} />
-                    <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip formatter={(v) => `$${v.toLocaleString()}`} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-neutral-700" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-15}
+                      textAnchor="end"
+                      height={60}
+                      tick={{ fontSize: 11, fill: "#6b7280" }}
+                      className="dark:fill-gray-400"
+                    />
+                    <YAxis tick={{ fontSize: 12, fill: "#6b7280" }} className="dark:fill-gray-400" />
+                    <Tooltip
+                      formatter={(v) => `$${v.toLocaleString()}`}
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                      }}
+                      className="dark:bg-neutral-800 dark:border-neutral-700"
+                    />
                     <Bar dataKey="value" fill="#1E3A8A" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
-            </div>
+            </motion.div>
 
             {/* Pie Chart */}
-            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Distribution</h3>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm p-6 border border-gray-200 dark:border-neutral-700"
+            >
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Distribution</h3>
               {pieData.length === 0 ? (
-                <div className="h-52 flex items-center justify-center text-gray-400">No data</div>
+                <div className="h-52 flex items-center justify-center text-gray-400 dark:text-gray-500">No data</div>
               ) : (
                 <ResponsiveContainer width="100%" height={208}>
                   <PieChart>
@@ -937,25 +973,36 @@ const FastStart = React.memo(() => {
                         <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v) => `$${v.toLocaleString()}`} />
+                    <Tooltip
+                      formatter={(v) => `$${v.toLocaleString()}`}
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                      }}
+                    />
                     <Legend verticalAlign="bottom" height={36} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* CTA */}
-        <div className="text-center mt-10">
-          <button className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mt-10"
+        >
+          <button className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 dark:from-yellow-400 dark:to-amber-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all">
             <Package className="mr-2 h-5 w-5" />
             Upgrade Package Now
           </button>
-        </div>
+        </motion.div>
 
         {/* FOOTER */}
-        <div className="mt-16 text-center text-xs text-gray-500">
+        <div className="mt-16 text-center text-xs text-gray-500 dark:text-gray-400">
           <p>Velox Capital © 2025 | Fast Start Engine v1.0</p>
         </div>
       </div>

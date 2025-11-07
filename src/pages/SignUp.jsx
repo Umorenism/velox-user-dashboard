@@ -934,7 +934,7 @@ export default function Signup() {
       localStorage.setItem("pendingEmail", form.email);
 
       setTimeout(() => {
-        navigate("/verify-email");
+        navigate("/login");
       }, 800);
     } catch (err) {
       console.error("Signup failed:", err);
