@@ -63,7 +63,7 @@ function BackgroundSwitcher() {
           className="w-full h-full object-cover transition-opacity duration-1000"
         />
       )}
-      <div className="absolute inset-0 bg-[#07112b]/20" />
+      <div className="absolute inset-0 bg-[#07112b]/10 backdrop-brightness-105" />
     </div>
   );
 }

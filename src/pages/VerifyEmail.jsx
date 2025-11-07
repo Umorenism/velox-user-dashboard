@@ -184,7 +184,7 @@ export default function VerifyEmail() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="z-10 w-full max-w-md bg-[#0a1a3a]/80 border border-[#1f315c]
+        className="z-10 w-full max-w-md bg-[#00b4A1]/10 border border-[#1f315c]
                    p-8 rounded-2xl backdrop-blur-xl shadow-2xl"
       >
         <h2 className="text-3xl font-bold text-center text-[#e3b874] mb-2">
