@@ -1638,6 +1638,8 @@ import {
   LeafIcon,
   Copy,
   Network,
+  Download,
+  ClipboardList,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logoimg from "../../assets/velox.svg";
@@ -1663,7 +1665,7 @@ export default function SideBar({ closeSidebar }) {
   /* ------------------- TOP LINKS ------------------- */
   const topLinks = [
     { to: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
-    { to: "/dashboard/users", label: "User Packages", icon: <Users size={18} /> },
+    { to: "/dashboard/users", label: " Packages", icon: <Users size={18} /> },
     { to: "/dashboard/transactions", label: "Transactions", icon: <CreditCard size={18} /> },
     { to: "/dashboard/part", label: "Partners", icon: <Handshake size={18} /> },
     { to: "/dashboard/leaderboard", label: "LeaderBoard", icon: <LeafIcon size={18} /> },
@@ -1682,18 +1684,20 @@ export default function SideBar({ closeSidebar }) {
     { to: "/dashboard/network/matrix", label: "Matrix" },
     { to: "/dashboard/network/leadership-bonus", label: "Leadership Bonus" },
     { to: "/dashboard/network/personal-matching-bonus", label: "Personal Matching Bonus" },
-    { to: "/dashboard/network/veloxcapitalsignals", label: "VeloxCapitalSignals" },
+    
   ];
 
   /* ------------------- ACADEMY (Modules + Academy) ------------------- */
   const academyItems = [
+
     // Modules
+     { to: "/dashboard/academy/courses", label: "Master-class" },
+      { to: "/dashboard/academy/market-overview", label: "MarkeOverview" },
     { to: "/dashboard/modules/compound-calculator", label: "Compound Calculator" },
-    { to: "/dashboard/modules/forex-lot-size", label: "Forex Lot Size Calculator" },
-    { to: "/dashboard/academy/market-overview", label: "MarkeOverview" },
-    // Academy
-    { to: "/dashboard/academy/courses", label: "Courses module" },
-    { to: "/dashboard/academy/book-a-call", label: "Book A Call" },
+    { to: "/dashboard/academy/signals", label: "Signals" },
+    
+   
+    { to: "/dashboard/academy/book-a-call", label: "Live mentorship" },
   ];
 
   /* ------------------- SETTINGS ------------------- */
@@ -1800,7 +1804,7 @@ export default function SideBar({ closeSidebar }) {
 
           {/* Academy (Modules + Academy) */}
           <DropdownSection
-            title="Academy"
+            title="Academy Dashboard"
             icon={<Calculator size={18} />}
             isOpen={isModulesOpen}
             toggle={toggleModules}
@@ -1810,8 +1814,16 @@ export default function SideBar({ closeSidebar }) {
 
           {/* Security & Settings */}
           <DropdownSection
-            title="Security & Settings"
-            icon={<Shield size={18} />}
+            title="Reports"
+            icon={<ClipboardList size={18} />}
+            isOpen={isSettingsOpen}
+            toggle={toggleSettings}
+            items={settingsItems}
+            closeSidebar={closeSidebar}
+          />
+          <DropdownSection
+            title="Downloads"
+            icon={<Download size={18} />}
             isOpen={isSettingsOpen}
             toggle={toggleSettings}
             items={settingsItems}

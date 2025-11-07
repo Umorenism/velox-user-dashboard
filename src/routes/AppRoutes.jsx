@@ -107,7 +107,7 @@ export default function AppRouter() {
          <Route path="network/leadership-bonus" element={<LeadershipBonus />} />
         <Route path="network/personal-matching-bonus" element={<PersonalMatchingBonus />} />
         
-        <Route path="network/veloxcapitalsignals" element={<VeloxCapitalSignals />} />
+        <Route path="academy/signals" element={<VeloxCapitalSignals />} />
 
         {/* Blog & Support */}
         <Route path="retirement-blog" element={<RetirementBlog />} />

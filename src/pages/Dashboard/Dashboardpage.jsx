@@ -996,7 +996,7 @@ const DepositModal = ({
   copyToClipboard,
   timeLeft,
 }) => {
-  const MIN_AMOUNT = 100;
+  const MIN_AMOUNT =100;
   const handleMinClick = () => setFundData({ ...fundData, amount: MIN_AMOUNT.toString() });
   const currentStatus = paymentStatus?.transaction?.status || (paymentId ? "waiting" : null);
   const payAddress = fundResult?.data?.payAddress || paymentStatus?.payAddress;
@@ -1466,16 +1466,16 @@ export default function Dashboardpage() {
   const confirmRequirements = () => {
     setShowRequirements(false);
     setShowDeposit(true);
-    setFundData({ amount: "5", payCurrency: "USDTBSC" });
-    // setFundData({ amount: "100", payCurrency: "USDTBSC" });
+   
+    setFundData({ amount: "100", payCurrency: "USDTBSC" });
   };
 
   const handleFundWallet = async (e) => {
     e.preventDefault();
 
     
-    if (Number(fundData.amount) < 5) return;
-    // if (Number(fundData.amount) < 100) return;
+    
+    if (Number(fundData.amount) < 100) return;
     setFundLoading(true);
     setFundResult(null);
 
@@ -1586,7 +1586,7 @@ export default function Dashboardpage() {
   ];
 
   const stats = [
-    { title: "Total Investment", value: profile?.totalInvestment || 0, currency: "USD" },
+    { title: "Total Balance", value: profile?.totalInvestment || 0, currency: "USD" },
     { title: "Personal Volume (PV)", value: profile?.personalVolume || 0, currency: "USD" },
     { title: "Group Volume (GV)", value: profile?.groupVolume || 0, currency: "USD" },
     { title: "Total Referrals", value: profile?.totalReferral || 0, currency: "" },
