@@ -835,8 +835,14 @@ import bg1 from "../assets/veloximg2.jpeg";
 import bg2 from "../assets/veloxvid1.mp4";
 import bg3 from "../assets/veloximg2.jpeg";
 import bg4 from "../assets/veloxvid2.mp4";
-import bg5 from "../assets/veloximg6.jpeg"
-import bg6 from "../assets/veloximg7.jpeg"
+import bg5 from "../assets/veloximg6.jpeg";
+import bg6 from "../assets/veloximg7.jpeg";
+
+/* -------------------------------------------------------------
+   2. Visibility icons (using Heroicons – install via:
+       npm i @heroicons/react
+   ------------------------------------------------------------- */
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 const backgroundMedia = [
   { type: "image", src: bg1 },
@@ -846,6 +852,7 @@ const backgroundMedia = [
   { type: "image", src: bg5 },
   { type: "image", src: bg6 },
 ];
+
 /* -------------------------------------------------------------
    3. BackgroundSwitcher component (same as Login)
    ------------------------------------------------------------- */
@@ -886,7 +893,39 @@ function BackgroundSwitcher() {
 }
 
 /* -------------------------------------------------------------
-   4. Your original Signup component (UI unchanged)
+   4. PasswordInput – reusable component with toggle
+   ------------------------------------------------------------- */
+function PasswordInput({ value, onChange, placeholder, name }) {
+  const [show, setShow] = useState(false);
+
+  return (
+    <div className="relative">
+      <input
+        type={show ? "text" : "password"}
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required
+        className="w-full px-3 py-2 pr-10 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none"
+      />
+      <button
+        type="button"
+        onClick={() => setShow((s) => !s)}
+        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#e3b874] transition"
+      >
+        {show ? (
+          <EyeSlashIcon className="h-5 w-5" />
+        ) : (
+          <EyeIcon className="h-5 w-5" />
+        )}
+      </button>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------
+   5. Signup component (UI unchanged except password toggle)
    ------------------------------------------------------------- */
 export default function Signup() {
   const navigate = useNavigate();
@@ -934,7 +973,7 @@ export default function Signup() {
       localStorage.setItem("pendingEmail", form.email);
 
       setTimeout(() => {
-        navigate("/login");
+        navigate("/verify-email");
       }, 800);
     } catch (err) {
       console.error("Signup failed:", err);
@@ -971,7 +1010,7 @@ export default function Signup() {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
-          className="bg-[#00b4A1]/10  backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
+          className="bg-[#00b4A1]/10 backdrop-blur-lg p-8 rounded-2xl w-full max-w-md shadow-xl border border-[#1f315c]"
         >
           <h2 className="text-2xl font-bold text-[#e3b874] mb-2 text-center">
             Sign Up
@@ -980,7 +1019,7 @@ export default function Signup() {
             Join our platform and explore next-level opportunities.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4 ">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               name="name"
@@ -1011,14 +1050,12 @@ export default function Signup() {
               className="w-full px-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none"
             />
 
-            <input
-              type="password"
+            {/* ---- PASSWORD WITH TOGGLE ---- */}
+            <PasswordInput
               name="password"
               placeholder="Password"
               value={form.password}
               onChange={handleChange}
-              required
-              className="w-full px-3 py-2 rounded-md bg-[#091631] border border-[#1f315c] focus:ring-2 focus:ring-[#e3b874] outline-none"
             />
 
             <input

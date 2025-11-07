@@ -116,8 +116,8 @@ export default function VerifyEmail() {
         
         // FORCE NAVIGATION after 2 seconds
         setTimeout(() => {
-          console.log("🚀 Navigating to /reset-password");
-          navigate("/reset-password");
+          console.log("Navigating to /login");
+    navigate("/login", { replace: true });
         }, 2000);
       } else {
         // Handle specific error messages
