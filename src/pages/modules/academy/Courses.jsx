@@ -2348,7 +2348,7 @@ export default function Course() {
   // Loading
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex items-center justify-center">
         <div className="text-gray-600 text-lg">Loading courses...</div>
       </div>
     );
@@ -2357,7 +2357,7 @@ export default function Course() {
   // Error
   if (error) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex items-center justify-center p-6">
         <div className="text-center max-w-md">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <p className="text-gray-700 mb-4">{error}</p>
@@ -2375,16 +2375,16 @@ export default function Course() {
   // Course List
   if (!selectedCourse || (!currentVideo && !selectedCourse.videos)) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center py-12 px-6 md:px-20">
+      <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex flex-col items-center py-12 px-6 md:px-20">
         <div className="w-full max-w-5xl space-y-8">
           <h1 className="text-3xl font-bold text-center mb-8">Academy Courses</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 dark:bg-neutral-900 dark:text-white lg:grid-cols-3 gap-6">
             {courses.map(course => (
               <motion.div
                 key={course._id}
                 whileHover={{ scale: 1.03 }}
                 onClick={() => loadCourseDetails(course._id)}
-                className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer border hover:shadow-lg transition"
+                className="bg-white dark:bg-neutral-900 dark:text-white rounded-xl shadow-md overflow-hidden cursor-pointer border hover:shadow-lg transition"
               >
                 <img
                   src={course.thumbnail || "/placeholder.jpg"}
@@ -2392,7 +2392,7 @@ export default function Course() {
                   className="w-full h-48 object-cover"
                   onError={(e) => e.target.src = "/placeholder.jpg"}
                 />
-                <div className="p-5">
+                <div className="p-5 dark:bg-neutral-900 dark:text-white">
                   <h3 className="font-bold text-lg mb-1 line-clamp-1">{course.title}</h3>
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">{course.description || "No description."}</p>
                   <div className="flex justify-between items-center">
@@ -2430,9 +2430,9 @@ export default function Course() {
   // Course Landing
   if (!currentVideo) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
+      <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-white flex flex-col items-center py-12 px-6 md:px-20 text-gray-800">
         <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 w-full max-w-5xl mb-10">
-          <div className="flex flex-col items-center">
+          <div className="flex dark:bg-neutral-900 dark:text-white flex-col items-center">
             <div className="w-40 h-40 rounded-full bg-gradient-to-b from-teal-500 to-yellow-400 flex items-center justify-center shadow-lg overflow-hidden">
               <img
   src={selectedCourse.thumbnail || courseThumb}
@@ -2445,13 +2445,13 @@ export default function Course() {
           </div>
 
           <div className="text-center md:text-left max-w-md">
-            <p className="text-sm text-gray-500 font-semibold mb-1">
+            <p className="text-sm dark:bg-neutral-900 dark:text-white text-gray-500 font-semibold mb-1">
               Course {selectedCourse.order} of {courses.length}
             </p>
-            <h2 className="text-4xl font-extrabold text-gray-800 mb-3">
+            <h2 className="text-4xl font-extrabold text-gray-800 dark:bg-neutral-900 dark:text-white mb-3">
               {selectedCourse.title}
             </h2>
-            <p className="text-gray-600 mb-5">{selectedCourse.description}</p>
+            <p className="text-gray-600 dark:bg-neutral-900 dark:text-white mb-5">{selectedCourse.description}</p>
             <button
               onClick={() => {
                 const firstFree = selectedCourse.videos?.find(v => v.isFree);
@@ -2461,7 +2461,7 @@ export default function Course() {
                   setShowPackageModal(true);
                 }
               }}
-              className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white font-semibold rounded-full shadow-md hover:opacity-90 transition-all"
+              className="px-6 py-2 bg-gradient-to-r from-teal-500 to-yellow-400 text-white font-semibold dark:bg-neutral-900 dark:text-white rounded-full shadow-md hover:opacity-90 transition-all"
             >
               Start Course
             </button>
@@ -2541,7 +2541,7 @@ export default function Course() {
           <div
             key={video._id}
             onClick={() => (canPlay ? setCurrentVideo(video) : setShowPackageModal(true))}
-            className={`grid grid-cols-[50px_1fr_60px] sm:grid-cols-[70px_1fr_80px] items-start gap-2 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 rounded-lg transition-all cursor-pointer
+            className={`grid grid-cols-[50px_1fr_60px] dark:bg-neutral-900 dark:text-white sm:grid-cols-[70px_1fr_80px] items-start gap-2 sm:gap-4 py-3 sm:py-4 px-2 sm:px-4 rounded-lg transition-all cursor-pointer
               ${isLocked || !canPlay ? "opacity-60" : "hover:bg-gray-50 dark:hover:bg-neutral-800"}
               ${isActive ? "bg-teal-50 dark:bg-neutral-800 ring-2 ring-teal-500/30" : ""}`}
           >
@@ -2607,7 +2607,7 @@ export default function Course() {
 
   // Video Player
   return (
-    <div className="min-h-screen bg-[#f9fafb] flex flex-col items-center py-10 px-6 md:px-16 text-gray-800">
+    <div className="min-h-screen dark:bg-neutral-900 dark:text-white bg-[#f9fafb] flex flex-col items-center py-10 px-6 md:px-16 text-gray-800">
       {/* <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
         <motion.div
           ref={videoSectionRef}
@@ -2691,7 +2691,7 @@ export default function Course() {
       </div> */}
 
 
-      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="w-full dark:bg-neutral-900 dark:text-white max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-8">
   {/* ─────────────── Main Video Section ─────────────── */}
   <motion.div
     ref={videoSectionRef}
@@ -2802,17 +2802,17 @@ export default function Course() {
 
       {/* UPGRADE MODAL */}
       {showUpgradeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed  inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            className="bg-white dark:bg-neutral-900 dark:text-white rounded-2xl p-6 max-w-md w-full shadow-2xl"
           >
             <div className="flex items-center gap-3 mb-4">
               <AlertCircle className="text-yellow-500" size={28} />
-              <h3 className="text-xl font-bold">Premium Content</h3>
+              <h3 className="text-xl font-bold dark:bg-neutral-900 dark:text-white">Premium Content</h3>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:bg-neutral-900 dark:text-white mb-4">
               This lesson is part of the <strong>Premium Package</strong>. Upgrade to continue.
             </p>
             <div className="flex gap-3">

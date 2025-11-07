@@ -780,10 +780,10 @@ const FastStart = React.memo(() => {
   /* ------------------- LOADING / ERROR ------------------- */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center dark:bg-neutral-900 dark:text-white p-6">
         <div className="flex items-center space-x-3">
           <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-yellow-500" />
-          <span className="text-lg font-medium text-gray-700">Loading Fast Start...</span>
+          <span className="text-lg font-medium text-gray-700 dark:bg-neutral-900 dark:text-white">Loading Fast Start...</span>
         </div>
       </div>
     );
@@ -791,7 +791,7 @@ const FastStart = React.memo(() => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center dark:bg-neutral-900 dark:text-white justify-center p-6">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
           <AlertCircle className="h-10 w-10 text-red-600 mx-auto mb-3" />
           <p className="text-red-800 font-medium">{error}</p>
@@ -808,11 +808,11 @@ const FastStart = React.memo(() => {
 
   /* ------------------- MAIN UI ------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-4 dark:bg-neutral-900 dark:text-white sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto dark:bg-neutral-900 dark:text-white">
 
         {/* HEADER */}
-        <header className="text-center mb-10">
+        <header className="text-center dark:bg-neutral-900 dark:text-white mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 flex items-center justify-center gap-3">
             <Trophy className="h-10 w-10 text-yellow-500" />
             Fast Start Performance
@@ -850,7 +850,7 @@ const FastStart = React.memo(() => {
         </section>
 
         {/* FAST START BREAKDOWN */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 dark:bg-neutral-900 dark:text-white mb-10">
           {/* LEFT: Package Table */}
           <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">

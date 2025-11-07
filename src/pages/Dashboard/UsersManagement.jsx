@@ -100,7 +100,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-/* ====================== DEPOSIT MODAL (SIMPLE - NO QR) ====================== */
+/* ====================== DEPOSIT MODAL (WITH COUNTDOWN) ====================== */
 const DepositModal = ({
   fundData,
   setFundData,
@@ -111,12 +111,21 @@ const DepositModal = ({
   paymentId,
   paymentStatus,
   copyToClipboard,
+  timeLeft,
+  onTimerExpire,
 }) => {
   const MIN_AMOUNT = 100;
   const handleMinClick = () => setFundData({ ...fundData, amount: MIN_AMOUNT.toString() });
-  const currentStatus = paymentStatus?.transaction?.status || (paymentId);
+  const currentStatus = paymentStatus?.transaction?.status || (paymentId ? "waiting" : null);
   const payAddress = fundResult?.data?.payAddress || paymentStatus?.payAddress;
   const payAmount = fundResult?.data?.payAmount || paymentStatus?.transaction?.amount;
+
+  const formatTime = (seconds) => {
+    if (seconds === null || seconds < 0) return null;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -169,19 +178,29 @@ const DepositModal = ({
             </div>
           </div>
 
-          {/* Payment Info - Simple */}
+          {/* Payment Info */}
           {(fundResult || paymentId) && (
             <div className="p-4 bg-gray-50 dark:bg-neutral-700 rounded-md text-sm space-y-3">
               <div className="flex items-center gap-2 text-green-700">
                 <CheckCircle2 size={16} /> Payment Initiated
               </div>
 
+              {/* COUNTDOWN TIMER */}
+              {timeLeft !== null && (
+                <div className={`flex items-center gap-2 font-medium ${timeLeft < 120 ? 'text-red-600 animate-pulse' : 'text-orange-600'}`}>
+                  <Clock size={16} />
+                  <span>
+                    {timeLeft < 120 ? "Hurry! " : ""}Time remaining: {formatTime(timeLeft)}
+                  </span>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <p>Send exactly:</p>
                 <div className="flex items-center gap-2">
-                  <p className="font-mono">{payAmount || fundResult?.data?.payAmount}</p>
+                  <p className="font-mono">{payAmount}</p>
                   <button
-                    onClick={() => copyToClipboard(payAmount || fundResult?.data?.payAmount)}
+                    onClick={() => copyToClipboard(payAmount)}
                     className="text-[#00A991] hover:text-[#008a77]"
                   >
                     <Copy size={14} />
@@ -215,6 +234,12 @@ const DepositModal = ({
                     <p className="text-emerald-700 mt-2">
                       <CheckCircle2 size={16} className="inline mr-1" />
                       Deposit confirmed!
+                    </p>
+                  )}
+                  {timeLeft === 0 && currentStatus !== "confirmed" && (
+                    <p className="text-red-600 mt-2 text-xs">
+                      <XCircle size={16} className="inline mr-1" />
+                      Payment window expired. Please try again.
                     </p>
                   )}
                 </div>
@@ -416,6 +441,11 @@ export default function UsersMangement() {
   const [paymentId, setPaymentId] = useState(() => localStorage.getItem("pendingPaymentId") || null);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const pollIntervalRef = useRef(null);
+  const timerIntervalRef = useRef(null);
+
+  // COUNTDOWN STATE
+  const [timeLeft, setTimeLeft] = useState(null);
+  const PAYMENT_EXPIRY_SECONDS = 15 * 60; // 15 minutes
 
   /* ====================== COPY TO CLIPBOARD ====================== */
   const copyToClipboard = async (text) => {
@@ -427,7 +457,7 @@ export default function UsersMangement() {
     }
   };
 
-  /* ====================== SINGLE POLLING LOGIC ====================== */
+  /* ====================== POLLING LOGIC ====================== */
   useEffect(() => {
     if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
 
@@ -455,6 +485,7 @@ export default function UsersMangement() {
         if (transaction?.status === "confirmed") {
           clearInterval(pollIntervalRef.current);
           localStorage.removeItem("pendingPaymentId");
+          localStorage.removeItem("depositInitiatedAt");
 
           if (user?.wallets?.deposit !== undefined) {
             setProfile((prev) => ({
@@ -466,6 +497,7 @@ export default function UsersMangement() {
           setSuccessMessage(`Deposit of ${transaction.amount} USDT confirmed!`);
           setShowSuccessBanner(true);
           setShowDeposit(false);
+          setTimeLeft(null); // stop timer
 
           getUserProfile(token).then(setProfile).catch(console.error);
           window.dispatchEvent(new Event("depositConfirmed"));
@@ -475,6 +507,7 @@ export default function UsersMangement() {
         if (err.response?.status === 401) {
           clearInterval(pollIntervalRef.current);
           localStorage.removeItem("pendingPaymentId");
+          localStorage.removeItem("depositInitiatedAt");
         }
       }
     };
@@ -486,6 +519,48 @@ export default function UsersMangement() {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     };
   }, []);
+
+  /* ====================== COUNTDOWN TIMER ====================== */
+  useEffect(() => {
+    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+
+    if (!paymentId) {
+      setTimeLeft(null);
+      return;
+    }
+
+    const initiatedAt = localStorage.getItem("depositInitiatedAt");
+    if (!initiatedAt) {
+      setTimeLeft(null);
+      return;
+    }
+
+    const startTime = parseInt(initiatedAt, 10);
+    const expiryTime = startTime + PAYMENT_EXPIRY_SECONDS * 1000;
+
+    const updateTimer = () => {
+      const now = Date.now();
+      const remaining = Math.max(0, Math.floor((expiryTime - now) / 1000));
+      setTimeLeft(remaining);
+
+      // Auto-reset when time runs out (and not confirmed)
+      if (remaining <= 0 && paymentStatus?.transaction?.status !== "confirmed") {
+        localStorage.removeItem("pendingPaymentId");
+        localStorage.removeItem("depositInitiatedAt");
+        setPaymentId(null);
+        setPaymentStatus(null);
+        setTimeLeft(null);
+        setShowDeposit(false);
+      }
+    };
+
+    updateTimer(); // immediate first tick
+    timerIntervalRef.current = setInterval(updateTimer, 1000);
+
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    };
+  }, [paymentId, paymentStatus]);
 
   /* ====================== FETCH PROFILE ====================== */
   useEffect(() => {
@@ -514,64 +589,59 @@ export default function UsersMangement() {
     setFundData({ amount: "100", payCurrency: "USDTBSC" });
   };
 
- const handleFundWallet = async (e) => {
-  e.preventDefault();
+  const handleFundWallet = async (e) => {
+    e.preventDefault();
 
-  if (Number(fundData.amount) < 100) return;
+    if (Number(fundData.amount) < 100) return;
 
-  setFundLoading(true);
-  setFundResult(null);
+    setFundLoading(true);
+    setFundResult(null);
 
-  try {
-    const res = await initiateFund({
-      amount: Number(fundData.amount),
-      payCurrency: "USDTBSC",
-    });
+    try {
+      const res = await initiateFund({
+        amount: Number(fundData.amount),
+        payCurrency: "USDTBSC",
+      });
 
-    const payId = res.paymentId || res.data?.paymentId;
-    if (!payId) throw new Error("No payment ID returned");
+      const payId = res.paymentId || res.data?.paymentId;
+      if (!payId) throw new Error("No payment ID returned");
 
-    // Save payment ID + timestamp
-    localStorage.setItem("pendingPaymentId", payId);
-    localStorage.setItem("depositInitiatedAt", Date.now().toString());
+      // **START TIMER IMMEDIATELY**
+      localStorage.setItem("pendingPaymentId", payId);
+      localStorage.setItem("depositInitiatedAt", Date.now().toString());
 
-    setPaymentId(payId);
-    setPaymentStatus({
-      message: "Payment initiated",
-      transaction: { status: "waiting", amount: Number(fundData.amount) },
-    });
+      setPaymentId(payId);
+      setPaymentStatus({
+        message: "Payment initiated",
+        transaction: { status: "waiting", amount: Number(fundData.amount) },
+      });
 
-    setFundResult({ type: "success", data: res });
-  } catch (err) {
-    setFundResult({
-      type: "error",
-      message: err.response?.data?.message || "Failed to initiate payment.",
-    });
-  } finally {
-    setFundLoading(false);
-  }
-};
-
-  // const closeDepositModal = () => {
-  //   setShowDeposit(false);
-  //   setFundResult(null);
-  //   setFundData({ amount: "", payCurrency: "USDTBSC" });
-  // };
-
+      setFundResult({ type: "success", data: res });
+    } catch (err) {
+      setFundResult({
+        type: "error",
+        message: err.response?.data?.message || "Failed to initiate payment.",
+      });
+    } finally {
+      setFundLoading(false);
+    }
+  };
 
   const closeDepositModal = () => {
-  setShowDeposit(false);
-  setFundResult(null);
-  setFundData({ amount: "", payCurrency: "USDTBSC" });
+    setShowDeposit(false);
+    setFundResult(null);
+    setFundData({ amount: "", payCurrency: "USDTBSC" });
 
-  // Only remove if not confirmed
-  if (paymentId && !paymentStatus?.transaction?.status === "confirmed") {
-    localStorage.removeItem("pendingPaymentId");
-    localStorage.removeItem("depositInitiatedAt");
-  }
-  setPaymentId(null);
-  setPaymentStatus(null);
-};
+    // Only clean up if not confirmed
+    if (paymentId && paymentStatus?.transaction?.status !== "confirmed") {
+      localStorage.removeItem("pendingPaymentId");
+      localStorage.removeItem("depositInitiatedAt");
+    }
+    setPaymentId(null);
+    setPaymentStatus(null);
+    setTimeLeft(null);
+  };
+
   /* ====================== TRANSFER & WITHDRAWAL ====================== */
   const handleTransfer = async (e) => {
     e.preventDefault();
@@ -681,7 +751,6 @@ export default function UsersMangement() {
 
   return (
     <>
-      {/* SUCCESS BANNER */}
       {showSuccessBanner && (
         <SuccessBanner message={successMessage} onClose={() => setShowSuccessBanner(false)} />
       )}
@@ -691,7 +760,7 @@ export default function UsersMangement() {
         animate="visible"
         className="flex flex-col items-center bg-gray-100 dark:bg-neutral-900 dark:text-white min-h-screen py-5"
       >
-        {/* ─────── Wallet Cards ─────── */}
+        {/* Wallet Cards */}
         <motion.div
           variants={fadeUp}
           className="w-[92%] lg:w-[80%] xl:w-[85%] bg-white dark:bg-neutral-800 rounded-xl shadow-md p-2 sm:p-3 mb-3 border border-gray-100/30"
@@ -746,7 +815,7 @@ export default function UsersMangement() {
           </div>
         </motion.div>
 
-        {/* ─────── Packages Header ─────── */}
+        {/* Packages Header */}
         <div className="space-y-2 max-w-[1400px] p-5 w-full">
           <RiMenuFoldLine size={30} className="text-gray-700 dark:text-white" />
           <h1 className="text-[20px] sm:text-[24px] font-[700] text-[#000000] dark:text-white">
@@ -754,12 +823,12 @@ export default function UsersMangement() {
           </h1>
         </div>
 
-        {/* ─────── Packages Grid ─────── */}
+        {/* Packages Grid */}
         <div className="space-y-2 max-w-[1400px] p-5 w-full">
           <UsersPackagesGrid />
         </div>
 
-        {/* ─────── Packages Section ─────── */}
+        {/* Packages Section */}
         <motion.div
           variants={fadeUp}
           className="py-6 flex flex-col lg:flex-row gap-4 w-full max-w-[1400px] px-4 sm:px-6"
@@ -769,7 +838,7 @@ export default function UsersMangement() {
           </div>
         </motion.div>
 
-        {/* ─────── Risk Warning ─────── */}
+        {/* Risk Warning */}
         <motion.div
           variants={fadeUp}
           className="flex flex-col md:flex-row gap-8 items-start bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 mx-auto mt-10 w-[95%] lg:w-[85%] xl:w-[95%]"
@@ -797,7 +866,7 @@ export default function UsersMangement() {
           </div>
         </motion.div>
 
-        {/* ─────── MODALS ─────── */}
+        {/* MODALS */}
         {showDepositInfo && (
           <DepositInfoPopup
             onConfirm={confirmDepositInfo}
@@ -815,6 +884,7 @@ export default function UsersMangement() {
             paymentId={paymentId}
             paymentStatus={paymentStatus}
             copyToClipboard={copyToClipboard}
+            timeLeft={timeLeft}
           />
         )}
         {showTransfer && (
