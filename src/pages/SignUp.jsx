@@ -161,7 +161,7 @@ export default function Signup() {
     firstName: "",
     middleName: "",
     lastName: "",
-    username: "",
+    userName: "",
     email: "",
     phone: "",
     password: "",
@@ -180,7 +180,7 @@ export default function Signup() {
     if (
       !form.firstName ||
       !form.lastName ||
-      !form.username ||
+      !form.userName ||
       !form.email ||
       !form.phone ||
       !form.password ||
@@ -200,7 +200,7 @@ export default function Signup() {
     const payload = {
       email: form.email.trim(),
       password: form.password,
-      username: form.username.trim(),
+      userName: form.userName.trim(),
       phone: form.phone.trim(),
       name: `${form.firstName.trim()} ${form.middleName.trim()} ${form.lastName.trim()}`.trim(),
     };
@@ -299,7 +299,7 @@ export default function Signup() {
               icon={User}
               name="username"
               placeholder="Username"
-              value={form.username}
+              value={form.userName}
               onChange={handleChange}
               required
               index={3}
