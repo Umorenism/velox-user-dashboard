@@ -63,13 +63,17 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { UserProvider } from "./routes/UserContext";
 import AppRouter from "./routes/AppRoutes";
 import "./index.css";
+import { UserRoleProvider } from "./routes/UserRoleContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider>
         <UserProvider>
-          <AppRouter />
+          <UserRoleProvider>
+           <AppRouter />
+          </UserRoleProvider>
+          
         </UserProvider>
       </ThemeProvider>
     </BrowserRouter>

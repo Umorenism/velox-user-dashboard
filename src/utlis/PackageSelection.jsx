@@ -1,97 +1,138 @@
-// src/utlis/PackageSelection.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Check, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import img1 from '../assets/veloximg1.jpeg';
-import img2 from '../assets/veloximg2.jpeg';
+import { useUser } from "../routes/UserContext";
+import { useUserRole } from "../routes/UserRoleContext";
+import img1 from "../assets/veloximg1.jpeg";
+import img2 from "../assets/veloximg2.jpeg";
 
 export default function PackageSelection({ onClose }) {
   const navigate = useNavigate();
+  const { updateUserState } = useUser();               // PUT
+  const { setRole, hasPackage, role } = useUserRole();
+  const [isSaving, setIsSaving] = useState(false);
 
-  const packages = [
+  // ---- auto-redirect when role already known ----
+  useEffect(() => {
+    if (hasPackage && role) {
+      const map = { trading: "/dashboard", academy: "/academy/courses" };
+      navigate(map[role] ?? "/dashboard", { replace: true });
+    }
+  }, [hasPackage, role, navigate]);
+
+  if (hasPackage && role) return null;   // never render when already chosen
+
+  const decisionpackages = [
     {
       id: "trading",
       title: "Academy + Trading Pack",
       subtitle: "Most Popular",
-      details: ["Earn cash back", "Full Academy Access", "Affiliate Program","certifications"],
+      details: ["Earn cash back", "Full Academy Access", "Affiliate Program", "Certifications"],
       buttonText: "Select Pack",
-      buttonColor: "bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800",
+      buttonClass: "bg-blue-600 hover:bg-blue-700 text-white",
       image: img1,
+      role: "trading",
+      redirect: "/dashboard",
     },
     {
       id: "academy",
       title: "Academy Pack",
       subtitle: "Learn & Grow",
-      details: ["Full Academy Access", "No cash back", "No affiliate program","Certification"],
-      buttonText: "Select Pack",
-      buttonColor: "bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800",
+      details: ["Full Academy Access", "No cash back", "No affiliate program", "Certification"],
+      buttonText: "Select Academy Pack",
+      buttonClass: "bg-purple-600 hover:bg-purple-700 text-white",
       image: img2,
+      role: "academy",
+      redirect: "/academy/courses",
     },
   ];
 
-  const handleSelectPackage = () => {
-  onClose?.();
-  navigate("/dashboard/users"); // ✅ Correct absolute path
-};
+  const handleSelect = async (pkg) => {
+    if (isSaving) return;
+    setIsSaving(true);
 
+    try {
+      // ---- SEND role as userState ----
+      const res = await updateUserState({ userState: pkg.role });
 
+      if (res?.user?.userState === pkg.role) {
+        setRole(pkg.role);                     // lock in context + localStorage
+        navigate(pkg.redirect, { replace: true });
+        onClose?.();
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save selection");
+    } finally {
+      setIsSaving(false);
+    }
+  };
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-gray-900 rounded-2xl shadow-2xl p-5 max-w-2xl w-full relative border border-gray-700">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-400 hover:text-white text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-800 transition"
+    <>
+      <div className="fixed inset-0 bg-black/70 z-40 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 flex items-center justify-center p-3 z-50 overflow-y-auto">
+        <div
+          className="relative bg-gray-900 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto p-4 sm:p-6 md:p-8"
+          onClick={(e) => e.stopPropagation()}
         >
-          ×
-        </button>
+          <button
+            onClick={onClose}
+            disabled={isSaving}
+            className="absolute top-3 right-3 text-gray-400 hover:text-white transition disabled:opacity-50"
+          >
+            <X size={22} />
+          </button>
 
-        <h1 className="text-xl md:text-2xl font-bold text-center text-white mb-6">
-          Choose Your Package
-        </h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-white mb-5 sm:mb-6">
+            Choose Your Package
+          </h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {packages.map((pack) => (
-            <div
-              key={pack.id}
-              className="bg-white text-gray-900 rounded-xl shadow-md overflow-hidden flex flex-col hover:shadow-lg transition-all duration-300 border border-gray-200"
-            >
-              <div className="h-32 overflow-hidden">
-                <img src={pack.image} alt={pack.title} className="w-full h-full object-cover" />
-              </div>
-
-              <div className="p-4 flex flex-col flex-grow">
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-base font-bold text-gray-800">{pack.title}</h2>
-                  {pack.subtitle && (
-                    <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                      {pack.subtitle}
-                    </span>
-                  )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+            {decisionpackages.map((pkg) => (
+              <div
+                key={pkg.id}
+                className="bg-gray-800 rounded-xl overflow-hidden flex flex-col border border-gray-700 transition-transform hover:scale-[1.02] duration-200"
+              >
+                <div className="h-40 sm:h-48 md:h-52">
+                  <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover" />
                 </div>
 
-                <ul className="text-xs text-gray-600 space-y-1 mb-4 flex-grow">
-                  {pack.details.map((line, i) => (
-                    <li key={i} className="flex items-center gap-1">
-                      Check {line}
-                    </li>
-                  ))}
-                </ul>
+                <div className="p-4 sm:p-5 flex flex-col flex-grow">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-base sm:text-lg font-semibold text-white">{pkg.title}</h2>
+                    {pkg.subtitle && (
+                      <span className="text-[10px] sm:text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                        {pkg.subtitle}
+                      </span>
+                    )}
+                  </div>
 
-                <button
-                  onClick={handleSelectPackage}
-                  className={`${pack.buttonColor} text-white py-2 px-3 rounded-lg text-sm font-medium shadow-sm transition duration-200 w-full`}
-                >
-                  {pack.buttonText}
-                </button>
+                  <ul className="text-sm text-gray-300 space-y-2 mb-5 flex-grow">
+                    {pkg.details.map((line, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <Check size={14} className="text-green-500 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm">{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleSelect(pkg)}
+                    disabled={isSaving}
+                    className={`${pkg.buttonClass} py-2.5 sm:py-3 rounded-lg font-medium text-sm sm:text-base transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {isSaving ? "Saving..." : pkg.buttonText}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div className="mt-6 text-center text-gray-500 text-xs">
-          <p>VeloxCapital — Lagos, Nigeria</p>
-          <p>© {new Date().getFullYear()} All rights reserved.</p>
+          <p className="mt-5 sm:mt-6 text-center text-[10px] sm:text-xs text-gray-500">
+            © {new Date().getFullYear()} VeloxCapitalMarket.ai – All rights reserved.
+          </p>
         </div>
       </div>
-    </div>
+    </>
   );
 }

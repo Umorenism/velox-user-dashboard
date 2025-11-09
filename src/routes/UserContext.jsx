@@ -1,19 +1,24 @@
+
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { loginUser, signUpUser, getUserProfile } from "../api/authApi";
-import { apiClient } from "../api/apiClient"; // axios instance (with baseURL)
+import {
+  fetchUserState as fetchStateAPI,
+  updateUserState as updateStateAPI,
+} from "../api/userApi";
+import { apiClient } from "../api/apiClient";
 
 // -----------------------------
-// 🔐 Helper: Token Validation
+// Token validation
 // -----------------------------
 const isTokenValid = () => {
   const token = localStorage.getItem("token");
   if (!token) return false;
-
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
     if (payload.exp && Date.now() >= payload.exp * 1000) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("userRole");
       return false;
     }
     return true;
@@ -25,19 +30,17 @@ const isTokenValid = () => {
 };
 
 // -----------------------------
-// 👥 Context Setup
+// Context
 // -----------------------------
 export const UserContext = createContext();
 
-// -----------------------------
-// ⚙️ Provider
-// -----------------------------
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(false);
 
-  // Attach token to every API request
-  const attachTokenToHeaders = (token) => {
+  // Attach token to axios
+  const attachToken = (token) => {
     if (token) {
       apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     } else {
@@ -45,28 +48,18 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // -----------------------------
-  // 🧩 Load User on Mount
-  // -----------------------------
+  // Load user on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token && isTokenValid()) {
-      attachTokenToHeaders(token);
-      getUserProfile(token)
+      attachToken(token);
+      getUserProfile()
         .then((res) => {
           const profile = res.user || res;
-          setUser({
-            name: profile.name || "User",
-            email: profile.email || "",
-            profilePic: profile.profilePic || null,
-            ...profile,
-          });
+          setUser(profile);
           localStorage.setItem("user", JSON.stringify(profile));
         })
-        .catch(() => {
-          logout(); // if profile fetch fails, clear session
-        })
+        .catch(logout)
         .finally(() => setLoading(false));
     } else {
       logout();
@@ -75,65 +68,100 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   // -----------------------------
-  // 🔑 Login
+  // Login
   // -----------------------------
   const login = async ({ prefix, email, password }) => {
-    const res = await loginUser({ prefix, email, password });
-    if (res?.token) {
-      localStorage.setItem("token", res.token);
-      attachTokenToHeaders(res.token);
-      const profile = await getUserProfile(res.token);
-      const userData = profile.user || profile;
-      setUser({
-        name: userData.name || "User",
-        email: userData.email || email,
-        profilePic: userData.profilePic || null,
-        ...userData,
-      });
-      localStorage.setItem("user", JSON.stringify(userData));
+    setAuthLoading(true);
+    try {
+      const res = await loginUser({ prefix, email, password });
+      if (res?.token) {
+        localStorage.setItem("token", res.token);
+        attachToken(res.token);
+
+        // Fetch fresh profile (includes userState)
+        const profileRes = await getUserProfile();
+        const profile = profileRes.user || profileRes;
+
+        setUser(profile);
+        localStorage.setItem("user", JSON.stringify(profile));
+      }
+      return res;
+    } catch (err) {
+      console.error("Login failed:", err);
+      throw err;
+    } finally {
+      setAuthLoading(false);
     }
-    return res;
   };
 
   // -----------------------------
-  // ✍️ Signup
+  // Signup
   // -----------------------------
   const signup = async (data) => {
-    const res = await signUpUser(data);
-    if (res?.token) {
-      localStorage.setItem("token", res.token);
-      attachTokenToHeaders(res.token);
-      const profile = res.user || {};
-      setUser({
-        name: profile.name || "User",
-        email: profile.email || data.email,
-        profilePic: profile.profilePic || null,
-        ...profile,
-      });
-      localStorage.setItem("user", JSON.stringify(profile));
+    setAuthLoading(true);
+    try {
+      const res = await signUpUser(data);
+      if (res?.token) {
+        localStorage.setItem("token", res.token);
+        attachToken(res.token);
+        const profile = res.user || {};
+        setUser(profile);
+        localStorage.setItem("user", JSON.stringify(profile));
+      }
+      return res;
+    } catch (err) {
+      console.error("Signup failed:", err);
+      throw err;
+    } finally {
+      setAuthLoading(false);
     }
-    return res;
   };
 
-  // -----------------------------
-  // 🚪 Logout
-  // -----------------------------
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("userRole");
     setUser(null);
-    attachTokenToHeaders(null);
+    attachToken(null);
+
+    
   };
+
+  const fetchUserState = async () => {
+    return fetchStateAPI();
+  };
+
+  const updateUserState = async (payload) => {
+    const res = await updateStateAPI(payload); // PUT
+    if (res?.user) {
+      const updated = { ...res.user };
+      setUser(updated);
+      localStorage.setItem("user", JSON.stringify(updated));
+
+      localStorage.setItem("userRole", updated.userState);
+    }
+    return res;
+  };
+
+  const isTradingUser = user?.userState === "Trading";
+
+  const userState = user?.userState || "";
 
   return (
     <UserContext.Provider
       value={{
         user,
+        setUser,
         login,
         signup,
         logout,
         loading,
+        authLoading,
         isTokenValid,
+        fetchUserState,
+        updateUserState,
+        isTradingUser,
+        userState, // ← NEW: use this anywhere!
       }}
     >
       {children}
@@ -142,6 +170,6 @@ export const UserProvider = ({ children }) => {
 };
 
 // -----------------------------
-// ⚡️ Custom Hook
+// Custom Hook
 // -----------------------------
 export const useUser = () => useContext(UserContext);

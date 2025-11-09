@@ -1,12 +1,11 @@
+// src/pages/VerifyEmail.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Loader2, CheckCircle2, RefreshCcw, Mail } from "lucide-react";
 import { verifyEmail, resendVerificationEmail } from "../api/authApi";
 
-/* ──────────────────────────────
-   Background Media
-──────────────────────────────── */
+/* ────────────────────────────── Background ────────────────────────────── */
 import bg1 from "../assets/veloximg3.jpeg";
 import bg2 from "../assets/veloxvid2.mp4";
 import bg3 from "../assets/veloximg2.jpeg";
@@ -46,9 +45,7 @@ function BackgroundSwitcher() {
   );
 }
 
-/* ──────────────────────────────
-   OTP Input Component
-──────────────────────────────── */
+/* ────────────────────────────── OTP Input ────────────────────────────── */
 function OTPInput({ value, onChange }) {
   const inputs = useRef([]);
   const handleChange = (index, val) => {
@@ -56,11 +53,7 @@ function OTPInput({ value, onChange }) {
     digits[index] = val.slice(-1).replace(/\D/, "");
     const newValue = digits.join("");
     onChange(newValue);
-
-    // Auto focus next box
-    if (val && index < 5) {
-      inputs.current[index + 1]?.focus();
-    }
+    if (val && index < 5) inputs.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (index, e) => {
@@ -93,9 +86,7 @@ function OTPInput({ value, onChange }) {
   );
 }
 
-/* ──────────────────────────────
-   Verify Email Page
-──────────────────────────────── */
+/* ────────────────────────────── Main Component ────────────────────────────── */
 export default function VerifyEmail() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -111,7 +102,7 @@ export default function VerifyEmail() {
     if (stored) setEmail(stored);
   }, []);
 
-  // Countdown for resend
+  // Cooldown timer
   useEffect(() => {
     if (cooldown > 0) {
       const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
@@ -119,47 +110,51 @@ export default function VerifyEmail() {
     }
   }, [cooldown]);
 
-  /* ─── Verify OTP ─────────────────────────── */
+  /* ─── Verify OTP ─── */
   const handleVerify = async (e) => {
     e.preventDefault();
     if (!email || code.length !== 6) {
-      setMessage("❌ Please enter your email and 6-digit code.");
+      setMessage("Please enter your email and 6-digit code.");
       return;
     }
 
     setLoading(true);
     setMessage("");
+
     try {
       const res = await verifyEmail({ email: email.trim(), code: code.trim() });
-      const isSuccess =
-        res?.success ||
-        res?.verified ||
-        res?.message?.toLowerCase().includes("verified") ||
-        res?.status === 200;
+      const isSuccess = res?.success || res?.verified || res?.status === 200;
 
       if (isSuccess) {
-        setMessage("✅ Email verified successfully!");
+        setMessage("Email verified successfully!");
+
+        // CRITICAL: Clear any auth state
         localStorage.removeItem("pendingEmail");
-        setTimeout(() => navigate("/login", { replace: true }), 2000);
+        localStorage.removeItem("token");        
+        localStorage.removeItem("user");         
+        sessionStorage.clear();                  
+        setTimeout(() => {
+          navigate("/login", { replace: true });
+        }, 2000);
       } else {
-        setMessage(`❌ ${res?.message || "Invalid code, try again."}`);
+        setMessage(`Invalid code. Please try again.`);
       }
     } catch (err) {
       const msg =
         err?.response?.data?.message ||
         err?.response?.data?.error ||
         "Verification failed. Please try again.";
-      setMessage(`❌ ${msg}`);
+      setMessage(`${msg}`);
     } finally {
       setLoading(false);
     }
   };
 
-  /* ─── Resend Verification ───────────────── */
+  /* ─── Resend Code ─── */
   const handleResend = async (e) => {
     e.preventDefault();
-    if (!email) {
-      setMessage("❌ Please enter your email first.");
+    if (!email.trim()) {
+      setMessage("Please enter your email.");
       return;
     }
     if (cooldown > 0) return;
@@ -167,10 +162,12 @@ export default function VerifyEmail() {
     setResending(true);
     try {
       await resendVerificationEmail({ email: email.trim() });
-      setMessage("✅ Code resent successfully!");
+      setMessage("Verification code sent!");
       setCooldown(30);
     } catch (err) {
-      setMessage(`❌ ${err?.response?.data?.error || "Failed to resend code."}`);
+      setMessage(
+        err?.response?.data?.error || "Failed to resend code."
+      );
     } finally {
       setResending(false);
     }
@@ -191,12 +188,12 @@ export default function VerifyEmail() {
           Verify Your Email
         </h2>
         <p className="text-center text-gray-400 text-sm mb-6">
-          Enter the 6-digit code sent to <span className="text-[#e3b874]">{email || "your email"}</span>.
+          Enter the 6-digit code sent to{" "}
+          <span className="text-[#e3b874]">{email || "your email"}</span>.
         </p>
 
-        {/* Verification Form */}
+        {/* Verify Form */}
         <form onSubmit={handleVerify} className="space-y-5">
-          {/* OTP Input */}
           <OTPInput value={code} onChange={setCode} />
 
           <motion.button
@@ -220,7 +217,6 @@ export default function VerifyEmail() {
           </motion.button>
         </form>
 
-        {/* Divider */}
         <div className="my-6 border-t border-[#1f315c]" />
 
         {/* Resend Form */}
@@ -250,11 +246,10 @@ export default function VerifyEmail() {
               ? "Sending..."
               : cooldown > 0
               ? `Resend in ${cooldown}s`
-              : "Resend Verification Code"}
+              : "Resend Code"}
           </motion.button>
         </form>
 
-        {/* Redirect to Login */}
         <div className="text-center text-sm text-gray-400 mt-6">
           Already verified?{" "}
           <a href="/login" className="text-[#e3b874] hover:underline">
@@ -262,13 +257,13 @@ export default function VerifyEmail() {
           </a>
         </div>
 
-        {/* Message Box */}
+        {/* Success / Error Message */}
         {message && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`mt-5 text-center text-sm font-medium p-3 rounded-lg ${
-              message.includes("✅")
+              message.includes("successfully") || message.includes("sent")
                 ? "bg-green-900/40 text-green-400 border border-green-500/30"
                 : "bg-red-900/40 text-red-400 border border-red-500/30"
             }`}

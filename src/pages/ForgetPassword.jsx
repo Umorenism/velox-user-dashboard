@@ -187,7 +187,7 @@ export default function ForgetPassword() {
               href="mailto:contact@veloxcapital.com"
               className="text-[#e3b874] hover:underline"
             >
-              contact@veloxcapital.com
+              contact@veloxcapitalmarket.ai
             </a>
           </div>
         </motion.div>

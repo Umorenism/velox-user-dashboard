@@ -1,12 +1,13 @@
-
 import { ThemeProvider } from "./context/ThemeContext";
 import AppRouter from "./routes/AppRoutes";
-import React from "react";
+import { UserRoleProvider } from "./routes/UserRoleContext";
 
 export default function App() {
   return (
     <ThemeProvider>
-      <AppRouter/>
+      <UserRoleProvider>
+        <AppRouter />
+      </UserRoleProvider>
     </ThemeProvider>
   );
 }
