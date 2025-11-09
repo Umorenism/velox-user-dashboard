@@ -939,7 +939,7 @@ const useMounted = () => {
   return mounted;
 };
 
-export default function SignalsPage() {
+export default function VeloxCapitalSignals() {
   const mounted = useMounted();
 
   const [theme, setTheme] = useState("light");

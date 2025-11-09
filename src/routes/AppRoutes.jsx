@@ -44,7 +44,9 @@ import VeloxCapitalSignals from "../pages/network/VeloxCapitalSignals";
 import RetirementBlog from "../pages/retirementbloq/RetirementBlog";
 import SupportPage from "../pages/SupportPage";
 import DownloadsPage from "../pages/Dashboard/DownloadsPage";
-import NotificationsPage from "../pages/Dashboard/NotificationsPage";
+
+import PerformanceReport from "../pages/Dashboard/PerformanceReport";
+import ReportHistoryTransaction from "../utlis/ReportHistoryTrancation";
 
 export default function AppRouter() {
   const { user, isTokenValid, loading, userState } = useUser();
@@ -110,7 +112,8 @@ export default function AppRouter() {
         <Route path="retirement-blog" element={<RetirementBlog />} />
         <Route path="support" element={<SupportPage />} />
         <Route path="downloads" element={<DownloadsPage/>} />
-        <Route path="notifications" element={<NotificationsPage/>} />
+        <Route path="reports" element={<PerformanceReport/>} />
+        <Route path="reportshistory" element={<ReportHistoryTransaction/>} />
       </Route>
 
       {/* === ACADEMY SECTION (both roles, but academy forced here) === */}

@@ -1,8 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Clock, User, Send, CheckCircle, XCircle } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  User,
+  Send,
+  CheckCircle,
+  XCircle,
+  PlayCircle,
+  AlertTriangle,
+} from "lucide-react";
+import { getUserProfile } from "../../api/authApi";
+import { apiClient } from "../../api/apiClient";
+import { useUser } from "../../routes/UserContext";
 
 export default function BookACall() {
+  const { token } = useUser(); // 🔐 assumes token from context
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({
     goal: "",
@@ -13,17 +26,46 @@ export default function BookACall() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [showCard, setShowCard] = useState(true);
+  const [userCourses, setUserCourses] = useState([]);
+  const [eligible, setEligible] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // ─── Fetch User Courses & Check Eligibility ────────────────────────────────
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileRes, courseRes] = await Promise.all([
+          getUserProfile(token),
+          apiClient.get("/api/users/training/courses", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        setUserCourses(courseRes.data);
+
+        // check if any course progress >= 50%
+        const hasEligibleCourse = courseRes.data.some(
+          (c) => c.progress?.percent >= 50
+        );
+        setEligible(hasEligibleCourse);
+      } catch (err) {
+        console.error("Failed to load mentorship data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [token]);
 
   const handleChange = (field, value) => {
     setAnswers({ ...answers, [field]: value });
   };
 
   const handleNext = () => {
-    if (step === 1) {
-      if (answers.goal && answers.experience && answers.topic) setStep(2);
-    } else if (step === 2) {
-      if (answers.date && answers.time) setSubmitted(true);
-    }
+    if (step === 1 && answers.goal && answers.experience && answers.topic)
+      setStep(2);
+    else if (step === 2 && answers.date && answers.time)
+      setSubmitted(true);
   };
 
   const handleClose = () => {
@@ -33,14 +75,33 @@ export default function BookACall() {
     setSubmitted(false);
   };
 
+  // ─── Loader State ─────────────────────────────────────────────
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-900 text-white">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="animate-spin border-4 border-teal-500 border-t-transparent rounded-full w-12 h-12 mx-auto mb-4"></div>
+          <p>Loading mentorship dashboard...</p>
+        </motion.div>
+      </div>
+    );
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-neutral-900 dark:to-neutral-950 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-neutral-900 dark:to-neutral-950 flex flex-col items-center justify-center p-6">
       {showCard ? (
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-6xl bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 relative"
+          transition={{ type: "spring", stiffness: 70 }}
+          className="w-full max-w-5xl bg-white dark:bg-neutral-800 shadow-xl rounded-2xl p-8 relative overflow-hidden"
         >
+          {/* Decorative gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-teal-600/10 to-transparent pointer-events-none rounded-2xl" />
+
           {/* Close Button */}
           {submitted && (
             <button
@@ -51,26 +112,78 @@ export default function BookACall() {
             </button>
           )}
 
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          {/* HEADER */}
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 relative z-10">
             {submitted
               ? "Call Scheduled!"
               : step === 1
               ? "AI Mentor Assistant"
               : "Book a Live Mentorship Call"}
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-gray-500 dark:text-gray-400 mb-6 relative z-10">
             {submitted
               ? "Your mentorship session has been successfully booked."
               : step === 1
-              ? "Let's get to know you before connecting you to a mentor."
-              : "Select your date and time for a live mentorship call with VeloxCapital experts."}
+              ? "Let's get to know you before connecting you to a VeloxCapital mentor."
+              : "Select your preferred date and time for your live mentorship call."}
           </p>
 
-          {/* Step 1 - AI QUESTIONS */}
+          {/* ─── COURSE PROGRESS VALIDATION ───────────────────── */}
+          {!eligible && !submitted && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 p-4 rounded-lg mb-6 flex items-center gap-3"
+            >
+              <AlertTriangle size={20} />
+              <p>
+                You must complete at least <strong>50%</strong> of one course
+                before booking a mentorship call.
+              </p>
+            </motion.div>
+          )}
+
+          {/* ─── COURSE PROGRESS LIST ─────────────────────────── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {userCourses.map((course, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="flex items-center justify-between bg-gray-50 dark:bg-neutral-900 p-4 rounded-xl border border-gray-200 dark:border-neutral-700"
+              >
+                <div className="flex items-center gap-3">
+                  <PlayCircle className="text-teal-500" size={28} />
+                  <div>
+                    <p className="font-medium text-gray-800 dark:text-gray-200">
+                      {course.title}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {course.progress?.percent ?? 0}% completed
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className={`px-3 py-1 text-sm rounded-full ${
+                    course.progress?.percent >= 50
+                      ? "bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300"
+                      : "bg-gray-200 dark:bg-neutral-700 text-gray-600 dark:text-gray-300"
+                  }`}
+                >
+                  {course.progress?.percent >= 50
+                    ? "Eligible"
+                    : "Incomplete"}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* ─── Step 1 - AI QUESTIONS ─────────────────────────── */}
           <AnimatePresence>
             {step === 1 && !submitted && (
               <motion.div
-                key="ai-questions"
+                key="step-1"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -78,24 +191,27 @@ export default function BookACall() {
               >
                 <div>
                   <label className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                    🤖 What is your main financial goal?
+                    🎯 What is your main financial goal?
                   </label>
                   <input
                     type="text"
                     value={answers.goal}
                     onChange={(e) => handleChange("goal", e.target.value)}
                     placeholder="e.g. Build a passive income portfolio"
-                    className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
+                    className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
                   />
                 </div>
+
                 <div>
                   <label className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                    📈 What is your current trading experience level?
+                    📈 Your trading experience level
                   </label>
                   <select
                     value={answers.experience}
-                    onChange={(e) => handleChange("experience", e.target.value)}
-                    className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
+                    onChange={(e) =>
+                      handleChange("experience", e.target.value)
+                    }
+                    className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
                   >
                     <option value="">Select one</option>
                     <option value="Beginner">Beginner</option>
@@ -103,25 +219,33 @@ export default function BookACall() {
                     <option value="Advanced">Advanced</option>
                   </select>
                 </div>
+
                 <div>
                   <label className="text-gray-700 dark:text-gray-200 text-sm font-medium">
-                    💬 Which topic would you like to discuss?
+                    💬 Topic you want to discuss
                   </label>
                   <select
                     value={answers.topic}
                     onChange={(e) => handleChange("topic", e.target.value)}
-                    className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
+                    className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
                   >
-                    <option value="">Choose a topic</option>
-                    <option value="Investment Strategies">Investment Strategies</option>
+                    <option value="">Choose topic</option>
+                    <option value="Investment Strategies">
+                      Investment Strategies
+                    </option>
                     <option value="Crypto Trading">Crypto Trading</option>
                     <option value="Risk Management">Risk Management</option>
-                    <option value="Financial Planning">Financial Planning</option>
+                    <option value="Financial Planning">
+                      Financial Planning
+                    </option>
                   </select>
                 </div>
+
                 <button
                   onClick={handleNext}
-                  disabled={!answers.goal || !answers.experience || !answers.topic}
+                  disabled={
+                    !answers.goal || !answers.experience || !answers.topic
+                  }
                   className="w-full mt-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition"
                 >
                   Continue to Booking →
@@ -130,11 +254,11 @@ export default function BookACall() {
             )}
           </AnimatePresence>
 
-          {/* Step 2 - BOOKING FORM */}
+          {/* ─── Step 2 - BOOKING FORM ─────────────────────────── */}
           <AnimatePresence>
             {step === 2 && !submitted && (
               <motion.div
-                key="booking-form"
+                key="step-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -144,9 +268,11 @@ export default function BookACall() {
                   <label className="text-gray-700 dark:text-gray-200 text-sm font-medium flex items-center gap-2">
                     <User size={16} /> Preferred Mentor
                   </label>
-                  <select className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500">
+                  <select className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500">
                     <option>Choose a mentor</option>
-                    <option>Dr. Samuel Owolabi — Senior Investment Coach</option>
+                    <option>
+                      Dr. Samuel Owolabi — Senior Investment Coach
+                    </option>
                     <option>Amaka Uzo — Crypto Analyst</option>
                     <option>James White — Risk Management Expert</option>
                   </select>
@@ -161,7 +287,7 @@ export default function BookACall() {
                       type="date"
                       value={answers.date}
                       onChange={(e) => handleChange("date", e.target.value)}
-                      className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
+                      className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
                   <div className="flex-1">
@@ -172,15 +298,19 @@ export default function BookACall() {
                       type="time"
                       value={answers.time}
                       onChange={(e) => handleChange("time", e.target.value)}
-                      className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
+                      className="w-full mt-2 px-4 py-2 rounded-lg border dark:border-gray-700 bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
                 </div>
 
                 <button
                   onClick={handleNext}
-                  disabled={!answers.date || !answers.time}
-                  className="w-full mt-4 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition flex justify-center items-center gap-2"
+                  disabled={!eligible || !answers.date || !answers.time}
+                  className={`w-full mt-4 py-2 rounded-lg text-white transition flex justify-center items-center gap-2 ${
+                    eligible
+                      ? "bg-teal-600 hover:bg-teal-700"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
                 >
                   <Send size={16} /> Book Call
                 </button>
@@ -188,20 +318,20 @@ export default function BookACall() {
             )}
           </AnimatePresence>
 
-          {/* Confirmation */}
+          {/* ─── CONFIRMATION ─────────────────────────── */}
           {submitted && (
             <motion.div
               key="confirmation"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center flex flex-col items-center justify-center py-8"
+              className="text-center flex flex-col items-center justify-center py-10"
             >
               <CheckCircle size={60} className="text-teal-500 mb-4" />
               <p className="text-lg font-semibold text-gray-800 dark:text-white">
                 Great! Your mentorship call is booked.
               </p>
               <p className="text-gray-500 mt-2">
-                We’ll send you a confirmation email with meeting details shortly.
+                A confirmation email will be sent to you shortly.
               </p>
 
               <button
@@ -214,11 +344,11 @@ export default function BookACall() {
           )}
         </motion.div>
       ) : (
-        // After Close — Address Section
+        // ─── Contact Info after closing ───────────────────────
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center mt-8 bg-white dark:bg-gray-800 shadow-md rounded-2xl p-6 max-w-md"
+          className="text-center mt-8 bg-white dark:bg-neutral-800 shadow-md rounded-2xl p-6 max-w-md"
         >
           <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
             VeloxCapital Headquarters
@@ -242,7 +372,10 @@ export default function BookACall() {
       )}
 
       <p className="text-gray-400 text-xs mt-6">
-        Powered by <span className="text-teal-500 font-semibold">VeloxCapital Mentorship AI</span>
+        Powered by{" "}
+        <span className="text-teal-500 font-semibold">
+          VeloxCapital Mentorship AI
+        </span>
       </p>
     </div>
   );
