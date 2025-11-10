@@ -121,6 +121,7 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("userRole");
+    
     setUser(null);
     attachToken(null);
 

@@ -118,3 +118,13 @@ export const getUserProfile = async (token) => {
 
 
 
+export const clearAuthData = () => {
+  localStorage.removeItem("token");
+  sessionStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("userRole");
+  localStorage.removeItem("pendingPaymentId");
+  localStorage.removeItem("depositInitiatedAt");
+  // Add any other keys you store on login
+  console.log("Auth data cleared from storage");
+};

@@ -1,6 +1,6 @@
 // src/routes/UserRoleContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
-
+import { clearAuthData } from "../api/authApi"; // ← CORRECT PATH
 const UserRoleContext = createContext(undefined);
 
 export const UserRoleProvider = ({ children }) => {

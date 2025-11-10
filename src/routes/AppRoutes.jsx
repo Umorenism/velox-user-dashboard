@@ -283,6 +283,7 @@ export default function AppRouter() {
         <Route path="book-a-call" element={<BookACall />} />
         <Route path="downloads" element={<DownloadsPage />} />
         <Route path="reports" element={<PerformanceReport />} />
+        <Route path="support" element={<SupportPage />} />
       </Route>
 
       {/* Fallback */}

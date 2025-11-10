@@ -117,7 +117,7 @@ export default function BookACall() {
             {submitted
               ? "Call Scheduled!"
               : step === 1
-              ? "AI Mentor Assistant"
+              ? "Live Mentor Assistant"
               : "Book a Live Mentorship Call"}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mb-6 relative z-10">
