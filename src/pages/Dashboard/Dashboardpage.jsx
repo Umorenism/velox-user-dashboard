@@ -1940,7 +1940,7 @@ const DepositModal = ({
   const payAmount = fundResult?.data?.payAmount || paymentStatus?.transaction?.amount;
 
   // BSC Payment URI for QR Code
-  const bscUri = payAddress && payAmount ? `bsc:${payAddress}?amount=${payAmount}` : "";
+  const bscUri = payAddress && payAmount ? `${payAddress}?amount=${payAmount}` : "";
 
   const formatTime = (seconds) => {
     if (seconds === null || seconds < 0) return null;

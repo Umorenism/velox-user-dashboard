@@ -21,7 +21,10 @@ const backgroundMedia = [
 function BackgroundSwitcher() {
   const [index, setIndex] = useState(0);
   useEffect(() => {
-    const interval = setInterval(() => setIndex((prev) => (prev + 1) % backgroundMedia.length), 8000);
+    const interval = setInterval(
+      () => setIndex((prev) => (prev + 1) % backgroundMedia.length),
+      8000
+    );
     return () => clearInterval(interval);
   }, []);
 
@@ -29,7 +32,11 @@ function BackgroundSwitcher() {
   return (
     <div className="absolute inset-0 overflow-hidden">
       {current.type === "image" ? (
-        <img src={current.src} alt="" className="w-full h-full object-cover transition-opacity duration-1000" />
+        <img
+          src={current.src}
+          alt=""
+          className="w-full h-full object-cover transition-opacity duration-1000"
+        />
       ) : (
         <video
           src={current.src}
@@ -48,6 +55,7 @@ function BackgroundSwitcher() {
 /* ────────────────────────────── OTP Input ────────────────────────────── */
 function OTPInput({ value, onChange }) {
   const inputs = useRef([]);
+
   const handleChange = (index, val) => {
     const digits = value.split("");
     digits[index] = val.slice(-1).replace(/\D/, "");
@@ -102,7 +110,7 @@ export default function VerifyEmail() {
     if (stored) setEmail(stored);
   }, []);
 
-  // Cooldown timer
+  // Cooldown countdown
   useEffect(() => {
     if (cooldown > 0) {
       const timer = setTimeout(() => setCooldown((c) => c - 1), 1000);
@@ -110,68 +118,139 @@ export default function VerifyEmail() {
     }
   }, [cooldown]);
 
-  /* ─── Verify OTP ─── */
+  /* ─── VERIFY EMAIL ─── */
   const handleVerify = async (e) => {
-    e.preventDefault();
-    if (!email || code.length !== 6) {
-      setMessage("Please enter your email and 6-digit code.");
-      return;
+  e.preventDefault();
+
+  if (!email || code.length !== 6) {
+    setMessage("Please enter your email and 6-digit verification code.");
+    return;
+  }
+
+  setLoading(true);
+  setMessage("");
+
+  try {
+    const response = await verifyEmail({
+      email: email.trim(),
+      code: code.trim(),
+    });
+
+    const successConditions = [
+      response?.success,
+      response?.verified,
+      response?.message?.toLowerCase().includes("success"),
+      response?.status === 200,
+    ];
+
+    // ✅ Handle "already verified" as success too
+    const alreadyVerified =
+      response?.error?.toLowerCase().includes("already verified") ||
+      response?.message?.toLowerCase().includes("already verified");
+
+    if (successConditions.some(Boolean) || alreadyVerified) {
+      setMessage("✅ Email verified successfully!");
+
+      // Clean up local data
+      localStorage.removeItem("pendingEmail");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      sessionStorage.clear();
+
+      // Redirect to login page
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 1500);
+    } else {
+      setMessage("❌ Invalid or expired code. Please try again.");
     }
+  } catch (error) {
+    console.error("Email verification error:", error);
 
-    setLoading(true);
-    setMessage("");
+    const backendMessage =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message;
 
-    try {
-      const res = await verifyEmail({ email: email.trim(), code: code.trim() });
-      const isSuccess = res?.success || res?.verified || res?.status === 200;
-
-      if (isSuccess) {
-        setMessage("Email verified successfully!");
-
-        // CRITICAL: Clear any auth state
-        localStorage.removeItem("pendingEmail");
-        localStorage.removeItem("token");        
-        localStorage.removeItem("user");         
-        sessionStorage.clear();                  
-        setTimeout(() => {
-          navigate("/login", { replace: true });
-        }, 2000);
-      } else {
-        setMessage(`Invalid code. Please try again.`);
-      }
-    } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        "Verification failed. Please try again.";
-      setMessage(`${msg}`);
-    } finally {
-      setLoading(false);
+    // ✅ Treat "already verified" in error response as success
+    if (
+      backendMessage?.toLowerCase().includes("already verified") ||
+      backendMessage?.toLowerCase().includes("verified already")
+    ) {
+      setMessage("✅ Email is already verified!");
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 1500);
+    } else {
+      setMessage(`❌ ${backendMessage || "Verification failed. Please try again."}`);
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
-  /* ─── Resend Code ─── */
+
+  /* ─── RESEND VERIFICATION CODE ─── */
   const handleResend = async (e) => {
-    e.preventDefault();
-    if (!email.trim()) {
-      setMessage("Please enter your email.");
-      return;
-    }
-    if (cooldown > 0) return;
+  e.preventDefault();
 
-    setResending(true);
-    try {
-      await resendVerificationEmail({ email: email.trim() });
-      setMessage("Verification code sent!");
+  if (!email.trim()) {
+    setMessage("Please enter your email.");
+    return;
+  }
+  if (cooldown > 0) return;
+
+  setResending(true);
+  setMessage("");
+
+  try {
+    const res = await resendVerificationEmail({ email: email.trim() });
+
+    // ✅ Check for success or message indicators
+    const success =
+      res?.success ||
+      res?.status === 200 ||
+      res?.message?.toLowerCase().includes("sent");
+
+    const alreadyVerified =
+      res?.error?.toLowerCase().includes("already verified") ||
+      res?.message?.toLowerCase().includes("already verified");
+
+    if (success) {
+      setMessage("✅ Verification code sent! Please check your email.");
       setCooldown(30);
-    } catch (err) {
-      setMessage(
-        err?.response?.data?.error || "Failed to resend code."
-      );
-    } finally {
-      setResending(false);
+    } else if (alreadyVerified) {
+      setMessage("✅ Your email is already verified. Redirecting to login...");
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 1500);
+    } else {
+      setMessage("❌ Failed to resend code. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("Resend error:", error);
+
+    const backendMessage =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message;
+
+    if (
+      backendMessage?.toLowerCase().includes("already verified") ||
+      backendMessage?.toLowerCase().includes("verified already")
+    ) {
+      setMessage("✅ Your email is already verified. Redirecting to login...");
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 1500);
+    } else {
+      setMessage(`❌ ${backendMessage || "Failed to resend code."}`);
+    }
+  } finally {
+    setResending(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center relative bg-[#07112b] text-white p-4 overflow-hidden">
@@ -192,7 +271,7 @@ export default function VerifyEmail() {
           <span className="text-[#e3b874]">{email || "your email"}</span>.
         </p>
 
-        {/* Verify Form */}
+        {/* VERIFY FORM */}
         <form onSubmit={handleVerify} className="space-y-5">
           <OTPInput value={code} onChange={setCode} />
 
@@ -219,7 +298,7 @@ export default function VerifyEmail() {
 
         <div className="my-6 border-t border-[#1f315c]" />
 
-        {/* Resend Form */}
+        {/* RESEND FORM */}
         <form onSubmit={handleResend} className="space-y-4">
           <div className="relative">
             <Mail className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
@@ -257,13 +336,13 @@ export default function VerifyEmail() {
           </a>
         </div>
 
-        {/* Success / Error Message */}
+        {/* SUCCESS / ERROR MESSAGE */}
         {message && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={`mt-5 text-center text-sm font-medium p-3 rounded-lg ${
-              message.includes("successfully") || message.includes("sent")
+              message.includes("✅")
                 ? "bg-green-900/40 text-green-400 border border-green-500/30"
                 : "bg-red-900/40 text-red-400 border border-red-500/30"
             }`}

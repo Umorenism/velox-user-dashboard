@@ -737,7 +737,7 @@ export default function Login() {
                 />
               </div>
               <div className="relative w-2/3">
-                <User className="absolute left-3 top-2.4 text-gray-400 w-4 h-4" />
+                <User className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
                 <input
                   type="email"
                   name="email"

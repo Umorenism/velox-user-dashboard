@@ -1485,7 +1485,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logoimg from "../../assets/velox.svg";
-import profilePic from "../../assets/profile.svg";
+import profilePic from "../../assets/veloximg1.jpeg";
 import { useTheme } from "../../context/ThemeContext";
 import { UserContext } from "../../routes/UserContext";
 import { useUserRole } from "../../routes/UserRoleContext";
@@ -1770,30 +1770,45 @@ export default function SideBar({ closeSidebar }) {
       </div>
 
       {/* ───────── Bottom Profile Section ───────── */}
-      <div className="mt-6">
-        <div className="flex items-center justify-between dark:bg-gray-800 rounded-lg py-2 px-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={user?.profilePic || profilePic}
-              alt={user?.name || "User"}
-              className="w-12 h-12 rounded-full object-cover border border-gray-300 dark:border-gray-700"
-            />
-            <div>
-              <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{user?.name || "User"}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || "No email"}</p>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              logout();
-              navigate("/login");
-            }}
-            className="text-red-500 ml-5 hover:text-red-600 transition"
-          >
-            <LogOut size={18} />
-          </button>
+     
+<div className="mt-6">
+  <div className="flex items-center justify-between dark:bg-gray-800 rounded-lg py-2 px-3">
+    <div className="flex items-center gap-3">
+      {user?.profilePic ? (
+        <img
+          src={user.profilePic}
+          alt={user.name || "User"}
+          className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+        />
+      ) : (
+        // 🔹 Generate initials if no profile image
+        <div className="w-8 h-8 rounded-full bg-[#00A991] flex items-center justify-center text-white text-lg font-semibold border border-gray-300 dark:border-gray-700">
+          {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
         </div>
+      )}
+
+      <div>
+        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+          {user?.name || "User"}
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {user?.email || "No email"}
+        </p>
       </div>
+    </div>
+
+    <button
+      onClick={() => {
+        logout();
+        navigate("/login");
+      }}
+      className="text-red-500 pr-3 ml-5 hover:text-red-600 transition"
+    >
+      <LogOut size={18} />
+    </button>
+  </div>
+</div>
+
     </motion.aside>
   );
 }

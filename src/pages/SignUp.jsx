@@ -175,7 +175,9 @@ export default function Signup() {
     ];
     for (const field of required) {
       if (!form[field].trim()) {
-        setError(`Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}.`);
+        setError(
+          `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}.`
+        );
         return;
       }
     }
@@ -206,7 +208,9 @@ export default function Signup() {
       }
     } catch (err) {
       console.error("Signup failed:", err);
-      setError(err.response?.data?.message || "Signup failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Signup failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -281,7 +285,7 @@ export default function Signup() {
           />
 
           {/* Fixed Phone Input */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
@@ -297,6 +301,25 @@ export default function Signup() {
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               className="w-full text-white bg-transparent border-none outline-none placeholder-gray-400"
+            />
+          </motion.div> */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="relative rounded-md border border-[#243a6e] px-3 py-2"
+          >
+            <PhoneInput
+              international
+              defaultCountry="NG"
+              countryCallingCodeEditable={false}
+              placeholder="Enter phone number"
+              value={form.phone}
+              onChange={handlePhoneChange}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              className="w-full text-black bg-transparent border-none outline-none placeholder-gray-500"
             />
           </motion.div>
 
