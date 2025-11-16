@@ -481,7 +481,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
 import { UserContext } from "../../routes/UserContext";
 import { apiClient } from "../../api/apiClient";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Sun, Moon, Bell, MessageSquare, Settings, Search, User, LogOut, Menu,
@@ -834,8 +834,10 @@ export default function Header({ toggleSidebar }) {
               )}
             </AnimatePresence>
           </div>
-
-          <Settings className="hidden sm:block cursor-pointer hover:text-[#00A991] transition" size={20} aria-label="Settings" />
+          <Link to="setting">
+          <Settings  className="hidden sm:block cursor-pointer hover:text-[#00A991] transition" size={20} aria-label="Settings" />
+          </Link>
+          
         </div>
 
         {/* PROFILE DROPDOWN */}

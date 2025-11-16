@@ -28,3 +28,16 @@ export const renewUserPackage = async (packageId) => {
   console.log("Renew Package Response:", response.data);
   return response.data;
 };
+
+
+// In your API file
+export const upgradeUserPackage = async (packageId, token) => {
+  const res = await apiClient.post(
+    "/api/users/upgrade-package",
+    { packageId },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return res.data;
+};

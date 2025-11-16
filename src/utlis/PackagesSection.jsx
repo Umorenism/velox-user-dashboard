@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, Package } from "lucide-react";
 import { apiClient } from "@/api/apiClient";
+import UpgradeButton from "./UpgradeButton";
 
 const UserPackagesSection = () => {
   const [activeTab, setActiveTab] = useState("All SERIES");
@@ -58,9 +59,14 @@ const UserPackagesSection = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-white dark:bg-neutral-900 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-800">
-      <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+      <div className="flex justify-between items-center w-full">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6">
         Packages Series
       </h2>
+      <div>
+        <UpgradeButton/>
+      </div>
+      </div>
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-neutral-700 mb-8 overflow-x-auto">
@@ -185,3 +191,11 @@ const UserPackagesSection = () => {
 };
 
 export default UserPackagesSection;
+
+
+
+
+
+
+
+
