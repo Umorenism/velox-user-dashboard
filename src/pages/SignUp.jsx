@@ -161,60 +161,63 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    const required = [
-      "firstName",
-      "lastName",
-      "userName",
-      "email",
-      "phone",
-      "password",
-      "confirmPassword",
-    ];
-    for (const field of required) {
-      if (!form[field].trim()) {
-        setError(
-          `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}.`
-        );
-        return;
-      }
-    }
-
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
+  const required = [
+    "firstName",
+    "lastName",
+    "userName",
+    "email",
+    "phone",
+    "password",
+    "confirmPassword",
+  ];
+  for (const field of required) {
+    if (!form[field].trim()) {
+      setError(
+        `Please fill in ${field.replace(/([A-Z])/g, " $1").toLowerCase()}.`
+      );
       return;
     }
+  }
 
-    setLoading(true);
+  if (form.password !== form.confirmPassword) {
+    setError("Passwords do not match.");
+    return;
+  }
 
-    const payload = {
-      email: form.email.trim(),
-      password: form.password,
-      userName: form.userName.trim(),
-      phone: form.phone.trim(),
-      name: `${form.firstName.trim()} ${form.middleName.trim()} ${form.lastName.trim()}`.trim(),
-      ...(form.ref.trim() && { ref: form.ref.trim() }),
-    };
+  setLoading(true);
 
-    try {
-      const res = await signUpUser(payload); // ✅ Proper API integration
-      if (res?.user || res?.message) {
-        localStorage.setItem("pendingEmail", form.email);
-        navigate("/verify-email");
-      } else {
-        throw new Error("Unexpected server response");
-      }
-    } catch (err) {
-      console.error("Signup failed:", err);
-      setError(
-        err.response?.data?.message || "Signup failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
+  // Auto-set referral to "admin" if empty or only whitespace
+  const referralCode = form.ref.trim() || "admin";
+
+  const payload = {
+    email: form.email.trim(),
+    password: form.password,
+    userName: form.userName.trim(),
+    phone: form.phone.trim(),
+    name: `${form.firstName.trim()} ${form.middleName.trim()} ${form.lastName.trim()}`.trim(),
+    ref: referralCode, // Always send a ref — defaults to "admin"
   };
+
+  try {
+    const res = await signUpUser(payload);
+    if (res?.user || res?.message) {
+      localStorage.setItem("pendingEmail", form.email);
+      navigate("/verify-email");
+    } else {
+      throw new Error("Unexpected server response");
+    }
+  } catch (err) {
+    console.error("Signup failed:", err);
+    setError(
+      err.response?.data?.message || "Signup failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#07112b] text-white relative overflow-hidden p-4">
